@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">RefuelTracker</string>
+    <string name="nav_back_button">Back</string>
+</resources>
