@@ -24,9 +24,9 @@ fun RefuelTrackerApp(navController: NavHostController = rememberNavController())
 @Composable
 fun CommonTopAppBar(
     title: String,
-    canNavigateBack: Boolean,
+    canNavigateUp: Boolean,
     modifier: Modifier = Modifier,
-    navigateUp: () -> Unit = {},
+    onNavigateUp: () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     CenterAlignedTopAppBar(
@@ -34,11 +34,11 @@ fun CommonTopAppBar(
         modifier = modifier,
         scrollBehavior = scrollBehavior,
         navigationIcon = {
-            if (canNavigateBack) {
-                IconButton(onClick = navigateUp) {
+            if (canNavigateUp) {
+                IconButton(onClick = onNavigateUp) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.nav_back_button)
+                        contentDescription = stringResource(R.string.nav_back_button_description)
                     )
                 }
             }
