@@ -1,6 +1,5 @@
 package org.refueltracker.ui.fuelstop
 
-import android.icu.util.Currency
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +24,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import org.refueltracker.CommonTopAppBar
 import org.refueltracker.R
+import org.refueltracker.ui.Config
 import org.refueltracker.ui.navigation.NavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 
@@ -121,8 +121,8 @@ private fun FuelStopInputForm(
             keyboardOptions = decimalKeyboard,
             trailingIcon = {
                 Row {
-                    Text(Currency.getInstance(java.util.Locale.getDefault()).symbol)
-                    Text("/L") // TODO: configuration on display currency and volume
+                    Text(Config.CURRENCY_SIGN)
+                    Text("/${Config.VOLUME_SIGN}")
                 }
             }
         )
@@ -135,7 +135,7 @@ private fun FuelStopInputForm(
             enabled = inputEnabled,
             singleLine = true,
             keyboardOptions = decimalKeyboard,
-            trailingIcon = { Text("L") }
+            trailingIcon = { Text(Config.VOLUME_SIGN) }
         )
         OutlinedTextField(
             value = "",
@@ -146,7 +146,7 @@ private fun FuelStopInputForm(
             enabled = inputEnabled,
             singleLine = true,
             keyboardOptions = decimalKeyboard,
-            leadingIcon = { Text(Currency.getInstance(java.util.Locale.getDefault()).symbol) }
+            leadingIcon = { Text(Config.CURRENCY_SIGN) }
         )
     }
 }
