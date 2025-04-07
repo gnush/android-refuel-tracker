@@ -25,6 +25,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -32,6 +34,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
@@ -39,12 +42,13 @@ import org.refueltracker.CommonTopAppBar
 import org.refueltracker.R
 import org.refueltracker.data.FuelStop
 import org.refueltracker.ui.Config
+import org.refueltracker.ui.RefuelTrackerViewModelProvider
 import org.refueltracker.ui.navigation.NavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 import java.math.BigDecimal
 
 object FuelStopHomeDestination: NavigationDestination {
-    override val route: String = "home"
+    override val route: String = "fuel_stop_home"
     @StringRes override val titleRes: Int = R.string.app_name
 }
 
@@ -53,9 +57,11 @@ object FuelStopHomeDestination: NavigationDestination {
 fun FuelStopHomeScreen(
     navigateToFuelStopEntry: () -> Unit,
     navigateToFuelStopUpdate: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: FuelStopHomeViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -80,7 +86,7 @@ fun FuelStopHomeScreen(
         }
     ) { innerPadding ->
         FuelStopList(
-            fuelStops = listOf(), // TODO: get from ViewModel state
+            fuelStops = uiState.fuelStops,
             onFuelStopClick = { navigateToFuelStopUpdate(it.id) },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
@@ -129,12 +135,12 @@ private fun FuelStopListItem(fuelStop: FuelStop, modifier: Modifier = Modifier) 
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(fuelStop.fuelSort)
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalVolume} ${fuelStop.volumeSign}")
+                Text("${fuelStop.totalVolume} ${Config.DISPLAY_VOLUME_SIGN}")
             }
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text("${fuelStop.pricePerVolume} ${fuelStop.currencySign}/${fuelStop.volumeSign}")
+                Text("${fuelStop.pricePerVolume} ${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}")
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalPrice} ${fuelStop.currencySign}")
+                Text("${fuelStop.totalPrice} ${Config.DISPLAY_CURRENCY_SIGN}")
             }
         }
     }
@@ -147,7 +153,7 @@ private fun FuelStopDateTime(day: LocalDate, time: LocalTime?) {
     ) {
         Text(day.format(Config.DATE_FORMAT))
         if (time != null)
-            Text(time.toString())
+            Text(time.format(Config.TIME_FORMAT))
     }
 }
 
@@ -166,8 +172,6 @@ private fun FuelStopListPreview() {
                     station = "Fuel Station",
                     day = LocalDate(2000, 1, 1),
                     fuelSort = "E10",
-                    volumeSign = "L",
-                    currencySign = "€",
                     pricePerVolume = stop1PPV,
                     totalVolume = stop1V.div(stop1PPV),
                     totalPrice = stop1V
@@ -177,8 +181,6 @@ private fun FuelStopListPreview() {
                     day = LocalDate(2011, 11, 30),
                     time = LocalTime(12, 1),
                     fuelSort = "E5",
-                    volumeSign = "L",
-                    currencySign = "€",
                     pricePerVolume = stop2PPV,
                     totalVolume = stop2V/stop2PPV,
                     totalPrice = stop2V
@@ -201,8 +203,6 @@ private fun FuelStopListNoTimeItemPreview() {
                 station = "Fuel Station",
                 day = LocalDate(2000, 1, 1),
                 fuelSort = "E10",
-                volumeSign = "L",
-                currencySign = "€",
                 pricePerVolume = pricePerVolume,
                 totalVolume = totalPrice.div(pricePerVolume),
                 totalPrice = totalPrice
@@ -224,8 +224,6 @@ private fun FuelStopListTimeItemPreview() {
                 day = LocalDate(2011, 11, 30),
                 time = LocalTime(12, 1),
                 fuelSort = "E5",
-                volumeSign = "L",
-                currencySign = "€",
                 pricePerVolume = pricePerVolume,
                 totalVolume = totalPrice/pricePerVolume,
                 totalPrice = totalPrice

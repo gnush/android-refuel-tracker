@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import org.refueltracker.ui.fuelstop.FuelStopEditDestination
+import org.refueltracker.ui.fuelstop.FuelStopEditScreen
 import org.refueltracker.ui.fuelstop.FuelStopEntryScreen
 import org.refueltracker.ui.fuelstop.FuelStopEntryDestination
 import org.refueltracker.ui.fuelstop.FuelStopHomeDestination
@@ -28,6 +30,12 @@ fun AppNavHost(
         }
         composable(route = FuelStopEntryDestination.route) {
             FuelStopEntryScreen(
+                onNavigateUp = navController::navigateUp,
+                onSaveClickNavigateTo = { navController.popBackStack(FuelStopHomeDestination.route, inclusive = false) }
+            )
+        }
+        composable(route = FuelStopEditDestination.route) {
+            FuelStopEditScreen(
                 onNavigateUp = navController::navigateUp,
                 onSaveClickNavigateTo = { navController.popBackStack(FuelStopHomeDestination.route, inclusive = false) }
             )

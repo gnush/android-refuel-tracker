@@ -1,13 +1,21 @@
 <resources>
     <string name="app_name">RefuelTracker</string>
 
+    <!--<string name="fuel_stop_home_screen">Fuel Stops</string>-->
     <string name="fuel_stop_entry_screen">Add Fuel Stop</string>
+    <string name="fuel_stop_edit_screen">Edit Fuel Stop</string>
+
     <string name="fuel_stop_station_form_label">Fuel Station</string>
+    <string name="fuel_stop_sort_form_label">Fuel sort</string>
+    <string name="fuel_stop_day_form_label">Day of the fuel stop</string>
+    <string name="fuel_stop_time_form_label">Time of the fuel stop</string>
     <string name="fuel_stop_price_per_volume_form_label">Price per volume</string>
     <string name="fuel_stop_total_volume_form_label">Total refueled volume</string>
     <string name="fuel_stop_total_paid_form_label">Total price paid</string>
 
     <string name="nav_back_button_description">Back</string>
     <string name="add_fuel_stop_button_description">Add Fuel Stop</string>
+    <string name="pick_time_button_description">Pick time</string>
+
     <string name="save_button">Save</string>
 </resources>
