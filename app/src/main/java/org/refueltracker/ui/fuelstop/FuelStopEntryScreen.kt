@@ -1,14 +1,11 @@
 package org.refueltracker.ui.fuelstop
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -37,24 +34,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.format
-import kotlinx.datetime.toJavaInstant
-import kotlinx.datetime.toLocalDateTime
 import org.refueltracker.CommonTopAppBar
 import org.refueltracker.R
 import org.refueltracker.ui.Config
+import org.refueltracker.ui.data.FuelStopDetails
+import org.refueltracker.ui.data.FuelStopUiState
 import org.refueltracker.ui.RefuelTrackerViewModelProvider
 import org.refueltracker.ui.dialog.PickDateDialog
 import org.refueltracker.ui.dialog.PickTimeDialDialog
 import org.refueltracker.ui.navigation.NavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
-import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.util.Calendar
-import java.util.Date
 
 object FuelStopEntryDestination: NavigationDestination {
     override val route: String = "fuel_stop_entry"
@@ -173,13 +162,7 @@ private fun FuelStopInputForm(
         OutlinedTextField(
             value = fuelStopDetails.day,
             onValueChange = { onValueChange(fuelStopDetails.copy(day = it)) },
-            label = {
-                Row {
-                    Text(stringResource(R.string.fuel_stop_day_form_label))
-//                    Spacer(Modifier.width(dimensionResource(R.dimen.padding_tiny)))
-//                    Text(Config.DATE_FORMAT.toString())
-                }
-            },
+            label = { Text(stringResource(R.string.fuel_stop_day_form_label)) },
             colors = colors,
             modifier = modifier,
             enabled = inputEnabled,
@@ -278,15 +261,18 @@ private fun FuelStopInputForm(
 private fun FuelStopEntryPreview() {
     RefuelTrackerTheme {
         FuelStopEntryBody(
-            uiState = FuelStopUiState(FuelStopDetails(
-                station = "Station",
-                fuelSort = "E10",
-                pricePerVolume = "2.00",
-                totalVolume = "10",
-                totalPrice = "20",
-                day = "10.02.2007",
-                time = "07:33"
-            )),
+            uiState = FuelStopUiState(
+                details = FuelStopDetails(
+                    station = "Station",
+                    fuelSort = "E10",
+                    pricePerVolume = "2.00",
+                    totalVolume = "10",
+                    totalPrice = "20",
+                    day = "10.02.2007",
+                    time = "07:33"
+                ),
+                isValid = true
+            ),
             onSaveClick = {},
             onFuelStopValueChange = {}
         )
