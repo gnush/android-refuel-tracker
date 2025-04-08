@@ -28,16 +28,16 @@ fun FuelStopEditScreen(
     modifier: Modifier = Modifier,
     canNavigateUp: Boolean = true
 ) {
-    Scaffold(
-        topBar = {
-            CommonTopAppBar(
-                title = stringResource(FuelStopEditDestination.titleRes),
-                canNavigateUp = canNavigateUp,
-                onNavigateUp = onNavigateUp
-            )
-        },
-        modifier = modifier
-    ) { innerPadding ->
+//    Scaffold(
+//        topBar = {
+//            CommonTopAppBar(
+//                title = stringResource(FuelStopEditDestination.titleRes),
+//                canNavigateUp = canNavigateUp,
+//                onNavigateUp = onNavigateUp
+//            )
+//        },
+//        modifier = modifier
+//    ) { innerPadding ->
 //        FuelStopEntryBody(
 //            onSaveClick = onSaveClickNavigateTo,
 //            modifier = Modifier
@@ -45,7 +45,7 @@ fun FuelStopEditScreen(
 //                .verticalScroll(rememberScrollState())
 //                .fillMaxWidth()
 //        )
-    }
+//    }
 }
 
 @Preview(showBackground = true)
