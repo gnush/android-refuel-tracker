@@ -1,5 +1,6 @@
 package org.refueltracker.ui.calendar
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,42 +47,40 @@ import org.refueltracker.ui.theme.RefuelTrackerTheme
 private fun CalendarPreview() {
     RefuelTrackerTheme {
         CalendarView(
-            startDate = LocalDate(2001, 12, 17),
-            date = listOf(
-                Pair(LocalDate(2001, 10, 1), true),
-                Pair(LocalDate(2001, 10, 2), true),
-                Pair(LocalDate(2001, 10, 3), true),
-                Pair(LocalDate(2001, 10, 4), true),
-                Pair(LocalDate(2001, 10, 5), true),
-                Pair(LocalDate(2001, 10, 6), true),
-                Pair(LocalDate(2001, 10, 7), true),
-                Pair(LocalDate(2001, 10, 8), true),
-                Pair(LocalDate(2001, 10, 9), true),
-                Pair(LocalDate(2001, 10, 10), true),
-                Pair(LocalDate(2001, 10, 11), true),
-                Pair(LocalDate(2001, 10, 12), true),
-                Pair(LocalDate(2001, 10, 13), true),
-                Pair(LocalDate(2001, 10, 14), true),
-                Pair(LocalDate(2001, 10, 15), true),
-                Pair(LocalDate(2001, 10, 16), true),
-                Pair(LocalDate(2001, 10, 17), true),
-                Pair(LocalDate(2001, 10, 18), true),
-                Pair(LocalDate(2001, 10, 19), true),
-                Pair(LocalDate(2001, 10, 20), true),
-                Pair(LocalDate(2001, 10, 21), true),
-                Pair(LocalDate(2001, 10, 22), true),
-                Pair(LocalDate(2001, 10, 23), true),
-                Pair(LocalDate(2001, 10, 24), true),
-                Pair(LocalDate(2001, 10, 25), true),
-                Pair(LocalDate(2001, 10, 26), true),
-                Pair(LocalDate(2001, 10, 27), true),
-                Pair(LocalDate(2001, 10, 28), true),
-                Pair(LocalDate(2001, 10, 29), true),
-                Pair(LocalDate(2001, 10, 30), true),
-                Pair(LocalDate(2001, 10, 31), true)
+            startDate = LocalDate(2001, 11, 17),
+            dates = listOf(
+                Pair(LocalDate(2001, 11, 1), true),
+                Pair(LocalDate(2001, 11, 2), true),
+                Pair(LocalDate(2001, 11, 3), true),
+                Pair(LocalDate(2001, 11, 4), true),
+                Pair(LocalDate(2001, 11, 5), true),
+                Pair(LocalDate(2001, 11, 6), true),
+                Pair(LocalDate(2001, 11, 7), true),
+                Pair(LocalDate(2001, 11, 8), true),
+                Pair(LocalDate(2001, 11, 9), true),
+                Pair(LocalDate(2001, 11, 10), true),
+                Pair(LocalDate(2001, 11, 11), true),
+                Pair(LocalDate(2001, 11, 12), true),
+                Pair(LocalDate(2001, 11, 13), true),
+                Pair(LocalDate(2001, 11, 14), true),
+                Pair(LocalDate(2001, 11, 15), true),
+                Pair(LocalDate(2001, 11, 16), true),
+                Pair(LocalDate(2001, 11, 17), true),
+                Pair(LocalDate(2001, 11, 18), true),
+                Pair(LocalDate(2001, 11, 19), true),
+                Pair(LocalDate(2001, 11, 20), true),
+                Pair(LocalDate(2001, 11, 21), true),
+                Pair(LocalDate(2001, 11, 22), true),
+                Pair(LocalDate(2001, 11, 23), true),
+                Pair(LocalDate(2001, 11, 24), true),
+                Pair(LocalDate(2001, 11, 25), true),
+                Pair(LocalDate(2001, 11, 26), true),
+                Pair(LocalDate(2001, 11, 27), true),
+                Pair(LocalDate(2001, 11, 28), true),
+                Pair(LocalDate(2001, 11, 29), true),
+                Pair(LocalDate(2001, 11, 30), true),
+                Pair(LocalDate(2001, 11, 31), true)
             ),
-            displayNext = true,
-            displayPrev = true,
             onClickNext = {},
             onClickPrev = {},
             onClick = {}
@@ -92,35 +91,33 @@ private fun CalendarPreview() {
 @Composable
 fun CalendarView(
     startDate: LocalDate,
-    date: List<Pair<LocalDate, Boolean>>?,
-    displayNext: Boolean,
-    displayPrev: Boolean,
-    onClickNext: () -> Unit,
-    onClickPrev: () -> Unit,
     onClick: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
-    startFromSunday: Boolean = false
+    dates: List<Pair<LocalDate, Boolean>>? = null,
+    startFromSunday: Boolean = false,
+    onClickNext: (() -> Unit)? = null,
+    onClickPrev: (() -> Unit)? = null
 ) {
     Column(modifier = modifier) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            if (displayPrev)
+            if (onClickPrev != null)
                 IconButton(
                     onClick = onClickPrev,
                     modifier = Modifier.align(Alignment.CenterStart),
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = "navigate to previous month" // TODO: string res
+                        contentDescription = stringResource(R.string.calendar_previous_button_description)
                     )
                 }
-            if (displayNext)
+            if (onClickNext != null)
                 IconButton(
                     onClick = onClickNext,
                     modifier = Modifier.align(Alignment.CenterEnd)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "navigate to next month" // TODO: string res
+                        contentDescription = stringResource(R.string.calendar_next_button_description)
                     )
                 }
             Row(modifier = Modifier.align(Alignment.Center)) {
@@ -132,9 +129,9 @@ fun CalendarView(
             }
         }
         Spacer(modifier = Modifier.size(16.dp))
-        if (!date.isNullOrEmpty()) {
+        if (!dates.isNullOrEmpty()) {
             CalendarGrid(
-                date = date,
+                date = dates,
                 onClick = onClick,
                 startFromSunday = startFromSunday,
                 modifier = Modifier
@@ -159,9 +156,16 @@ private fun CalendarGrid(
         weekdays.forEach {
             WeekdayCell(weekday = it)
         }
-        // TODO: doesnt seem to work, debug
         // Adds Spacers to align the first day of the month to the correct weekday
-        repeat(if (!startFromSunday) weekdayFirstDay.isoDayNumber - 2 else weekdayFirstDay.isoDayNumber - 1) {
+        repeat(
+            if (!startFromSunday)
+                weekdayFirstDay.isoDayNumber - 1
+            else if (weekdayFirstDay.isoDayNumber == 7)
+                0
+            else
+                weekdayFirstDay.isoDayNumber
+        ) {
+            Log.d("ME", "include spacer")
             Spacer(modifier = Modifier)
         }
         date.forEach {

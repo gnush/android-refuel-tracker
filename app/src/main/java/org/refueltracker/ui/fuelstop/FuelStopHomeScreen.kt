@@ -16,8 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,7 +23,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -52,7 +49,6 @@ import org.refueltracker.data.FuelStop
 import org.refueltracker.ui.Config
 import org.refueltracker.ui.RefuelTrackerViewModelProvider
 import org.refueltracker.ui.navigation.BottomNavigationDestination
-import org.refueltracker.ui.navigation.NavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 import java.math.BigDecimal
 
@@ -61,8 +57,8 @@ object FuelStopHomeDestination: BottomNavigationDestination {
     @StringRes override val titleRes: Int = R.string.app_name
 
     override val icon: ImageVector = Icons.AutoMirrored.Filled.List
-    @StringRes override val iconDescriptionRes: Int = R.string.nav_list_button_description
-    @StringRes override val labelRes: Int = R.string.nav_list_button_label
+    @StringRes override val iconDescriptionRes: Int = R.string.nav_bar_list_button_description
+    @StringRes override val labelRes: Int = R.string.nav_bar_list_button_label
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
