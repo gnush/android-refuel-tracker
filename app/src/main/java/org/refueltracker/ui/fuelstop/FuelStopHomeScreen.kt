@@ -56,7 +56,7 @@ object FuelStopHomeDestination: NavigationDestination {
 @Composable
 fun FuelStopHomeScreen(
     navigateToFuelStopEntry: () -> Unit,
-    navigateToFuelStopUpdate: (Int) -> Unit,
+    navigateToFuelStopEdit: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FuelStopHomeViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
@@ -87,7 +87,7 @@ fun FuelStopHomeScreen(
     ) { innerPadding ->
         FuelStopList(
             fuelStops = uiState.fuelStops,
-            onFuelStopClick = { navigateToFuelStopUpdate(it.id) },
+            onFuelStopClick = { navigateToFuelStopEdit(it.id) },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
         )
