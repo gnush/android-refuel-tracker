@@ -5,8 +5,10 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -51,6 +53,7 @@ import org.refueltracker.ui.navigation.NavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 import java.text.SimpleDateFormat
 import java.time.ZoneId
+import java.util.Calendar
 import java.util.Date
 
 object FuelStopEntryDestination: NavigationDestination {
@@ -103,8 +106,6 @@ fun FuelStopEntryBody(
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Log.d("ME", "${uiState.isValid}")
-
     Column(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_large)),
         modifier = modifier
@@ -134,8 +135,6 @@ private fun FuelStopInputForm(
     modifier: Modifier = Modifier,
     inputEnabled: Boolean = true
 ) {
-    Log.d("ME", fuelStopDetails.station)
-
     Column(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
         modifier = modifier
@@ -153,13 +152,8 @@ private fun FuelStopInputForm(
 
         if (showTimeDialog) {
             PickTimeDialDialog(
-                onConfirm = { timeState ->
-                    onValueChange(fuelStopDetails.copy(
-                        time = LocalTime(
-                            hour = timeState.hour,
-                            minute = timeState.minute
-                        ).format(Config.TIME_FORMAT)
-                    ))
+                onConfirm = {
+                    onValueChange(fuelStopDetails.copy(time = it))
                     showTimeDialog = false
                 },
                 onDismiss = { showTimeDialog = false }
@@ -168,28 +162,24 @@ private fun FuelStopInputForm(
 
         if (showDateDialog) {
             PickDateDialog(
-                onDateSelected = { dayMillis ->
-                    if (dayMillis != null) {
-                        try { // TODO: ui doesnt get updated with picked value
-                            val sdf = SimpleDateFormat.getDateInstance()
-                            val date = Date(dayMillis)
-                            onValueChange(fuelStopDetails.copy(day = sdf.format(date)
-                            ))
-                        } catch (e: Exception) {
-                            Log.d("date_picker", "could not convert $dayMillis: ${e.message}")
-                        }
-                    }
+                onDateSelected = {
+                    onValueChange(fuelStopDetails.copy(day = it))
                     showDateDialog = false
                 },
                 onDismiss = { showDateDialog = false }
             )
         }
 
-        //PickTimeDialWithDialog({}, {})
         OutlinedTextField(
             value = fuelStopDetails.day,
             onValueChange = { onValueChange(fuelStopDetails.copy(day = it)) },
-            label = { Text(stringResource(R.string.fuel_stop_day_form_label)) },
+            label = {
+                Row {
+                    Text(stringResource(R.string.fuel_stop_day_form_label))
+//                    Spacer(Modifier.width(dimensionResource(R.dimen.padding_tiny)))
+//                    Text(Config.DATE_FORMAT.toString())
+                }
+            },
             colors = colors,
             modifier = modifier,
             enabled = inputEnabled,
