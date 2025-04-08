@@ -25,6 +25,11 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.number
 import org.refueltracker.R
@@ -51,6 +57,21 @@ fun CalendarView(
     hasClickableCells: Boolean = false,
     onCellClick: (LocalDate) -> Unit = {}
 ) {
+    // TODO:
+    //  - first display month/year should be current month/year
+    //  - don't use supplied dates as basis for cell creation, rather derive number of days from current month/year
+    //    for that: bump api to 26 again or use new extension function Month.numberOfDays
+    //  - add viewmodel to query db for fuel stops in the current month
+    //    or supply as argument?
+    var displayYear by remember { mutableIntStateOf(2025) }
+    var displayMonth by remember { mutableStateOf(Month(4)) }
+    // .length still requires api 26
+//    val c = GregorianCalendar.getInstance() as GregorianCalendar
+//    Log.d("ME", "month ${Month(11).name} has ${Month(11).length(false)} days")
+//    Log.d("ME", "month ${Month(12).name} has ${Month(12).length(false)} days")
+//    Log.d("ME", "month ${Month(2).name} has ${Month(2).length(c.isLeapYear(2001))} days")
+//    Log.d("ME", "month ${Month(2).name} has ${Month(2).length(c.isLeapYear(2004))} days on a leap year")
+
     if (dates.isNotEmpty()) {
         val firstDate = dates.first().first
 
@@ -279,6 +300,22 @@ private fun Int.monthOfYearId(): Int = when(this) {
     11 -> R.string.month_11
     12 -> R.string.month_12
     else -> R.string.month_1
+}
+
+private fun Month.numberOfDays(isLeapYear: Boolean): Int = when(number) {
+    1 -> 31
+    2 -> if (isLeapYear) 29 else 28
+    3 -> 31
+    4 -> 30
+    5 -> 31
+    6 -> 30
+    7 -> 31
+    8 -> 31
+    9 -> 30
+    10 -> 31
+    11 -> 30
+    12 -> 31
+    else -> 30
 }
 
 @Preview(showBackground = true)
