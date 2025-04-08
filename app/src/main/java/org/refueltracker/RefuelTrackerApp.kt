@@ -67,7 +67,7 @@ fun CommonBottomAppBar(
                 bottomNavBarDestinations().forEachIndexed { index, destination ->
                     NavigationBarItem(
                         selected = index == navBarSelectedItem,
-                        label = { Text(stringResource(destination.iconDescriptionRes)) },
+                        label = { Text(stringResource(destination.labelRes)) },
                         icon = {
                             Icon(
                                 imageVector = destination.icon,

@@ -13,6 +13,8 @@ import org.refueltracker.ui.fuelstop.FuelStopEntryScreen
 import org.refueltracker.ui.fuelstop.FuelStopEntryDestination
 import org.refueltracker.ui.fuelstop.FuelStopHomeDestination
 import org.refueltracker.ui.fuelstop.FuelStopHomeScreen
+import org.refueltracker.ui.statistic.StatisticsHomeDestination
+import org.refueltracker.ui.statistic.StatisticsHomeScreen
 
 @Composable
 fun AppNavHost(
@@ -46,6 +48,11 @@ fun AppNavHost(
             FuelStopEditScreen(
                 onNavigateUp = navController::navigateUp,
                 onSaveClickNavigateTo = { navController.popBackStack(FuelStopHomeDestination.route, inclusive = false) }
+            )
+        }
+        composable(StatisticsHomeDestination.route) {
+            StatisticsHomeScreen(
+                navigateTo = navController::navigate
             )
         }
     }

@@ -62,6 +62,7 @@ object FuelStopHomeDestination: BottomNavigationDestination {
 
     override val icon: ImageVector = Icons.AutoMirrored.Filled.List
     @StringRes override val iconDescriptionRes: Int = R.string.nav_list_button_description
+    @StringRes override val labelRes: Int = R.string.nav_list_button_label
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
