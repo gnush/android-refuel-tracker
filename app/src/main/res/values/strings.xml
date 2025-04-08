@@ -14,6 +14,8 @@
     <string name="fuel_stop_total_paid_form_label">Total price paid</string>
 
     <string name="nav_back_button_description">Back</string>
+    <string name="nav_list_button_description">Fuel stops list</string>
+
     <string name="add_fuel_stop_button_description">Add Fuel Stop</string>
     <string name="pick_time_button_description">Pick time</string>
 

@@ -26,6 +26,7 @@ fun AppNavHost(
     ) {
         composable(route = FuelStopHomeDestination.route) {
             FuelStopHomeScreen(
+                navigateTo = navController::navigate,
                 navigateToFuelStopEntry = { navController.navigate(FuelStopEntryDestination.route) },
                 navigateToFuelStopEdit = { navController.navigate(FuelStopEditDestination.routeWithFuelStopId(it)) },
             )

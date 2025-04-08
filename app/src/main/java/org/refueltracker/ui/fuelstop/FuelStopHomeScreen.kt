@@ -14,12 +14,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,6 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -38,23 +45,29 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
+import org.refueltracker.CommonBottomAppBar
 import org.refueltracker.CommonTopAppBar
 import org.refueltracker.R
 import org.refueltracker.data.FuelStop
 import org.refueltracker.ui.Config
 import org.refueltracker.ui.RefuelTrackerViewModelProvider
+import org.refueltracker.ui.navigation.BottomNavigationDestination
 import org.refueltracker.ui.navigation.NavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 import java.math.BigDecimal
 
-object FuelStopHomeDestination: NavigationDestination {
+object FuelStopHomeDestination: BottomNavigationDestination {
     override val route: String = "fuel_stop_home"
     @StringRes override val titleRes: Int = R.string.app_name
+
+    override val icon: ImageVector = Icons.AutoMirrored.Filled.List
+    @StringRes override val iconDescriptionRes: Int = R.string.nav_list_button_description
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FuelStopHomeScreen(
+    navigateTo: (String) -> Unit,
     navigateToFuelStopEntry: () -> Unit,
     navigateToFuelStopEdit: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -72,17 +85,23 @@ fun FuelStopHomeScreen(
                 scrollBehavior = scrollBehavior
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = navigateToFuelStopEntry,
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(dimensionResource(R.dimen.padding_large))
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add_fuel_stop_button_description)
-                )
-            }
+        bottomBar = {
+            CommonBottomAppBar(
+                onNavigationItemClicked = navigateTo,
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = navigateToFuelStopEntry,
+                        shape = MaterialTheme.shapes.medium,
+                        containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(R.string.add_fuel_stop_button_description)
+                        )
+                    }
+                }
+            )
         }
     ) { innerPadding ->
         FuelStopList(
