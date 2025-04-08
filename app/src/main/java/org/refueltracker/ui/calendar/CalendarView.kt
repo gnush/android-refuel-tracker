@@ -1,6 +1,5 @@
 package org.refueltracker.ui.calendar
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,97 +41,54 @@ import kotlinx.datetime.number
 import org.refueltracker.R
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 
-@Preview(showBackground = true)
-@Composable
-private fun CalendarPreview() {
-    RefuelTrackerTheme {
-        CalendarView(
-            startDate = LocalDate(2001, 11, 17),
-            dates = listOf(
-                Pair(LocalDate(2001, 11, 1), true),
-                Pair(LocalDate(2001, 11, 2), true),
-                Pair(LocalDate(2001, 11, 3), true),
-                Pair(LocalDate(2001, 11, 4), true),
-                Pair(LocalDate(2001, 11, 5), true),
-                Pair(LocalDate(2001, 11, 6), true),
-                Pair(LocalDate(2001, 11, 7), true),
-                Pair(LocalDate(2001, 11, 8), true),
-                Pair(LocalDate(2001, 11, 9), true),
-                Pair(LocalDate(2001, 11, 10), true),
-                Pair(LocalDate(2001, 11, 11), true),
-                Pair(LocalDate(2001, 11, 12), true),
-                Pair(LocalDate(2001, 11, 13), true),
-                Pair(LocalDate(2001, 11, 14), true),
-                Pair(LocalDate(2001, 11, 15), true),
-                Pair(LocalDate(2001, 11, 16), true),
-                Pair(LocalDate(2001, 11, 17), true),
-                Pair(LocalDate(2001, 11, 18), true),
-                Pair(LocalDate(2001, 11, 19), true),
-                Pair(LocalDate(2001, 11, 20), true),
-                Pair(LocalDate(2001, 11, 21), true),
-                Pair(LocalDate(2001, 11, 22), true),
-                Pair(LocalDate(2001, 11, 23), true),
-                Pair(LocalDate(2001, 11, 24), true),
-                Pair(LocalDate(2001, 11, 25), true),
-                Pair(LocalDate(2001, 11, 26), true),
-                Pair(LocalDate(2001, 11, 27), true),
-                Pair(LocalDate(2001, 11, 28), true),
-                Pair(LocalDate(2001, 11, 29), true),
-                Pair(LocalDate(2001, 11, 30), true),
-                Pair(LocalDate(2001, 11, 31), true)
-            ),
-            onClickNext = {},
-            onClickPrev = {},
-            onClick = {}
-        )
-    }
-}
-
 @Composable
 fun CalendarView(
-    startDate: LocalDate,
-    onClick: (LocalDate) -> Unit,
+    dates: List<Pair<LocalDate, Boolean>>,
     modifier: Modifier = Modifier,
-    dates: List<Pair<LocalDate, Boolean>>? = null,
     startFromSunday: Boolean = false,
     onClickNext: (() -> Unit)? = null,
-    onClickPrev: (() -> Unit)? = null
+    onClickPrev: (() -> Unit)? = null,
+    hasClickableCells: Boolean = false,
+    onCellClick: (LocalDate) -> Unit = {}
 ) {
-    Column(modifier = modifier) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            if (onClickPrev != null)
-                IconButton(
-                    onClick = onClickPrev,
-                    modifier = Modifier.align(Alignment.CenterStart),
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = stringResource(R.string.calendar_previous_button_description)
+    if (dates.isNotEmpty()) {
+        val firstDate = dates.first().first
+
+        Column(modifier = modifier) {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                if (onClickPrev != null)
+                    IconButton(
+                        onClick = onClickPrev,
+                        modifier = Modifier.align(Alignment.CenterStart),
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = stringResource(R.string.calendar_previous_button_description)
+                        )
+                    }
+                if (onClickNext != null)
+                    IconButton(
+                        onClick = onClickNext,
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = stringResource(R.string.calendar_next_button_description)
+                        )
+                    }
+                Row(modifier = Modifier.align(Alignment.Center)) {
+                    Text(
+                        text = "${stringResource(firstDate.month.number.monthOfYearId())} ${firstDate.year}",
+                        style = typography.headlineMedium,
+                        color = colorScheme.onPrimaryContainer,
                     )
                 }
-            if (onClickNext != null)
-                IconButton(
-                    onClick = onClickNext,
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = stringResource(R.string.calendar_next_button_description)
-                    )
-                }
-            Row(modifier = Modifier.align(Alignment.Center)) {
-                Text(
-                    text = "${stringResource(startDate.month.number.monthOfYearId())} ${startDate.year}",
-                    style = typography.headlineMedium,
-                    color = colorScheme.onPrimaryContainer,
-                )
             }
-        }
-        Spacer(modifier = Modifier.size(16.dp))
-        if (!dates.isNullOrEmpty()) {
+            Spacer(modifier = Modifier.size(16.dp))
             CalendarGrid(
                 date = dates,
-                onClick = onClick,
+                hasClickableCells = hasClickableCells,
+                onCellClick = onCellClick,
                 startFromSunday = startFromSunday,
                 modifier = Modifier
                     .wrapContentHeight()
@@ -146,15 +102,16 @@ fun CalendarView(
 @Composable
 private fun CalendarGrid(
     date: List<Pair<LocalDate, Boolean>>,
-    onClick: (LocalDate) -> Unit,
     startFromSunday: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hasClickableCells: Boolean,
+    onCellClick: (LocalDate) -> Unit = {}
 ) {
     val weekdayFirstDay = date.first().first.dayOfWeek
     val weekdays = getWeekDays(startFromSunday)
     CalendarCustomLayout(modifier = modifier) {
         weekdays.forEach {
-            WeekdayCell(weekday = it)
+            CalendarWeekHeader(weekday = it)
         }
         // Adds Spacers to align the first day of the month to the correct weekday
         repeat(
@@ -165,11 +122,15 @@ private fun CalendarGrid(
             else
                 weekdayFirstDay.isoDayNumber
         ) {
-            Log.d("ME", "include spacer")
             Spacer(modifier = Modifier)
         }
         date.forEach {
-            CalendarCell(date = it.first, signal = it.second, onClick = { onClick(it.first) })
+            CalendarDayCell(
+                date = it.first,
+                signal = it.second,
+                isClickable = hasClickableCells,
+                onClick = { onCellClick(it.first) }
+            )
         }
     }
 }
@@ -179,7 +140,7 @@ private fun CalendarCustomLayout(
     modifier: Modifier = Modifier,
     horizontalGapDp: Dp = 2.dp,
     verticalGapDp: Dp = 2.dp,
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     val horizontalGap = with(LocalDensity.current) {
         horizontalGapDp.roundToPx()
@@ -228,7 +189,7 @@ private fun CalendarCustomLayout(
 }
 
 @Composable
-private fun WeekdayCell(weekday: Int, modifier: Modifier = Modifier) {
+private fun CalendarWeekHeader(weekday: Int, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .aspectRatio(1f)
@@ -242,18 +203,20 @@ private fun WeekdayCell(weekday: Int, modifier: Modifier = Modifier) {
     }
 }
 
-
 @Composable
-private fun CalendarCell(
+private fun CalendarDayCell(
     date: LocalDate,
     signal: Boolean,
-    onClick: () -> Unit,
+    isClickable: Boolean,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     val text = date.dayOfMonth.toString()
-    date.dayOfWeek
+    val mod =
+        if (isClickable) modifier.clickable(onClick = onClick)
+        else modifier
     Box(
-        modifier = modifier
+        modifier = mod
             .aspectRatio(1f)
             .fillMaxSize()
             .padding(2.dp)
@@ -262,7 +225,6 @@ private fun CalendarCell(
                 color = colorScheme.secondaryContainer,
             )
             .clip(RoundedCornerShape(CornerSize(8.dp)))
-            .clickable(onClick = onClick)
     ) {
         if (signal) {
             Box(
@@ -317,4 +279,45 @@ private fun Int.monthOfYearId(): Int = when(this) {
     11 -> R.string.month_11
     12 -> R.string.month_12
     else -> R.string.month_1
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CalendarPreview() {
+    RefuelTrackerTheme {
+        CalendarView(
+            dates = listOf(
+                Pair(LocalDate(2001, 11, 1), true),
+                Pair(LocalDate(2001, 11, 2), true),
+                Pair(LocalDate(2001, 11, 3), false),
+                Pair(LocalDate(2001, 11, 4), true),
+                Pair(LocalDate(2001, 11, 5), true),
+                Pair(LocalDate(2001, 11, 6), true),
+                Pair(LocalDate(2001, 11, 7), true),
+                Pair(LocalDate(2001, 11, 8), true),
+                Pair(LocalDate(2001, 11, 9), true),
+                Pair(LocalDate(2001, 11, 10), false),
+                Pair(LocalDate(2001, 11, 11), false),
+                Pair(LocalDate(2001, 11, 12), false),
+                Pair(LocalDate(2001, 11, 13), false),
+                Pair(LocalDate(2001, 11, 14), false),
+                Pair(LocalDate(2001, 11, 15), false),
+                Pair(LocalDate(2001, 11, 16), false),
+                Pair(LocalDate(2001, 11, 17), true),
+                Pair(LocalDate(2001, 11, 18), true),
+                Pair(LocalDate(2001, 11, 19), false),
+                Pair(LocalDate(2001, 11, 20), false),
+                Pair(LocalDate(2001, 11, 21), true),
+                Pair(LocalDate(2001, 11, 22), false),
+                Pair(LocalDate(2001, 11, 23), false),
+                Pair(LocalDate(2001, 11, 24), false),
+                Pair(LocalDate(2001, 11, 25), false),
+                Pair(LocalDate(2001, 11, 26), true),
+                Pair(LocalDate(2001, 11, 27), false),
+                Pair(LocalDate(2001, 11, 28), false),
+                Pair(LocalDate(2001, 11, 29), false),
+                Pair(LocalDate(2001, 11, 30), false)
+            )
+        )
+    }
 }
