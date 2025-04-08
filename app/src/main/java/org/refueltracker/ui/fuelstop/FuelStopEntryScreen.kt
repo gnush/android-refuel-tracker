@@ -41,6 +41,9 @@ import org.refueltracker.ui.Config
 import org.refueltracker.ui.data.FuelStopDetails
 import org.refueltracker.ui.data.FuelStopUiState
 import org.refueltracker.ui.RefuelTrackerViewModelProvider
+import org.refueltracker.ui.data.updateBasedOnPricePerVolume
+import org.refueltracker.ui.data.updateBasedOnTotalPrice
+import org.refueltracker.ui.data.updateBasedOnTotalVolume
 import org.refueltracker.ui.dialog.PickDateDialog
 import org.refueltracker.ui.dialog.PickTimeDialDialog
 import org.refueltracker.ui.navigation.NavigationDestination
@@ -220,7 +223,7 @@ private fun FuelStopInputForm(
         )
         OutlinedTextField(
             value = fuelStopDetails.pricePerVolume,
-            onValueChange = { onValueChange(fuelStopDetails.copy(pricePerVolume = it)) },
+            onValueChange = { onValueChange(fuelStopDetails.updateBasedOnPricePerVolume(it)) },
             label = { Text(stringResource(R.string.fuel_stop_price_per_volume_form_label)) },
             colors = colors,
             modifier = modifier,
@@ -236,7 +239,7 @@ private fun FuelStopInputForm(
         )
         OutlinedTextField(
             value = fuelStopDetails.totalVolume,
-            onValueChange = { onValueChange(fuelStopDetails.copy(totalVolume = it)) },
+            onValueChange = { onValueChange(fuelStopDetails.updateBasedOnTotalVolume(it)) },
             label = { Text(stringResource(R.string.fuel_stop_total_volume_form_label)) },
             colors = colors,
             modifier = modifier,
@@ -247,7 +250,7 @@ private fun FuelStopInputForm(
         )
         OutlinedTextField(
             value = fuelStopDetails.totalPrice,
-            onValueChange = { onValueChange(fuelStopDetails.copy(totalPrice = it)) },
+            onValueChange = { onValueChange(fuelStopDetails.updateBasedOnTotalPrice(it)) },
             label = { Text(stringResource(R.string.fuel_stop_total_paid_form_label)) },
             colors = colors,
             modifier = modifier,

@@ -16,8 +16,12 @@ object Config {
         }
 
     // requires at least api 26: bump min sdk?
+    //   and introduce DATE_FORMAT_PATTERN: String config (same for time)
     // val foo = java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
     const val DISPLAY_CURRENCY_SIGN: String = "€"
     const val DISPLAY_VOLUME_SIGN: String = "L"
+
+    const val CURRENCY_DECIMAL_PLACES_DEFAULT = 2
+    const val VOLUME_DECIMAL_PLACES_DEFAULT = 2
 }
