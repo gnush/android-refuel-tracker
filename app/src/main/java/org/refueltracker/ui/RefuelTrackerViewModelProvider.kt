@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import org.refueltracker.RefuelTrackerApplication
+import org.refueltracker.ui.calendar.CalendarViewModel
 import org.refueltracker.ui.fuelstop.FuelStopEditViewModel
 import org.refueltracker.ui.fuelstop.FuelStopEntryViewModel
 import org.refueltracker.ui.fuelstop.FuelStopHomeViewModel
@@ -27,6 +28,9 @@ object RefuelTrackerViewModelProvider {
                 createSavedStateHandle(),
                 refuelTrackerApplication().container.fuelStopsRepository
             )
+        }
+        initializer {
+            CalendarViewModel()
         }
     }
 }

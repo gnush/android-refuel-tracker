@@ -56,16 +56,16 @@ fun StatisticsHomeScreen(
             onClickPrev = {},
             onCellClick = {},
             modifier = Modifier.padding(innerPadding),
-            dates = listOf(
-                Pair(LocalDate(2001, 11, 1), false),
-                Pair(LocalDate(2001, 11, 2), false),
-                Pair(LocalDate(2001, 11, 3), true),
-                Pair(LocalDate(2001, 11, 4), true),
-                Pair(LocalDate(2001, 11, 5), false),
-                Pair(LocalDate(2001, 11, 6), false),
-                Pair(LocalDate(2001, 11, 7), false),
-                Pair(LocalDate(2001, 11, 8), true),
-                Pair(LocalDate(2001, 11, 9), false)
+            selectedDays = listOf(
+                LocalDate(2001, 11, 1),
+                LocalDate(2001, 11, 2),
+                LocalDate(2001, 11, 3),
+                LocalDate(2001, 11, 4),
+                LocalDate(2001, 11, 5),
+                LocalDate(2001, 11, 6),
+                LocalDate(2001, 11, 7),
+                LocalDate(2001, 11, 8),
+                LocalDate(2001, 11, 9),
             ),
             startFromSunday = false
         )

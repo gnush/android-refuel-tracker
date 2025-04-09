@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,11 +24,6 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,22 +34,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.number
 import org.refueltracker.R
+import org.refueltracker.ui.RefuelTrackerViewModelProvider
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 
 @Composable
-fun CalendarView(
-    dates: List<Pair<LocalDate, Boolean>>,
+fun CalendarView( // TODO: add firstDisplayMonth, firstDisplayYear params (make optional, default current/null, on null current in CalendarUiState)
     modifier: Modifier = Modifier,
+    firstDisplayMonth: Month? = null,
+    firstDisplayYear: Int? = null,
+    selectedDays: List<LocalDate> = listOf(),
     startFromSunday: Boolean = false,
     onClickNext: (() -> Unit)? = null,
     onClickPrev: (() -> Unit)? = null,
     hasClickableCells: Boolean = false,
-    onCellClick: (LocalDate) -> Unit = {}
+    onCellClick: (LocalDate) -> Unit = {},
+    viewModel: CalendarViewModel = viewModel( factory = RefuelTrackerViewModelProvider.Factory )
 ) {
     // TODO:
     //  - first display month/year should be current month/year
@@ -63,8 +63,6 @@ fun CalendarView(
     //    for that: bump api to 26 again or use new extension function Month.numberOfDays
     //  - add viewmodel to query db for fuel stops in the current month
     //    or supply as argument?
-    var displayYear by remember { mutableIntStateOf(2025) }
-    var displayMonth by remember { mutableStateOf(Month(4)) }
     // .length still requires api 26
 //    val c = GregorianCalendar.getInstance() as GregorianCalendar
 //    Log.d("ME", "month ${Month(11).name} has ${Month(11).length(false)} days")
@@ -72,9 +70,13 @@ fun CalendarView(
 //    Log.d("ME", "month ${Month(2).name} has ${Month(2).length(c.isLeapYear(2001))} days")
 //    Log.d("ME", "month ${Month(2).name} has ${Month(2).length(c.isLeapYear(2004))} days on a leap year")
 
-    if (dates.isNotEmpty()) {
-        val firstDate = dates.first().first
+    if (firstDisplayMonth != null)
+        viewModel.updateDisplayMonth(firstDisplayMonth)
 
+    if (firstDisplayYear != null)
+        viewModel.updateDisplayYear(firstDisplayYear)
+
+    if (selectedDays.isNotEmpty()) { // TODO: remove when calendar cell building doesnt require dates anymore
         Column(modifier = modifier) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 if (onClickPrev != null)
@@ -97,20 +99,23 @@ fun CalendarView(
                             contentDescription = stringResource(R.string.calendar_next_button_description)
                         )
                     }
-                Row(modifier = Modifier.align(Alignment.Center)) {
-                    Text(
-                        text = "${stringResource(firstDate.month.number.monthOfYearId())} ${firstDate.year}",
-                        style = typography.headlineMedium,
-                        color = colorScheme.onPrimaryContainer,
-                    )
-                }
+                val monthNameId = viewModel.uiState.month.monthOfYearId()
+                Text(
+                    text = "${stringResource(monthNameId)} ${viewModel.uiState.year}",
+                    style = typography.headlineMedium,
+                    color = colorScheme.onPrimaryContainer,
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
             Spacer(modifier = Modifier.size(16.dp))
             CalendarGrid(
-                date = dates,
+                firstWeekDayOfMonth = viewModel.firstWeekDayOfMonth(),
+                daysOfMonth = viewModel.daysOfMonth(),
+                selectedDays = selectedDays,
                 hasClickableCells = hasClickableCells,
                 onCellClick = onCellClick,
                 startFromSunday = startFromSunday,
+                uiState = viewModel.uiState,
                 modifier = Modifier
                     .wrapContentHeight()
                     .padding(horizontal = 16.dp)
@@ -122,14 +127,26 @@ fun CalendarView(
 
 @Composable
 private fun CalendarGrid(
-    date: List<Pair<LocalDate, Boolean>>,
+    firstWeekDayOfMonth: DayOfWeek,
+    daysOfMonth: Int,
+    selectedDays: List<LocalDate>,
     startFromSunday: Boolean,
-    modifier: Modifier = Modifier,
     hasClickableCells: Boolean,
-    onCellClick: (LocalDate) -> Unit = {}
+    onCellClick: (LocalDate) -> Unit,
+    uiState: CalendarUiState,
+    modifier: Modifier = Modifier
 ) {
-    val weekdayFirstDay = date.first().first.dayOfWeek
     val weekdays = getWeekDays(startFromSunday)
+    val days: List<Pair<LocalDate, Boolean>> = (1 .. daysOfMonth)
+        .map {
+            LocalDate(
+                uiState.year,
+                uiState.month,
+                it
+            )
+        }
+        .map { it to selectedDays.contains(it) }
+
     CalendarCustomLayout(modifier = modifier) {
         weekdays.forEach {
             CalendarWeekHeader(weekday = it)
@@ -137,15 +154,15 @@ private fun CalendarGrid(
         // Adds Spacers to align the first day of the month to the correct weekday
         repeat(
             if (!startFromSunday)
-                weekdayFirstDay.isoDayNumber - 1
-            else if (weekdayFirstDay.isoDayNumber == 7)
+                firstWeekDayOfMonth.isoDayNumber - 1
+            else if (firstWeekDayOfMonth.isoDayNumber == 7)
                 0
             else
-                weekdayFirstDay.isoDayNumber
+                firstWeekDayOfMonth.isoDayNumber
         ) {
             Spacer(modifier = Modifier)
         }
-        date.forEach {
+        days.forEach {
             CalendarDayCell(
                 date = it.first,
                 signal = it.second,
@@ -210,14 +227,14 @@ private fun CalendarCustomLayout(
 }
 
 @Composable
-private fun CalendarWeekHeader(weekday: Int, modifier: Modifier = Modifier) {
+private fun CalendarWeekHeader(weekday: DayOfWeek, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .aspectRatio(1f)
             .fillMaxSize()
     ) {
         Text(
-            text = stringResource(weekday.dayOfWeekAbbreviationId()),
+            text = stringResource(weekday.abbreviationId()),
             color = colorScheme.onPrimaryContainer,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
@@ -267,14 +284,14 @@ private fun CalendarDayCell(
     }
 }
 
-private fun getWeekDays(startFromSunday: Boolean): List<Int> =
+private fun getWeekDays(startFromSunday: Boolean): List<DayOfWeek> =
     if (startFromSunday)
-        listOf(7, 1, 2, 3, 4, 5, 6)
+        listOf(DayOfWeek(7), DayOfWeek(1), DayOfWeek(2), DayOfWeek(3), DayOfWeek(4), DayOfWeek(5), DayOfWeek(6))
     else
-        listOf(1, 2, 3, 4, 5, 6, 7)
+        listOf(DayOfWeek(1), DayOfWeek(2), DayOfWeek(3), DayOfWeek(4), DayOfWeek(5), DayOfWeek(6), DayOfWeek(7))
 
 @StringRes
-private fun Int.dayOfWeekAbbreviationId(): Int = when(this) {
+private fun DayOfWeek.abbreviationId(): Int = when(isoDayNumber) {
     1 -> R.string.day_of_week_abbreviation_1
     2 -> R.string.day_of_week_abbreviation_2
     3 -> R.string.day_of_week_abbreviation_3
@@ -286,7 +303,7 @@ private fun Int.dayOfWeekAbbreviationId(): Int = when(this) {
 }
 
 @StringRes
-private fun Int.monthOfYearId(): Int = when(this) {
+private fun Month.monthOfYearId(): Int = when(number) {
     1 -> R.string.month_1
     2 -> R.string.month_2
     3 -> R.string.month_3
@@ -302,59 +319,24 @@ private fun Int.monthOfYearId(): Int = when(this) {
     else -> R.string.month_1
 }
 
-private fun Month.numberOfDays(isLeapYear: Boolean): Int = when(number) {
-    1 -> 31
-    2 -> if (isLeapYear) 29 else 28
-    3 -> 31
-    4 -> 30
-    5 -> 31
-    6 -> 30
-    7 -> 31
-    8 -> 31
-    9 -> 30
-    10 -> 31
-    11 -> 30
-    12 -> 31
-    else -> 30
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun CalendarPreview() {
     RefuelTrackerTheme {
         CalendarView(
-            dates = listOf(
-                Pair(LocalDate(2001, 11, 1), true),
-                Pair(LocalDate(2001, 11, 2), true),
-                Pair(LocalDate(2001, 11, 3), false),
-                Pair(LocalDate(2001, 11, 4), true),
-                Pair(LocalDate(2001, 11, 5), true),
-                Pair(LocalDate(2001, 11, 6), true),
-                Pair(LocalDate(2001, 11, 7), true),
-                Pair(LocalDate(2001, 11, 8), true),
-                Pair(LocalDate(2001, 11, 9), true),
-                Pair(LocalDate(2001, 11, 10), false),
-                Pair(LocalDate(2001, 11, 11), false),
-                Pair(LocalDate(2001, 11, 12), false),
-                Pair(LocalDate(2001, 11, 13), false),
-                Pair(LocalDate(2001, 11, 14), false),
-                Pair(LocalDate(2001, 11, 15), false),
-                Pair(LocalDate(2001, 11, 16), false),
-                Pair(LocalDate(2001, 11, 17), true),
-                Pair(LocalDate(2001, 11, 18), true),
-                Pair(LocalDate(2001, 11, 19), false),
-                Pair(LocalDate(2001, 11, 20), false),
-                Pair(LocalDate(2001, 11, 21), true),
-                Pair(LocalDate(2001, 11, 22), false),
-                Pair(LocalDate(2001, 11, 23), false),
-                Pair(LocalDate(2001, 11, 24), false),
-                Pair(LocalDate(2001, 11, 25), false),
-                Pair(LocalDate(2001, 11, 26), true),
-                Pair(LocalDate(2001, 11, 27), false),
-                Pair(LocalDate(2001, 11, 28), false),
-                Pair(LocalDate(2001, 11, 29), false),
-                Pair(LocalDate(2001, 11, 30), false)
-            )
+            firstDisplayMonth = Month(2),
+            firstDisplayYear = 1602,
+            selectedDays = listOf(
+                LocalDate(1602, 2, 1),
+                LocalDate(1602, 2, 7),
+                LocalDate(1602, 2, 15),
+                LocalDate(1602, 2, 25),
+                LocalDate(1602, 2, 12),
+                LocalDate(1602, 2, 19),
+                LocalDate(1602, 2, 8)
+            ),
+            onClickPrev = {},
+            onClickNext = {}
         )
     }
 }
