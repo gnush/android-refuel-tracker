@@ -136,7 +136,9 @@ fun FuelStopList(
 private fun FuelStopListItem(fuelStop: FuelStop, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = dimensionResource(R.dimen.card_elevation)
+        )
     ) {
         Column(
             modifier = Modifier.padding(dimensionResource(R.dimen.padding_large)),

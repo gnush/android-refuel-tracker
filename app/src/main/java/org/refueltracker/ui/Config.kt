@@ -1,5 +1,6 @@
 package org.refueltracker.ui
 
+import androidx.compose.ui.graphics.Color
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format.DateTimeFormat
@@ -44,4 +45,7 @@ object Config {
 
     const val CURRENCY_DECIMAL_PLACES_DEFAULT = 2
     const val VOLUME_DECIMAL_PLACES_DEFAULT = 2
+
+    val INCREASE_COLOR = Color.Red
+    val DECREASE_COLOR = Color.Blue
 }
