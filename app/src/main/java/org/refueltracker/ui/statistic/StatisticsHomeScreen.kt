@@ -1,5 +1,6 @@
 package org.refueltracker.ui.statistic
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,14 +25,19 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.refueltracker.CommonBottomAppBar
 import org.refueltracker.CommonTopAppBar
 import org.refueltracker.R
+import org.refueltracker.data.FuelStop
 import org.refueltracker.ui.Config
+import org.refueltracker.ui.RefuelTrackerViewModelProvider
 import org.refueltracker.ui.navigation.BottomNavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.util.Locale
+import kotlin.math.absoluteValue
 
 object StatisticsHomeDestination: BottomNavigationDestination {
     override val route: String = "statistics_home"
@@ -49,7 +55,8 @@ object StatisticsHomeDestination: BottomNavigationDestination {
 @Composable
 fun StatisticsHomeScreen(
     navigateTo: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: StatisticsHomeViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -71,9 +78,45 @@ fun StatisticsHomeScreen(
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
-            Text("Current Month")
-            Text("Current Year")
-            Text("Complete")
+            // TODO: move calculation to no ui file, doesn't belong here
+            var sum = viewModel.uiState.allStops
+                .map(FuelStop::pricePerVolume)
+                .fold(BigDecimal("0")) { x, xs -> x+xs }
+            val size = viewModel.uiState.allStops.size.toBigDecimal()
+            val avgPPV =
+                if (size == BigDecimal("0")) BigDecimal("0")
+                else sum.divide(
+                    size,
+                    RoundingMode.HALF_UP
+                )
+
+            sum = viewModel.uiState.allStops
+                .map(FuelStop::totalVolume)
+                .fold(BigDecimal("0")) { x, xs -> x+xs }
+            val avgVol =
+                if (size == BigDecimal("0")) BigDecimal("0")
+                else sum.divide(
+                    size,
+                    RoundingMode.HALF_UP
+                )
+
+            sum = viewModel.uiState.allStops
+                .map(FuelStop::totalPrice)
+                .fold(BigDecimal("0")) { x, xs -> x+xs }
+            val avgPrice =
+                if (size == BigDecimal("0")) BigDecimal("0")
+                else sum.divide(
+                    size,
+                    RoundingMode.HALF_UP
+                )
+
+            // TODO: add monthly and yearly statistics
+            AllTimeAverageFuelStatisticsCard(
+                heading = R.string.all_time_average_heading,
+                averagePricePerVolume = avgPPV,
+                averageVolume = avgVol,
+                averagePrice = avgPrice
+            )
         }
     }
 }

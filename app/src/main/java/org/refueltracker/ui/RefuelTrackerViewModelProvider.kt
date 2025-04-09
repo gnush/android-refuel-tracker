@@ -11,6 +11,7 @@ import org.refueltracker.ui.fuelstop.FuelStopCalendarViewModel
 import org.refueltracker.ui.fuelstop.FuelStopEditViewModel
 import org.refueltracker.ui.fuelstop.FuelStopEntryViewModel
 import org.refueltracker.ui.fuelstop.FuelStopListViewModel
+import org.refueltracker.ui.statistic.StatisticsHomeViewModel
 
 object RefuelTrackerViewModelProvider {
     val Factory = viewModelFactory {
@@ -32,6 +33,11 @@ object RefuelTrackerViewModelProvider {
         initializer {
             FuelStopEditViewModel(
                 createSavedStateHandle(),
+                refuelTrackerApplication().container.fuelStopsRepository
+            )
+        }
+        initializer {
+            StatisticsHomeViewModel(
                 refuelTrackerApplication().container.fuelStopsRepository
             )
         }
