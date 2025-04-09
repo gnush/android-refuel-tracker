@@ -43,6 +43,6 @@ interface FuelStopDao {
     /**
      * Retrieves all fuel stops from [monthOfYear] in descending order by day/time
      */
-    @Query("select * from fuel_stops where day between :monthOfYear and :monthOfYear+99")
+    @Query("select * from fuel_stops where day between :monthOfYear and :monthOfYear+99 order by day desc, time desc")
     fun fuelStopsOn(monthOfYear: Int): Flow<List<FuelStop>>
 }

@@ -6,24 +6,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.Month
 import org.refueltracker.CommonBottomAppBar
 import org.refueltracker.CommonTopAppBar
 import org.refueltracker.R
@@ -42,6 +41,9 @@ object FuelStopCalendarDestination: BottomNavigationDestination {
     @StringRes override val labelRes: Int = R.string.nav_bar_cal_button_label
 }
 
+// TODO:
+//  - add calendar year navigation
+//  - (maybe) add gesture month navigation on calendar header
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FuelStopCalendarScreen(
@@ -52,6 +54,8 @@ fun FuelStopCalendarScreen(
     viewModel: FuelStopCalendarViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    val uiState by viewModel.fuelStopsState.collectAsState()
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -67,10 +71,7 @@ fun FuelStopCalendarScreen(
                 onNavigationItemClicked = navigateTo,
                 floatingActionButton = {
                     FloatingActionButton(
-                        onClick = {
-                            navigateToFuelStopEntry()
-                            //viewModel.refreshFuelStops() // TODO: look into ways to update the state on a new entry: e.g. with a state flow (see ListScreen) as this doesnt work
-                        },
+                        onClick = navigateToFuelStopEntry, // TODO: remember selected month on return or jump to month of newly added entry
                         shape = MaterialTheme.shapes.medium,
                         containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                         elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
@@ -86,13 +87,13 @@ fun FuelStopCalendarScreen(
     ) { innerPadding ->
         Column(modifier.padding(innerPadding)) {
             FuelStopCalendar(
-                uiState = viewModel.uiState.calendar,
-                fuelStopDates = viewModel.uiState.fuelStops.map(FuelStop::day),
+                uiState = uiState.calendar,
+                fuelStopDates = uiState.fuelStops.map(FuelStop::day),
                 onPreviousClick = viewModel::displayPreviousMonth,
                 onNextClick = viewModel::displayNextMonth
             )
             FuelStopList(
-                fuelStops = viewModel.uiState.fuelStops,
+                fuelStops = uiState.fuelStops,
                 onFuelStopClick = { navigateToFuelStopEdit(it.id) }
             )
         }
