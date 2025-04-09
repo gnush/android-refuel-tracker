@@ -2,7 +2,8 @@ package org.refueltracker.ui.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
-import org.refueltracker.ui.fuelstop.FuelStopHomeDestination
+import org.refueltracker.ui.fuelstop.FuelStopCalendarDestination
+import org.refueltracker.ui.fuelstop.FuelStopListDestination
 import org.refueltracker.ui.statistic.StatisticsHomeDestination
 
 interface NavigationDestination {
@@ -23,6 +24,7 @@ interface BottomNavigationDestination: NavigationDestination {
 }
 
 fun bottomNavBarDestinations(): List<BottomNavigationDestination> = listOf(
-    FuelStopHomeDestination,
+    FuelStopListDestination,
+    FuelStopCalendarDestination,
     StatisticsHomeDestination
 )

@@ -52,8 +52,8 @@ import org.refueltracker.ui.navigation.BottomNavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 import java.math.BigDecimal
 
-object FuelStopHomeDestination: BottomNavigationDestination {
-    override val route: String = "fuel_stop_home"
+object FuelStopListDestination: BottomNavigationDestination {
+    override val route: String = "fuel_stop_list_home"
     @StringRes override val titleRes: Int = R.string.app_name
 
     override val icon: ImageVector = Icons.AutoMirrored.Filled.List
@@ -63,12 +63,12 @@ object FuelStopHomeDestination: BottomNavigationDestination {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FuelStopHomeScreen(
+fun FuelStopListScreen(
     navigateTo: (String) -> Unit,
     navigateToFuelStopEntry: () -> Unit,
     navigateToFuelStopEdit: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: FuelStopHomeViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
+    viewModel: FuelStopListViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val uiState by viewModel.uiState.collectAsState()
@@ -77,7 +77,7 @@ fun FuelStopHomeScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CommonTopAppBar(
-                title = stringResource(FuelStopHomeDestination.titleRes),
+                title = stringResource(FuelStopListDestination.titleRes),
                 canNavigateUp = false,
                 scrollBehavior = scrollBehavior
             )

@@ -15,12 +15,14 @@
     <string name="fuel_stop_total_paid_form_label">Total price paid</string>
 
     <string name="nav_back_button_description">Back</string>
-    <string name="nav_bar_list_button_description">Navigate to Fuel stops list</string>
+    <string name="nav_bar_list_button_description">Navigate to fuel stops list</string>
     <string name="nav_bar_list_button_label">Fuel stops</string>
-    <string name="nav_bar_stat_button_description">Navigate to Statistics Screen</string>
+    <string name="nav_bar_cal_button_description">Navigate to fuel stops calendar</string>
+    <string name="nav_bar_cal_button_label">Fuel stops</string>
+    <string name="nav_bar_stat_button_description">Navigate to statistics screen</string>
     <string name="nav_bar_stat_button_label">Statistics</string>
-    <string name="calendar_previous_button_description">navigate to previous month</string>
-    <string name="calendar_next_button_description">navigate to next month</string>
+    <string name="calendar_previous_button_description">Navigate to previous month</string>
+    <string name="calendar_next_button_description">Navigate to next month</string>
 
     <string name="add_fuel_stop_button_description">Add Fuel Stop</string>
     <string name="pick_time_button_description">Pick time</string>

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.stateIn
 import org.refueltracker.data.FuelStop
 import org.refueltracker.data.FuelStopsRepository
 
-class FuelStopHomeViewModel(
+class FuelStopListViewModel(
     fuelStopsRepository: FuelStopsRepository
 ): ViewModel() {
     val uiState: StateFlow<FuelStopHomeUiState> = fuelStopsRepository
