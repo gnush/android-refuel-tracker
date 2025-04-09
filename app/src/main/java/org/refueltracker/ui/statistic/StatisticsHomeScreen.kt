@@ -42,6 +42,9 @@ object StatisticsHomeDestination: BottomNavigationDestination {
     @StringRes override val labelRes: Int = R.string.nav_bar_stat_button_label
 }
 
+// TODO:
+//  - add statistics for favorite fuel sort etc?
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticsHomeScreen(
@@ -76,7 +79,51 @@ fun StatisticsHomeScreen(
 }
 
 @Composable
+fun AllTimeAverageFuelStatisticsCard(
+    @StringRes heading: Int,
+    averagePricePerVolume: BigDecimal,
+    averageVolume: BigDecimal,
+    averagePrice: BigDecimal,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = dimensionResource(R.dimen.card_elevation)
+        ),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))) {
+            Text(stringResource(heading))
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(
+                        top = dimensionResource(R.dimen.padding_small),
+                        bottom = dimensionResource(R.dimen.padding_small)
+                    ),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                AverageValue(
+                    averagePricePerVolume,
+                    "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}"
+                )
+                AverageValue(
+                    averageVolume,
+                    Config.DISPLAY_VOLUME_SIGN
+                )
+                AverageValue(
+                    averagePrice,
+                    Config.DISPLAY_CURRENCY_SIGN
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun AverageFuelStatisticsCard(
+    @StringRes currentHeading: Int,
+    @StringRes previousHeading: Int,
+    @StringRes diffHeading: Int,
     currentAvgPricePerVolume: BigDecimal,
     currentAvgVolume: BigDecimal,
     currentAvgPrice: BigDecimal,
@@ -98,11 +145,13 @@ fun AverageFuelStatisticsCard(
             horizontalArrangement = Arrangement.Absolute.SpaceBetween
         ) {
             Column {
+                Text(stringResource(currentHeading))
                 AverageValue(currentAvgPricePerVolume,"${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}")
                 AverageValue(currentAvgVolume, Config.DISPLAY_VOLUME_SIGN)
                 AverageValue(currentAvgPrice, Config.DISPLAY_CURRENCY_SIGN)
             }
             Column {
+                Text(stringResource(previousHeading))
                 AverageValue(previousAvgPricePerVolume, "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}")
                 AverageValue(previousAvgVolume, Config.DISPLAY_VOLUME_SIGN)
                 AverageValue(previousAvgPrice, Config.DISPLAY_CURRENCY_SIGN)
@@ -111,6 +160,7 @@ fun AverageFuelStatisticsCard(
                 val diffAvgPricePerVolume = previousAvgPricePerVolume-currentAvgPricePerVolume
                 val diffAvgVolume = previousAvgVolume-currentAvgVolume
                 val diffAvgPrice = previousAvgPrice-currentAvgPrice
+                Text(stringResource(diffHeading))
                 AverageValue(
                     value = diffAvgPricePerVolume.abs(),
                     suffix = "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}",
@@ -158,7 +208,13 @@ private fun AverageValue(
     modifier: Modifier = Modifier,
     sign: String = "",
 ) {
-    Row(modifier = modifier) {
+    Row(
+        modifier = modifier.padding(
+                bottom = dimensionResource(R.dimen.padding_tiny),
+                top = dimensionResource(R.dimen.padding_tiny)
+        ),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         Text("∅")
         Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
         if (color == null)
@@ -183,12 +239,32 @@ private fun FuelStatisticsCardPreview() {
 
     RefuelTrackerTheme {
         AverageFuelStatisticsCard(
+            currentHeading = R.string.current_month_heading,
+            previousHeading = R.string.previous_month_heading,
+            diffHeading = R.string.diff_average_heading,
             currentAvgPricePerVolume = ppv1,
             currentAvgVolume = vol1,
             currentAvgPrice = price1,
             previousAvgPricePerVolume = ppv2,
             previousAvgVolume = vol2,
             previousAvgPrice = price2,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AllTimeFuelStatisticsCardPreview() {
+    val ppv = BigDecimal("1.679")
+    val vol = BigDecimal("476.87")
+    val price = (ppv*vol).setScale(Config.CURRENCY_DECIMAL_PLACES_DEFAULT, RoundingMode.HALF_UP)
+
+    RefuelTrackerTheme {
+        AllTimeAverageFuelStatisticsCard(
+            heading = R.string.all_time_average_heading,
+            averagePricePerVolume = ppv,
+            averageVolume = vol,
+            averagePrice = price
         )
     }
 }

@@ -30,6 +30,13 @@
 
     <string name="save_button">Save</string>
 
+    <string name="current_month_heading">Current month</string>
+    <string name="previous_month_heading">Previous month</string>
+    <string name="current_year_heading">Current year</string>
+    <string name="previous_year_heading">Previous year</string>
+    <string name="diff_average_heading">Difference</string>
+    <string name="all_time_average_heading">All time values</string>
+
     <string name="day_of_week_1">Monday</string>
     <string name="day_of_week_2">Tuesday</string>
     <string name="day_of_week_3">Wednesday</string>
