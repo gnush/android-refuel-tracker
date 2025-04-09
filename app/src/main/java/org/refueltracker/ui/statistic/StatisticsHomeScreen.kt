@@ -52,9 +52,6 @@ fun StatisticsHomeScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
         CalendarView(
-            onClickNext = {},
-            onClickPrev = {},
-            onCellClick = {},
             modifier = Modifier.padding(innerPadding),
             selectedDays = listOf(
                 LocalDate(2001, 11, 1),

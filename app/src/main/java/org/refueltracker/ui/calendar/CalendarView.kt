@@ -45,30 +45,23 @@ import org.refueltracker.ui.RefuelTrackerViewModelProvider
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 
 @Composable
-fun CalendarView( // TODO: add firstDisplayMonth, firstDisplayYear params (make optional, default current/null, on null current in CalendarUiState)
+fun CalendarView(
     modifier: Modifier = Modifier,
     firstDisplayMonth: Month? = null,
     firstDisplayYear: Int? = null,
     selectedDays: List<LocalDate> = listOf(),
     startFromSunday: Boolean = false,
-    onClickNext: (() -> Unit)? = null,
-    onClickPrev: (() -> Unit)? = null,
+    onClickNext: () -> Unit = {},
+    onClickPrev: () -> Unit = {},
+    canNavigateMonth: Boolean = true,
     hasClickableCells: Boolean = false,
     onCellClick: (LocalDate) -> Unit = {},
     viewModel: CalendarViewModel = viewModel( factory = RefuelTrackerViewModelProvider.Factory )
 ) {
     // TODO:
-    //  - first display month/year should be current month/year
-    //  - don't use supplied dates as basis for cell creation, rather derive number of days from current month/year
-    //    for that: bump api to 26 again or use new extension function Month.numberOfDays
     //  - add viewmodel to query db for fuel stops in the current month
-    //    or supply as argument?
-    // .length still requires api 26
-//    val c = GregorianCalendar.getInstance() as GregorianCalendar
-//    Log.d("ME", "month ${Month(11).name} has ${Month(11).length(false)} days")
-//    Log.d("ME", "month ${Month(12).name} has ${Month(12).length(false)} days")
-//    Log.d("ME", "month ${Month(2).name} has ${Month(2).length(c.isLeapYear(2001))} days")
-//    Log.d("ME", "month ${Month(2).name} has ${Month(2).length(c.isLeapYear(2004))} days on a leap year")
+    //    or supply as argument? (Ansower: supply, add callbacks to insert data)
+    //  - regarding ↑: use onClickNext/Prev callbacks to update selected days when navigating calendar
 
     if (firstDisplayMonth != null)
         viewModel.updateDisplayMonth(firstDisplayMonth)
@@ -76,52 +69,78 @@ fun CalendarView( // TODO: add firstDisplayMonth, firstDisplayYear params (make 
     if (firstDisplayYear != null)
         viewModel.updateDisplayYear(firstDisplayYear)
 
-    if (selectedDays.isNotEmpty()) { // TODO: remove when calendar cell building doesnt require dates anymore
-        Column(modifier = modifier) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                if (onClickPrev != null)
-                    IconButton(
-                        onClick = onClickPrev,
-                        modifier = Modifier.align(Alignment.CenterStart),
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = stringResource(R.string.calendar_previous_button_description)
-                        )
-                    }
-                if (onClickNext != null)
-                    IconButton(
-                        onClick = onClickNext,
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            contentDescription = stringResource(R.string.calendar_next_button_description)
-                        )
-                    }
-                val monthNameId = viewModel.uiState.month.monthOfYearId()
-                Text(
-                    text = "${stringResource(monthNameId)} ${viewModel.uiState.year}",
-                    style = typography.headlineMedium,
-                    color = colorScheme.onPrimaryContainer,
-                    modifier = Modifier.align(Alignment.Center)
-                )
+    Column(modifier = modifier) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            if (canNavigateMonth) {
+                IconButton(
+                    onClick = {
+                        if (viewModel.uiState.month.number == 1) {
+                            viewModel.updateUiState(
+                                viewModel.uiState.copy(
+                                    month = Month(12),
+                                    year = viewModel.uiState.year-1
+                                )
+                            )
+                        } else {
+                            viewModel.updateDisplayMonth(
+                                viewModel.uiState.month.number-1
+                            )
+                        }
+                        onClickPrev()
+                    },
+                    modifier = Modifier.align(Alignment.CenterStart),
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                        contentDescription = stringResource(R.string.calendar_previous_button_description)
+                    )
+                }
+                IconButton(
+                    onClick = {
+                        if (viewModel.uiState.month.number == 12) {
+                            viewModel.updateUiState(
+                                viewModel.uiState.copy(
+                                    month = Month(1),
+                                    year = viewModel.uiState.year+1
+                                )
+                            )
+                        } else {
+                            viewModel.updateDisplayMonth(
+                                viewModel.uiState.month.number+1
+                            )
+                        }
+                        onClickNext()
+                    },
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = stringResource(R.string.calendar_next_button_description)
+                    )
+                }
             }
-            Spacer(modifier = Modifier.size(16.dp))
-            CalendarGrid(
-                firstWeekDayOfMonth = viewModel.firstWeekDayOfMonth(),
-                daysOfMonth = viewModel.daysOfMonth(),
-                selectedDays = selectedDays,
-                hasClickableCells = hasClickableCells,
-                onCellClick = onCellClick,
-                startFromSunday = startFromSunday,
-                uiState = viewModel.uiState,
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .padding(horizontal = 16.dp)
-                    .align(Alignment.CenterHorizontally)
+            val monthNameId = viewModel.uiState.month.monthOfYearId()
+            Text(
+                text = "${stringResource(monthNameId)} ${viewModel.uiState.year}",
+                style = typography.headlineMedium,
+                color = colorScheme.onPrimaryContainer,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
+        Spacer(modifier = Modifier.size(16.dp))
+        CalendarGrid(
+            firstWeekDayOfMonth = viewModel.firstWeekDayOfMonth(),
+            daysOfMonth = viewModel.daysOfMonth(),
+            selectedDays = selectedDays,
+            hasClickableCells = hasClickableCells,
+            onCellClick = onCellClick,
+            startFromSunday = startFromSunday,
+            uiState = viewModel.uiState,
+            modifier = Modifier
+                .wrapContentHeight()
+                .padding(horizontal = 16.dp)
+                .align(Alignment.CenterHorizontally)
+        )
     }
 }
 
@@ -335,8 +354,7 @@ private fun CalendarPreview() {
                 LocalDate(1602, 2, 19),
                 LocalDate(1602, 2, 8)
             ),
-            onClickPrev = {},
-            onClickNext = {}
+            canNavigateMonth = true
         )
     }
 }

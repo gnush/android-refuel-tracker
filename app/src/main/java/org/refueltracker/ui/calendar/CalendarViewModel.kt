@@ -58,6 +58,11 @@ data class CalendarUiState(
     val year: Int = Calendar.getInstance().get(Calendar.YEAR),
 )
 
+/**
+ * Returns the number of days in a month (Assumes Gregorian calendar).
+ * If on Api Level >= 26, use Month.length instead
+ * @param isLeapYear Indicates if the year is a leap year
+ */
 private fun Month.numberOfDays(isLeapYear: Boolean): Int = when(number) {
     1 -> 31
     2 -> if (isLeapYear) 29 else 28
