@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">RefuelTracker</string>
 
-    <!--<string name="fuel_stop_home_screen">Fuel Stops</string>-->
+    <string name="fuel_stop_list_screen">All stops</string>
+    <string name="fuel_stop_calendar_screen">Fuel stops by month</string>
     <string name="fuel_stop_entry_screen">Add Fuel Stop</string>
     <string name="fuel_stop_edit_screen">Edit Fuel Stop</string>
     <string name="fuel_stop_statistics_screen">Statistics</string>
@@ -16,9 +17,9 @@
 
     <string name="nav_back_button_description">Back</string>
     <string name="nav_bar_list_button_description">Navigate to fuel stops list</string>
-    <string name="nav_bar_list_button_label">Fuel stops</string>
+    <string name="nav_bar_list_button_label">All</string>
     <string name="nav_bar_cal_button_description">Navigate to fuel stops calendar</string>
-    <string name="nav_bar_cal_button_label">Fuel stops</string>
+    <string name="nav_bar_cal_button_label">Calendar</string>
     <string name="nav_bar_stat_button_description">Navigate to statistics screen</string>
     <string name="nav_bar_stat_button_label">Statistics</string>
     <string name="calendar_previous_button_description">Navigate to previous month</string>

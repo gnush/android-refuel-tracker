@@ -6,6 +6,8 @@ import org.refueltracker.data.FuelStop
 import org.refueltracker.ui.Config
 import java.math.RoundingMode
 
+data class FuelStopListUiState(val fuelStops: List<FuelStop> = listOf())
+
 data class FuelStopUiState(
     val details: FuelStopDetails = FuelStopDetails(),
     val isValid: Boolean = false

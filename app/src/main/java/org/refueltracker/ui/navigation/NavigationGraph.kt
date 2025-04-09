@@ -38,13 +38,14 @@ fun AppNavHost(
         composable(route = FuelStopCalendarDestination.route) {
             FuelStopCalendarScreen(
                 navigateTo = navController::navigate,
-                navigateToFuelStopEntry = { navController.navigate(FuelStopEntryDestination.route) }
+                navigateToFuelStopEntry = { navController.navigate(FuelStopEntryDestination.route) },
+                navigateToFuelStopEdit = { navController.navigate(FuelStopEditDestination.routeWithFuelStopId(it)) },
             )
         }
         composable(route = FuelStopEntryDestination.route) {
             FuelStopEntryScreen(
                 onNavigateUp = navController::navigateUp,
-                onSaveClickNavigateTo = { navController.popBackStack(FuelStopListDestination.route, inclusive = false) }
+                onSaveClickNavigateTo = navController::popBackStack
             )
         }
         composable(
@@ -55,7 +56,7 @@ fun AppNavHost(
         ) {
             FuelStopEditScreen(
                 onNavigateUp = navController::navigateUp,
-                onSaveClickNavigateTo = { navController.popBackStack(FuelStopListDestination.route, inclusive = false) }
+                onSaveClickNavigateTo = navController::popBackStack
             )
         }
         composable(StatisticsHomeDestination.route) {

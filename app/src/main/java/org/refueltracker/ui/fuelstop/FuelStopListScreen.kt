@@ -54,7 +54,7 @@ import java.math.BigDecimal
 
 object FuelStopListDestination: BottomNavigationDestination {
     override val route: String = "fuel_stop_list_home"
-    @StringRes override val titleRes: Int = R.string.app_name
+    @StringRes override val titleRes: Int = R.string.fuel_stop_list_screen
 
     override val icon: ImageVector = Icons.AutoMirrored.Filled.List
     @StringRes override val iconDescriptionRes: Int = R.string.nav_bar_list_button_description

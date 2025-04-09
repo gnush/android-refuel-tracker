@@ -8,22 +8,21 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.refueltracker.data.FuelStop
 import org.refueltracker.data.FuelStopsRepository
+import org.refueltracker.ui.data.FuelStopListUiState
 
 class FuelStopListViewModel(
     fuelStopsRepository: FuelStopsRepository
 ): ViewModel() {
-    val uiState: StateFlow<FuelStopHomeUiState> = fuelStopsRepository
+    val uiState: StateFlow<FuelStopListUiState> = fuelStopsRepository
         .fuelStopsOrderedNewestFirst()
-        .map { FuelStopHomeUiState(it) }
+        .map { FuelStopListUiState(it) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = FuelStopHomeUiState()
+            initialValue = FuelStopListUiState()
         )
 
     companion object {
         private const val TIMEOUT_MILLIS = 5000L
     }
 }
-
-data class FuelStopHomeUiState(val fuelStops: List<FuelStop> = listOf())

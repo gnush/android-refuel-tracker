@@ -7,6 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 
 @Dao
 interface FuelStopDao {
@@ -31,4 +33,16 @@ interface FuelStopDao {
      */
     @Query("select * from fuel_stops order by day desc, time desc")
     fun allFuelStopsOrderedNewestFirst(): Flow<List<FuelStop>>
+
+    /**
+     * Retrieves all fuel stops between [from] and [to] in descending order by day/time
+     */
+    @Query("select * from fuel_stops where day between :from and :to order by day desc, time desc")
+    fun fuelStopsBetween(from: LocalDate, to: LocalDate): Flow<List<FuelStop>>
+
+    /**
+     * Retrieves all fuel stops from [monthOfYear] in descending order by day/time
+     */
+    @Query("select * from fuel_stops where day between :monthOfYear and :monthOfYear+99")
+    fun fuelStopsOn(monthOfYear: Int): Flow<List<FuelStop>>
 }

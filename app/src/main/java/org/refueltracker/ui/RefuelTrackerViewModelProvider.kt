@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import org.refueltracker.RefuelTrackerApplication
 import org.refueltracker.ui.calendar.CalendarViewModel
+import org.refueltracker.ui.fuelstop.FuelStopCalendarViewModel
 import org.refueltracker.ui.fuelstop.FuelStopEditViewModel
 import org.refueltracker.ui.fuelstop.FuelStopEntryViewModel
 import org.refueltracker.ui.fuelstop.FuelStopListViewModel
@@ -15,6 +16,11 @@ object RefuelTrackerViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             FuelStopListViewModel(
+                refuelTrackerApplication().container.fuelStopsRepository
+            )
+        }
+        initializer {
+            FuelStopCalendarViewModel(
                 refuelTrackerApplication().container.fuelStopsRepository
             )
         }

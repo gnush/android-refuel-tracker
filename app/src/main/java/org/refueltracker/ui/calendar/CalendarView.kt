@@ -51,18 +51,13 @@ fun CalendarView(
     firstDisplayYear: Int? = null,
     selectedDays: List<LocalDate> = listOf(),
     startFromSunday: Boolean = false,
-    onClickNext: () -> Unit = {},
-    onClickPrev: () -> Unit = {},
-    canNavigateMonth: Boolean = true,
+    canNavigateMonth: Boolean = false,
+    onNextMonthClick: () -> Unit = {},
+    onPreviousMonthClick: () -> Unit = {},
     hasClickableCells: Boolean = false,
     onCellClick: (LocalDate) -> Unit = {},
     viewModel: CalendarViewModel = viewModel( factory = RefuelTrackerViewModelProvider.Factory )
 ) {
-    // TODO:
-    //  - add viewmodel to query db for fuel stops in the current month
-    //    or supply as argument? (Ansower: supply, add callbacks to insert data)
-    //  - regarding ↑: use onClickNext/Prev callbacks to update selected days when navigating calendar
-
     if (firstDisplayMonth != null)
         viewModel.updateDisplayMonth(firstDisplayMonth)
 
@@ -86,7 +81,7 @@ fun CalendarView(
                                 viewModel.uiState.month.number-1
                             )
                         }
-                        onClickPrev()
+                        onPreviousMonthClick()
                     },
                     modifier = Modifier.align(Alignment.CenterStart),
                 ) {
@@ -109,7 +104,7 @@ fun CalendarView(
                                 viewModel.uiState.month.number+1
                             )
                         }
-                        onClickNext()
+                        onNextMonthClick()
                     },
                     modifier = Modifier.align(Alignment.CenterEnd)
                 ) {
