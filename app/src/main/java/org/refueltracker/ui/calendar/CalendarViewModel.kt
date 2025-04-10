@@ -29,6 +29,14 @@ class CalendarViewModel: ViewModel() {
         )
     }
 
+    fun setPreviousMonth() {
+        uiState = uiState.previousMonth()
+    }
+
+    fun setNextMonth() {
+        uiState = uiState.nextMonth()
+    }
+
     fun updateDisplayYear(year: Int) {
         uiState = CalendarUiState(
             month = uiState.month,

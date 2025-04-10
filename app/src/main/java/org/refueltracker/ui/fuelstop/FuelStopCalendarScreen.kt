@@ -41,9 +41,6 @@ object FuelStopCalendarDestination: BottomNavigationDestination {
     @StringRes override val labelRes: Int = R.string.nav_bar_cal_button_label
 }
 
-// TODO:
-//  - add calendar year navigation
-//  - (maybe) add gesture month navigation on calendar header
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FuelStopCalendarScreen(

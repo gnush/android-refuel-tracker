@@ -1,5 +1,6 @@
 package org.refueltracker
 
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
@@ -61,6 +62,8 @@ fun CommonBottomAppBar(
 ) {
     var navBarSelectedItem by remember { mutableIntStateOf(0) }
 
+    //Log.d("ME", navBarSelectedItem.toString())
+
     BottomAppBar(
         actions = {
             NavigationBar {
@@ -74,7 +77,10 @@ fun CommonBottomAppBar(
                                 contentDescription = stringResource(destination.iconDescriptionRes)
                             )
                         },
-                        onClick = { onNavigationItemClicked(destination.route) }
+                        onClick = {
+                            //navBarSelectedItem = bottomNavBarDestinations().indexOf(destination)
+                            onNavigationItemClicked(destination.route)
+                        }
                     )
                 }
             }

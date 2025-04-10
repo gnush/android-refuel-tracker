@@ -1,15 +1,23 @@
 package org.refueltracker.ui.calendar
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
@@ -23,28 +31,43 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.isoDayNumber
-import kotlinx.datetime.number
 import org.refueltracker.R
 import org.refueltracker.ui.RefuelTrackerViewModelProvider
 import org.refueltracker.ui.extensions.abbreviationId
 import org.refueltracker.ui.extensions.monthOfYearId
 import org.refueltracker.ui.theme.RefuelTrackerTheme
+import kotlin.math.roundToInt
 
+// TODO:
+//  - add year navigation
+//  - make Month and Year in calendar header clickable with a drop down list (or else)
+//    month select: navigate directly to the selected month of the same year
+//    year select: navigate directly to the selected year selecting the same month
+//    alternatively: just one click to open a date picker dialog
+//  - (maybe) add gesture month navigation on calendar header
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CalendarView(
     modifier: Modifier = Modifier,
@@ -65,65 +88,50 @@ fun CalendarView(
     if (firstDisplayYear != null)
         viewModel.updateDisplayYear(firstDisplayYear)
 
-    Column(modifier = modifier) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            if (canNavigateMonth) {
-                IconButton(
-                    onClick = {
-                        if (viewModel.uiState.month.number == 1) {
-                            viewModel.updateUiState(
-                                viewModel.uiState.copy(
-                                    month = Month(12),
-                                    year = viewModel.uiState.year-1
-                                )
-                            )
-                        } else {
-                            viewModel.updateDisplayMonth(
-                                viewModel.uiState.month.number-1
-                            )
-                        }
-                        onPreviousMonthClick()
-                    },
-                    modifier = Modifier.align(Alignment.CenterStart),
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = stringResource(R.string.calendar_previous_button_description)
-                    )
-                }
-                IconButton(
-                    onClick = {
-                        if (viewModel.uiState.month.number == 12) {
-                            viewModel.updateUiState(
-                                viewModel.uiState.copy(
-                                    month = Month(1),
-                                    year = viewModel.uiState.year+1
-                                )
-                            )
-                        } else {
-                            viewModel.updateDisplayMonth(
-                                viewModel.uiState.month.number+1
-                            )
-                        }
-                        onNextMonthClick()
-                    },
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = stringResource(R.string.calendar_next_button_description)
-                    )
-                }
+    /////////////////
+    // TODO: preserve
+//    val density = LocalDensity.current
+//    val defaultActionSize = 80.dp
+//    val endActionSizePx = with(density) { (defaultActionSize*3).toPx() }
+//    val startActionSizePx = with(density) { defaultActionSize.toPx() }
+//
+//    val anchoredState = remember {
+//        AnchoredDraggableState(
+//            initialValue = DragAnchors.Center,
+//            anchors = DraggableAnchors {
+//                DragAnchors.Start at - startActionSizePx
+//                DragAnchors.Center at 0f
+//                DragAnchors.End at endActionSizePx
+//            },
+//            positionalThreshold = { distance: Float -> distance*0.5f },
+//            velocityThreshold = { with(density) { 100.dp.toPx() } },
+//            decayAnimationSpec = exponentialDecay(),
+//            snapAnimationSpec = spring()
+//        )
+//    }
+//    Log.d("ME", "current state = ${anchoredState.currentValue.name}")
+//    if (anchoredState.currentValue == DragAnchors.Start) {
+//        // DO SOMETHING
+//    }
+//        AnchoredDraggableItem(
+//            state = anchoredState,
+//            content = { Icon(Icons.Default.Add, contentDescription = "") }
+//        )
+    Column(
+        modifier = modifier
+    ) {
+        CalendarHeader(
+            uiState = viewModel.uiState,
+            canNavigateMonth = canNavigateMonth,
+            onNextMonthClick = {
+                viewModel.setNextMonth()
+                onNextMonthClick()
+            },
+            onPreviousMonthClick = {
+                viewModel.setPreviousMonth()
+                onPreviousMonthClick()
             }
-            val monthNameId = viewModel.uiState.month.monthOfYearId
-            Text(
-                text = "${stringResource(monthNameId)} ${viewModel.uiState.year}",
-                style = typography.headlineMedium,
-                color = colorScheme.onPrimaryContainer,
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-        Spacer(modifier = Modifier.size(16.dp))
+        )
         CalendarGrid(
             firstWeekDayOfMonth = viewModel.firstWeekDayOfMonth(),
             daysOfMonth = viewModel.daysOfMonth(),
@@ -136,6 +144,112 @@ fun CalendarView(
                 .wrapContentHeight()
                 .padding(horizontal = 16.dp)
                 .align(Alignment.CenterHorizontally)
+        )
+    }
+}
+
+@Composable
+private fun CalendarHeader(
+    uiState: CalendarUiState,
+    canNavigateMonth: Boolean,
+    onNextMonthClick: () -> Unit,
+    onPreviousMonthClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var offset by remember { mutableFloatStateOf(0f) }
+
+    // TODO:
+    //  - only react when gesture released / not clicked anymore
+    //  - animate (e.g. with spring) smooth back to zero position
+    if (offset <= -250) {
+        offset = 0f
+        onPreviousMonthClick()
+    }
+
+    if (250 <= offset) {
+        offset = 0f
+        onNextMonthClick()
+    }
+
+    Box(modifier = modifier.fillMaxWidth()) {
+        if (canNavigateMonth) {
+            IconButton(
+                onClick = onPreviousMonthClick,
+                modifier = Modifier.align(Alignment.CenterStart),
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = stringResource(R.string.calendar_previous_button_description)
+                )
+            }
+            IconButton(
+                onClick = onNextMonthClick,
+                modifier = Modifier.align(Alignment.CenterEnd)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = stringResource(R.string.calendar_next_button_description)
+                )
+            }
+        }
+        val monthNameId = uiState.month.monthOfYearId
+        Text(
+            text = "${stringResource(monthNameId)} ${uiState.year}",
+            style = typography.headlineMedium,
+            color = colorScheme.onPrimaryContainer,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset {
+                    IntOffset(
+                        x = offset.roundToInt(),
+                        y = 0
+                    )
+                }
+                .draggable(
+                    state = rememberDraggableState {
+                        offset += it
+                    },
+                    orientation = Orientation.Horizontal
+                )
+        )
+    }
+}
+
+// TODO: preserve: move to AnchoredDraggableExample project
+enum class DragAnchors {
+    Start,
+    Center,
+    End
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun AnchoredDraggableItem(
+    state: AnchoredDraggableState<DragAnchors>,
+    content: @Composable BoxScope.() -> Unit
+) {
+    Box(modifier = Modifier
+        .padding(16.dp)
+        .fillMaxWidth()
+        .height(100.dp)
+        .clip(RectangleShape)
+        .background(Color.Gray)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center)
+                .offset {
+                    IntOffset(
+                        x = -state
+                            .requireOffset()
+                            .roundToInt(),
+                        y = 0
+                    )
+                }
+                .anchoredDraggable(state, Orientation.Horizontal)
+                .background(Color.DarkGray),
+            content = content
         )
     }
 }

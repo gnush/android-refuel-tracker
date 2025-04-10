@@ -149,7 +149,7 @@ private fun AllTimeAverageFuelStatisticsCard(
                     prefix = {
                         Icon(
                             imageVector = Icons.Filled.Functions,
-                            contentDescription = "" // TODO
+                            contentDescription = stringResource(R.string.sum_aggregate_icon_description)
                         )
                     },
                     suffix = Config.DISPLAY_CURRENCY_SIGN
@@ -159,7 +159,7 @@ private fun AllTimeAverageFuelStatisticsCard(
                     prefix = {
                         Icon(
                             imageVector = Icons.Filled.Functions,
-                            contentDescription = "" // TODO
+                            contentDescription = stringResource(R.string.sum_aggregate_icon_description)
                         )
                     },
                     suffix = Config.DISPLAY_VOLUME_SIGN
