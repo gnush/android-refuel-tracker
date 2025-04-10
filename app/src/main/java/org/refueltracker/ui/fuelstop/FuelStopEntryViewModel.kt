@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import org.refueltracker.data.FuelStopsRepository
 import org.refueltracker.ui.data.FuelStopDetails
 import org.refueltracker.ui.data.FuelStopUiState
-import org.refueltracker.ui.data.toFuelStop
-import org.refueltracker.ui.data.validate
+import org.refueltracker.ui.extensions.toFuelStop
+import org.refueltracker.ui.extensions.validate
 
 class FuelStopEntryViewModel(
     private val fuelStopsRepository: FuelStopsRepository

@@ -12,9 +12,9 @@ import kotlinx.coroutines.launch
 import org.refueltracker.data.FuelStopsRepository
 import org.refueltracker.ui.data.FuelStopDetails
 import org.refueltracker.ui.data.FuelStopUiState
-import org.refueltracker.ui.data.toFuelStop
-import org.refueltracker.ui.data.toFuelStopUiState
-import org.refueltracker.ui.data.validate
+import org.refueltracker.ui.extensions.toFuelStop
+import org.refueltracker.ui.extensions.toFuelStopUiState
+import org.refueltracker.ui.extensions.validate
 
 class FuelStopEditViewModel(
     savedStateHandle: SavedStateHandle,

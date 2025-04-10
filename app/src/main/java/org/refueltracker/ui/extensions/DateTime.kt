@@ -7,6 +7,9 @@ import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.number
 import org.refueltracker.R
 
+/**
+ * The [StringRes] associated with this [DayOfWeek] instance.
+ */
 val DayOfWeek.abbreviationId: Int
     @StringRes get() = when(isoDayNumber) {
         1 -> R.string.day_of_week_abbreviation_1
@@ -19,6 +22,9 @@ val DayOfWeek.abbreviationId: Int
         else -> R.string.day_of_week_abbreviation_1
     }
 
+/**
+ * The [StringRes] associated with this [Month] instance.
+ */
 val Month.monthOfYearId: Int
     @StringRes get() = when(number) {
         1 -> R.string.month_1
@@ -35,3 +41,24 @@ val Month.monthOfYearId: Int
         12 -> R.string.month_12
         else -> R.string.month_1
     }
+
+/**
+ * Returns the number of days in a month (Assumes Gregorian calendar).
+ * If on Api Level >= 26, use Month.length instead
+ * @param isLeapYear Indicates if the year is a leap year
+ */
+fun Month.numberOfDays(isLeapYear: Boolean): Int = when(number) {
+    1 -> 31
+    2 -> if (isLeapYear) 29 else 28
+    3 -> 31
+    4 -> 30
+    5 -> 31
+    6 -> 30
+    7 -> 31
+    8 -> 31
+    9 -> 30
+    10 -> 31
+    11 -> 30
+    12 -> 31
+    else -> 30
+}

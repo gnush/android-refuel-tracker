@@ -7,9 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
-import org.refueltracker.data.FuelStop
 import org.refueltracker.data.FuelStopsRepository
-import org.refueltracker.ui.calendar.CalendarUiState
+import org.refueltracker.ui.data.FuelStopCalendarUiState
 
 class FuelStopCalendarViewModel(
     private val fuelStopsRepository: FuelStopsRepository
@@ -72,8 +71,3 @@ class FuelStopCalendarViewModel(
         }
     }
 }
-
-data class FuelStopCalendarUiState(
-    val fuelStops: List<FuelStop> = emptyList(),
-    val calendar: CalendarUiState = CalendarUiState()
-)

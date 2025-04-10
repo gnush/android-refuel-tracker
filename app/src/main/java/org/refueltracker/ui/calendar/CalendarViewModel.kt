@@ -8,7 +8,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
-import java.util.Calendar
+import org.refueltracker.ui.extensions.numberOfDays
 import java.util.GregorianCalendar
 
 class CalendarViewModel: ViewModel() {
@@ -52,47 +52,3 @@ class CalendarViewModel: ViewModel() {
 
     fun daysOfMonth(): Int = uiState.month.numberOfDays(isLeapYear())
 }
-
-data class CalendarUiState(
-    val month: Month = Month(Calendar.getInstance().get(Calendar.MONTH)+1),
-    val year: Int = Calendar.getInstance().get(Calendar.YEAR),
-)
-
-/**
- * Returns the number of days in a month (Assumes Gregorian calendar).
- * If on Api Level >= 26, use Month.length instead
- * @param isLeapYear Indicates if the year is a leap year
- */
-private fun Month.numberOfDays(isLeapYear: Boolean): Int = when(number) {
-    1 -> 31
-    2 -> if (isLeapYear) 29 else 28
-    3 -> 31
-    4 -> 30
-    5 -> 31
-    6 -> 30
-    7 -> 31
-    8 -> 31
-    9 -> 30
-    10 -> 31
-    11 -> 30
-    12 -> 31
-    else -> 30
-}
-
-fun CalendarUiState.previousMonth(): CalendarUiState =
-    if (month.number == 1)
-        CalendarUiState(
-            month = Month(12),
-            year = year-1
-        )
-    else
-        copy(month = Month(month.number-1))
-
-fun CalendarUiState.nextMonth(): CalendarUiState =
-    if (month.number == 12)
-        CalendarUiState(
-            month = Month(1),
-            year = year+1
-        )
-    else
-        copy(month = Month(month.number+1))

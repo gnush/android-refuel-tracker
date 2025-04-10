@@ -41,11 +41,11 @@ import org.refueltracker.ui.Config
 import org.refueltracker.ui.data.FuelStopDetails
 import org.refueltracker.ui.data.FuelStopUiState
 import org.refueltracker.ui.RefuelTrackerViewModelProvider
-import org.refueltracker.ui.data.updateBasedOnPricePerVolume
-import org.refueltracker.ui.data.updateBasedOnTotalPrice
-import org.refueltracker.ui.data.updateBasedOnTotalVolume
 import org.refueltracker.ui.dialog.PickDateDialog
 import org.refueltracker.ui.dialog.PickTimeDialDialog
+import org.refueltracker.ui.extensions.updateBasedOnPricePerVolume
+import org.refueltracker.ui.extensions.updateBasedOnTotalPrice
+import org.refueltracker.ui.extensions.updateBasedOnTotalVolume
 import org.refueltracker.ui.navigation.NavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 
