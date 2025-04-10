@@ -75,6 +75,7 @@ fun StatisticsHomeScreen(
         },
         bottomBar = {
             CommonBottomAppBar(
+                currentDestination = StatisticsHomeDestination,
                 onNavigationItemClicked = navigateTo
             )
         },

@@ -65,6 +65,7 @@ fun FuelStopCalendarScreen(
         },
         bottomBar = {
             CommonBottomAppBar(
+                currentDestination = FuelStopCalendarDestination,
                 onNavigationItemClicked = navigateTo,
                 floatingActionButton = {
                     FloatingActionButton(

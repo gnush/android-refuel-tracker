@@ -86,6 +86,7 @@ fun FuelStopListScreen(
         },
         bottomBar = {
             CommonBottomAppBar(
+                currentDestination = FuelStopListDestination,
                 onNavigationItemClicked = navigateTo,
                 floatingActionButton = {
                     FloatingActionButton(

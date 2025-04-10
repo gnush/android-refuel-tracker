@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.refueltracker.ui.navigation.AppNavHost
+import org.refueltracker.ui.navigation.BottomNavigationDestination
 import org.refueltracker.ui.navigation.bottomNavBarDestinations
 
 @Composable
@@ -57,19 +58,16 @@ fun CommonTopAppBar(
 
 @Composable
 fun CommonBottomAppBar(
+    currentDestination: BottomNavigationDestination,
     onNavigationItemClicked: (String) -> Unit,
     floatingActionButton: @Composable (() -> Unit)? = null
 ) {
-    var navBarSelectedItem by remember { mutableIntStateOf(0) }
-
-    //Log.d("ME", navBarSelectedItem.toString())
-
     BottomAppBar(
         actions = {
             NavigationBar {
-                bottomNavBarDestinations().forEachIndexed { index, destination ->
+                bottomNavBarDestinations().forEach { destination ->
                     NavigationBarItem(
-                        selected = index == navBarSelectedItem,
+                        selected = destination == currentDestination,
                         label = { Text(stringResource(destination.labelRes)) },
                         icon = {
                             Icon(

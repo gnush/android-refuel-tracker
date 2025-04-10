@@ -66,7 +66,6 @@ import kotlin.math.roundToInt
 //    month select: navigate directly to the selected month of the same year
 //    year select: navigate directly to the selected year selecting the same month
 //    alternatively: just one click to open a date picker dialog
-//  - (maybe) add gesture month navigation on calendar header
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CalendarView(
@@ -161,6 +160,7 @@ private fun CalendarHeader(
     // TODO:
     //  - only react when gesture released / not clicked anymore
     //  - animate (e.g. with spring) smooth back to zero position
+    //  - generally go (smoothly) back to 0 when click released
     if (offset <= -250) {
         offset = 0f
         onPreviousMonthClick()
