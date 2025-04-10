@@ -132,8 +132,6 @@ private fun FuelStopInputForm(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
         modifier = modifier
     ) {
-        Log.d("ME", fuelStopDetails.toString())
-
         var showTimeDialog by remember { mutableStateOf(false) }
         var showDateDialog by remember { mutableStateOf(false) }
 

@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -37,6 +36,9 @@ import org.refueltracker.data.FuelStopAverageValues
 import org.refueltracker.data.FuelStopSumValues
 import org.refueltracker.ui.Config
 import org.refueltracker.ui.RefuelTrackerViewModelProvider
+import org.refueltracker.ui.extensions.displaySign
+import org.refueltracker.ui.extensions.displayText
+import org.refueltracker.ui.extensions.valueChangeColor
 import org.refueltracker.ui.navigation.BottomNavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 import java.math.BigDecimal
@@ -53,7 +55,6 @@ object StatisticsHomeDestination: BottomNavigationDestination {
 
 // TODO:
 //  - add statistics for favourite fuel sort etc?
-//  - BigDecimal.displayText extension function (Round to DECIMAL places)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -143,7 +144,7 @@ private fun AllTimeAverageFuelStatisticsCard(
                     ),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                AverageValueText(
+                ValueText(
                     value = sums.price,
                     prefix = {
                         Icon(
@@ -153,7 +154,7 @@ private fun AllTimeAverageFuelStatisticsCard(
                     },
                     suffix = Config.DISPLAY_CURRENCY_SIGN
                 )
-                AverageValueText(
+                ValueText(
                     value = sums.volume,
                     prefix = {
                         Icon(
@@ -173,17 +174,17 @@ private fun AllTimeAverageFuelStatisticsCard(
                     ),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                AverageValueText(
+                ValueText(
                     value = averages.price,
                     prefix = { Text("∅") },
                     suffix = Config.DISPLAY_CURRENCY_SIGN
                 )
-                AverageValueText(
+                ValueText(
                     value = averages.volume,
                     prefix = { Text("∅") },
                     suffix = Config.DISPLAY_VOLUME_SIGN
                 )
-                AverageValueText(
+                ValueText(
                     value = averages.pricePerVolume,
                     prefix = { Text("∅") },
                     suffix = "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}"
@@ -223,7 +224,7 @@ private fun AverageFuelStatisticsCard(
             AverageValueColumn(heading = previousHeading, stats = previousStats)
             AverageValueColumn(heading = currentHeading, stats = currentStats)
             AverageValueColumn(
-                stats = previousStats-currentStats,
+                stats = currentStats-previousStats,
                 isValueDiff = true,
                 heading = diffHeading
             )
@@ -240,19 +241,19 @@ private fun AverageValueColumn(
 ) {
     Column(modifier = modifier) {
         Text(if (heading != null) stringResource(heading) else "")
-        AverageValueText(
+        ValueText(
             value = stats.price,
             prefix = { Text("∅") },
             suffix = Config.DISPLAY_CURRENCY_SIGN,
             isValueDiff = isValueDiff
         )
-        AverageValueText(
+        ValueText(
             value = stats.volume,
             prefix = { Text("∅") },
             suffix = Config.DISPLAY_VOLUME_SIGN,
             isValueDiff = isValueDiff
         )
-        AverageValueText(
+        ValueText(
             value = stats.pricePerVolume,
             prefix = { Text("∅") },
             suffix = "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}",
@@ -262,7 +263,7 @@ private fun AverageValueColumn(
 }
 
 @Composable
-private fun AverageValueText(
+private fun ValueText(
     value: BigDecimal,
     prefix: @Composable () -> Unit,
     suffix: String,
@@ -279,32 +280,18 @@ private fun AverageValueText(
         prefix()
         Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
         if (isValueDiff)
-            Text(
-                text = if (value.sign().isEmpty()) value.toString() else "${value.sign()} ${value.abs()}",
-                color = value.valueChangeColor()
+            Text(text = if (value.displaySign.isEmpty())
+                            value.displayText
+                        else
+                            "${value.displaySign} ${value.abs().displayText}",
+                 color = value.valueChangeColor
             )
         else
-            Text(value.toString())
+            Text(value.displayText)
         Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
         Text(suffix)
     }
 }
-
-private fun BigDecimal.sign(): String =
-    if (signum() < 0)
-        "-"
-    else if (signum() > 0)
-        "+"
-    else
-        ""
-
-private fun BigDecimal.valueChangeColor(): Color =
-    if (signum() < 0)
-        Config.DECREASE_COLOR
-    else if (signum() > 0)
-        Config.INCREASE_COLOR
-    else
-        Color.Unspecified
 
 @Preview(showBackground = true)
 @Composable
@@ -322,22 +309,16 @@ private fun AllTimeFuelStatisticsCardPreview() {
     }
 }
 
-private operator fun FuelStopAverageValues.minus(other: FuelStopAverageValues) = FuelStopAverageValues(
-    pricePerVolume = pricePerVolume - other.pricePerVolume,
-    volume = volume - other.volume,
-    price = price - other.price
-)
-
 @Preview(showBackground = true)
 @Composable
 private fun FuelStatisticsCardPreview() {
     val ppv1 = BigDecimal("1.769")
     val vol1 = BigDecimal("76.87")
-    val price1 = (ppv1*vol1).setScale(Config.CURRENCY_DECIMAL_PLACES_DEFAULT, RoundingMode.HALF_UP)
+    val price1 = ppv1*vol1
 
     val ppv2 = BigDecimal("1.579")
     val vol2 = BigDecimal("85.32")
-    val price2 = (ppv2*vol2).setScale(Config.CURRENCY_DECIMAL_PLACES_DEFAULT, RoundingMode.HALF_UP)
+    val price2 = ppv2*vol2
 
     RefuelTrackerTheme {
         AverageFuelStatisticsCard(

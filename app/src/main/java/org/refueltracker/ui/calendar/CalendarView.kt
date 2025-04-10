@@ -42,6 +42,8 @@ import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.number
 import org.refueltracker.R
 import org.refueltracker.ui.RefuelTrackerViewModelProvider
+import org.refueltracker.ui.extensions.abbreviationId
+import org.refueltracker.ui.extensions.monthOfYearId
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 
 @Composable
@@ -114,7 +116,7 @@ fun CalendarView(
                     )
                 }
             }
-            val monthNameId = viewModel.uiState.month.monthOfYearId()
+            val monthNameId = viewModel.uiState.month.monthOfYearId
             Text(
                 text = "${stringResource(monthNameId)} ${viewModel.uiState.year}",
                 style = typography.headlineMedium,
@@ -248,7 +250,7 @@ private fun CalendarWeekHeader(weekday: DayOfWeek, modifier: Modifier = Modifier
             .fillMaxSize()
     ) {
         Text(
-            text = stringResource(weekday.abbreviationId()),
+            text = stringResource(weekday.abbreviationId),
             color = colorScheme.onPrimaryContainer,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
@@ -303,35 +305,6 @@ private fun getWeekDays(startFromSunday: Boolean): List<DayOfWeek> =
         listOf(DayOfWeek(7), DayOfWeek(1), DayOfWeek(2), DayOfWeek(3), DayOfWeek(4), DayOfWeek(5), DayOfWeek(6))
     else
         listOf(DayOfWeek(1), DayOfWeek(2), DayOfWeek(3), DayOfWeek(4), DayOfWeek(5), DayOfWeek(6), DayOfWeek(7))
-
-@StringRes
-private fun DayOfWeek.abbreviationId(): Int = when(isoDayNumber) {
-    1 -> R.string.day_of_week_abbreviation_1
-    2 -> R.string.day_of_week_abbreviation_2
-    3 -> R.string.day_of_week_abbreviation_3
-    4 -> R.string.day_of_week_abbreviation_4
-    5 -> R.string.day_of_week_abbreviation_5
-    6 -> R.string.day_of_week_abbreviation_6
-    7 -> R.string.day_of_week_abbreviation_7
-    else -> R.string.day_of_week_abbreviation_1
-}
-
-@StringRes
-private fun Month.monthOfYearId(): Int = when(number) {
-    1 -> R.string.month_1
-    2 -> R.string.month_2
-    3 -> R.string.month_3
-    4 -> R.string.month_4
-    5 -> R.string.month_5
-    6 -> R.string.month_6
-    7 -> R.string.month_7
-    8 -> R.string.month_8
-    9 -> R.string.month_9
-    10 -> R.string.month_10
-    11 -> R.string.month_11
-    12 -> R.string.month_12
-    else -> R.string.month_1
-}
 
 @Preview(showBackground = true)
 @Composable

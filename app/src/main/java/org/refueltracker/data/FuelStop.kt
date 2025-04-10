@@ -22,7 +22,13 @@ data class FuelStopAverageValues(
     val pricePerVolume: BigDecimal = BigDecimal.ZERO,
     val volume: BigDecimal = BigDecimal.ZERO,
     val price: BigDecimal = BigDecimal.ZERO
-)
+) {
+    operator fun minus(other: FuelStopAverageValues) = FuelStopAverageValues(
+        pricePerVolume = this.pricePerVolume - other.pricePerVolume,
+        volume = this.volume - other.volume,
+        price = this.price - other.price
+    )
+}
 
 data class FuelStopSumValues(
     val volume: BigDecimal = BigDecimal.ZERO,
