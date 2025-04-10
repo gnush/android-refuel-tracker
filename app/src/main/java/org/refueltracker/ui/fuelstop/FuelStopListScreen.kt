@@ -48,6 +48,8 @@ import org.refueltracker.R
 import org.refueltracker.data.FuelStop
 import org.refueltracker.ui.Config
 import org.refueltracker.ui.RefuelTrackerViewModelProvider
+import org.refueltracker.ui.extensions.defaultText
+import org.refueltracker.ui.extensions.specialText
 import org.refueltracker.ui.navigation.BottomNavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 import java.math.BigDecimal
@@ -153,12 +155,12 @@ private fun FuelStopListItem(fuelStop: FuelStop, modifier: Modifier = Modifier) 
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(fuelStop.fuelSort)
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalVolume} ${Config.DISPLAY_VOLUME_SIGN}")
+                Text("${fuelStop.totalVolume.defaultText} ${Config.DISPLAY_VOLUME_SIGN}")
             }
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text("${fuelStop.pricePerVolume} ${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}")
+                Text("${fuelStop.pricePerVolume.specialText} ${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}")
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalPrice} ${Config.DISPLAY_CURRENCY_SIGN}")
+                Text("${fuelStop.totalPrice.defaultText} ${Config.DISPLAY_CURRENCY_SIGN}")
             }
         }
     }

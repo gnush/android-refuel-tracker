@@ -10,11 +10,9 @@ fun FuelStopDetails.updateBasedOnPricePerVolume(pricePerVolume: String) = copy(
     pricePerVolume = pricePerVolume,
     totalPrice = try {
         (pricePerVolume.toBigDecimal() * totalVolume.toBigDecimal())
-            .setScale(
-                Config.CURRENCY_DECIMAL_PLACES_DEFAULT,
-                RoundingMode.HALF_UP
-            ).toString()
-    } catch (_: Exception) {
+            .defaultText
+    } catch (_: NumberFormatException) {
+        Log.d("ENTRY_UPDATE_ON_PPV", "could not convert '$pricePerVolume' or '$totalVolume'")
         totalPrice
     }
 )
@@ -23,11 +21,9 @@ fun FuelStopDetails.updateBasedOnTotalVolume(totalVolume: String) = copy(
     totalVolume = totalVolume,
     totalPrice = try {
         (pricePerVolume.toBigDecimal() * totalVolume.toBigDecimal())
-            .setScale(
-                Config.CURRENCY_DECIMAL_PLACES_DEFAULT,
-                RoundingMode.HALF_UP
-            ).toString()
-    } catch (_: Exception) {
+            .defaultText
+    } catch (_: NumberFormatException) {
+        Log.d("ENTRY_UPDATE_ON_VOL", "could not convert '$totalVolume' or '$totalPrice'")
         totalPrice
     }
 )
@@ -37,12 +33,12 @@ fun FuelStopDetails.updateBasedOnTotalPrice(totalPrice: String) = copy(
     totalVolume = try {
         val ppv = pricePerVolume.toBigDecimal()
         (totalPrice.toBigDecimal().divide(ppv, ppv.scale(), RoundingMode.HALF_UP))
-            .setScale(
-                Config.VOLUME_DECIMAL_PLACES_DEFAULT,
-                RoundingMode.HALF_UP
-            ).toString()
-    } catch (_: Exception) {
-        Log.d("ME", "oopsies")
+            .defaultText
+    } catch (_: NumberFormatException) {
+        Log.d("ENTRY_UPDATE_ON_PRICE", "could not convert '$totalPrice' or '$totalVolume'")
+        totalVolume
+    } catch (e: ArithmeticException) {
+        Log.d("ENTRY_UPDATE_ON_PRICE", "${e.message}")
         totalVolume
     }
 )

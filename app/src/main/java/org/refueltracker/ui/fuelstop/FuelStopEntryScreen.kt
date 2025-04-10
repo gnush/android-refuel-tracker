@@ -1,6 +1,5 @@
 package org.refueltracker.ui.fuelstop
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

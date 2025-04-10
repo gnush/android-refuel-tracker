@@ -5,7 +5,6 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format.DateTimeFormat
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
-import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.format.char
 import kotlinx.datetime.format.optional
@@ -43,8 +42,8 @@ object Config {
     const val DISPLAY_CURRENCY_SIGN: String = "€"
     const val DISPLAY_VOLUME_SIGN: String = "L"
 
-    const val CURRENCY_DECIMAL_PLACES_DEFAULT = 2
-    const val VOLUME_DECIMAL_PLACES_DEFAULT = 2
+    const val DECIMAL_PLACES_DEFAULT = 2
+    const val DECIMAL_PLACES_SPECIAL = 3
 
     val INCREASE_COLOR = Color.Red
     val DECREASE_COLOR = Color.Blue

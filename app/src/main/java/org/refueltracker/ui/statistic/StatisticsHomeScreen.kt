@@ -37,7 +37,7 @@ import org.refueltracker.data.FuelStopSumValues
 import org.refueltracker.ui.Config
 import org.refueltracker.ui.RefuelTrackerViewModelProvider
 import org.refueltracker.ui.extensions.displaySign
-import org.refueltracker.ui.extensions.displayText
+import org.refueltracker.ui.extensions.defaultText
 import org.refueltracker.ui.extensions.valueChangeColor
 import org.refueltracker.ui.navigation.BottomNavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
@@ -281,13 +281,13 @@ private fun ValueText(
         Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
         if (isValueDiff)
             Text(text = if (value.displaySign.isEmpty())
-                            value.displayText
+                            value.defaultText
                         else
-                            "${value.displaySign} ${value.abs().displayText}",
+                            "${value.displaySign} ${value.abs().defaultText}",
                  color = value.valueChangeColor
             )
         else
-            Text(value.displayText)
+            Text(value.defaultText)
         Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
         Text(suffix)
     }
@@ -298,7 +298,7 @@ private fun ValueText(
 private fun AllTimeFuelStatisticsCardPreview() {
     val ppv = BigDecimal("1.679")
     val vol = BigDecimal("23.87")
-    val price = (ppv*vol).setScale(Config.CURRENCY_DECIMAL_PLACES_DEFAULT, RoundingMode.HALF_UP)
+    val price = (ppv*vol).setScale(Config.DECIMAL_PLACES_DEFAULT, RoundingMode.HALF_UP)
 
     RefuelTrackerTheme {
         AllTimeAverageFuelStatisticsCard(

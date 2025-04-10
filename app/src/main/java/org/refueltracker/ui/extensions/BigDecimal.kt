@@ -6,10 +6,16 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 /**
- * Returns a String representation rounded to [Config.CURRENCY_DECIMAL_PLACES_DEFAULT] decimal places.
+ * Returns a String representation rounded to [Config.DECIMAL_PLACES_DEFAULT] decimal places.
  */
-val BigDecimal.displayText: String
-    get() = this.setScale(Config.CURRENCY_DECIMAL_PLACES_DEFAULT, RoundingMode.HALF_UP).toString()
+val BigDecimal.defaultText: String
+    get() = this.setScale(Config.DECIMAL_PLACES_DEFAULT, RoundingMode.HALF_UP).toString()
+
+/**
+ * Returns a String representation rounded to [Config.DECIMAL_PLACES_SPECIAL] decimal places.
+ */
+val BigDecimal.specialText: String
+    get() = this.setScale(Config.DECIMAL_PLACES_SPECIAL, RoundingMode.HALF_UP).toString()
 
 /**
  * Returns '-' when the value is below zero
