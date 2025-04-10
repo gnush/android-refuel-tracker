@@ -6,6 +6,11 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import java.math.BigDecimal
 
+// TODO: Change database schema
+//  - FuelSort Table, with foreign key
+//  - Station table, with foreign key?
+//  - Currency (type) with foreign key
+//  - Volume (type) with foreign key
 @Entity(tableName = "fuel_stops")
 data class FuelStop(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
