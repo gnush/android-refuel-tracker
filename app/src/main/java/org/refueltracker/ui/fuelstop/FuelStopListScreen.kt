@@ -141,6 +141,9 @@ private fun FuelStopListItem(fuelStop: FuelStop, modifier: Modifier = Modifier) 
         modifier = modifier,
         elevation = CardDefaults.cardElevation(
             defaultElevation = dimensionResource(R.dimen.card_elevation)
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         )
     ) {
         Column(
