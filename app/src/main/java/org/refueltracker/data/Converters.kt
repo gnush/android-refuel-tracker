@@ -7,13 +7,13 @@ import java.math.BigDecimal
 
 class Converters {
     @TypeConverter
-    fun bigDecimalFromString(value: String): BigDecimal = BigDecimal(value)
+    fun bigDecimalFromString(value: String?): BigDecimal = if (value != null) BigDecimal(value) else BigDecimal.ZERO
 
     @TypeConverter
     fun bigDecimalToString(value: BigDecimal) = value.toString()
 
     /**
-     * Converts a [LocalDate] to an [Int] with YYYYMMDD format
+     * Converts a [LocalDate] to an [Int] with yyyyMMdd format
      * @param day The [LocalDate] to convert
      */
     @TypeConverter
@@ -23,7 +23,7 @@ class Converters {
 
     /**
      * Converts an [Int] to a [LocalDate]
-     * @param day The [Int] to convert in YYYYMMDD format
+     * @param day The [Int] to convert in yyyyMMdd format
      */
     @TypeConverter
     fun localDateFromInt(day: Int): LocalDate = LocalDate(
@@ -33,7 +33,7 @@ class Converters {
     )
 
     /**
-     * Converts [LocalTime] to [Int] with HHMMSS format
+     * Converts [LocalTime] to [Int] with HHmmSS format
      * @param time The [LocalTime] to convert
      */
     @TypeConverter
@@ -43,7 +43,7 @@ class Converters {
 
     /**
      * Converts [Int] to [LocalTime]
-     * @param time The [Int] to convert in HHMMSS format
+     * @param time The [Int] to convert in HHmmSS format
      */
     @TypeConverter
     fun localTimeFromInt(time: Int): LocalTime = LocalTime(

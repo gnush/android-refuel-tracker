@@ -1,6 +1,5 @@
 package org.refueltracker.ui.statistic
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,15 +28,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.refueltracker.CommonBottomAppBar
 import org.refueltracker.CommonTopAppBar
 import org.refueltracker.R
-import org.refueltracker.data.FuelStop
+import org.refueltracker.data.FuelStopDecimalValues
 import org.refueltracker.ui.Config
 import org.refueltracker.ui.RefuelTrackerViewModelProvider
 import org.refueltracker.ui.navigation.BottomNavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.Locale
-import kotlin.math.absoluteValue
 
 object StatisticsHomeDestination: BottomNavigationDestination {
     override val route: String = "statistics_home"
@@ -49,7 +46,7 @@ object StatisticsHomeDestination: BottomNavigationDestination {
 }
 
 // TODO:
-//  - add statistics for favorite fuel sort etc?
+//  - add statistics for favourite fuel sort etc?
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,44 +75,21 @@ fun StatisticsHomeScreen(
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
-            // TODO: move calculation to no ui file, doesn't belong here
-            var sum = viewModel.uiState.allStops
-                .map(FuelStop::pricePerVolume)
-                .fold(BigDecimal("0")) { x, xs -> x+xs }
-            val size = viewModel.uiState.allStops.size.toBigDecimal()
-            val avgPPV =
-                if (size == BigDecimal("0")) BigDecimal("0")
-                else sum.divide(
-                    size,
-                    RoundingMode.HALF_UP
-                )
-
-            sum = viewModel.uiState.allStops
-                .map(FuelStop::totalVolume)
-                .fold(BigDecimal("0")) { x, xs -> x+xs }
-            val avgVol =
-                if (size == BigDecimal("0")) BigDecimal("0")
-                else sum.divide(
-                    size,
-                    RoundingMode.HALF_UP
-                )
-
-            sum = viewModel.uiState.allStops
-                .map(FuelStop::totalPrice)
-                .fold(BigDecimal("0")) { x, xs -> x+xs }
-            val avgPrice =
-                if (size == BigDecimal("0")) BigDecimal("0")
-                else sum.divide(
-                    size,
-                    RoundingMode.HALF_UP
-                )
-
-            // TODO: add monthly and yearly statistics
+            AverageFuelStatisticsCard(
+                currentHeading = R.string.current_month_heading,
+                currentStats = viewModel.uiState.currentMonthStops,
+                previousHeading = R.string.previous_month_heading,
+                previousStats = viewModel.uiState.previousMonthStops
+            )
+            AverageFuelStatisticsCard(
+                currentHeading = R.string.current_year_heading,
+                currentStats = viewModel.uiState.currentYearStops,
+                previousHeading = R.string.previous_year_heading,
+                previousStats = viewModel.uiState.previousYearStops
+            )
             AllTimeAverageFuelStatisticsCard(
                 heading = R.string.all_time_average_heading,
-                averagePricePerVolume = avgPPV,
-                averageVolume = avgVol,
-                averagePrice = avgPrice
+                stats = viewModel.uiState.allStops
             )
         }
     }
@@ -124,9 +98,7 @@ fun StatisticsHomeScreen(
 @Composable
 fun AllTimeAverageFuelStatisticsCard(
     @StringRes heading: Int,
-    averagePricePerVolume: BigDecimal,
-    averageVolume: BigDecimal,
-    averagePrice: BigDecimal,
+    stats: FuelStopDecimalValues,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -138,24 +110,28 @@ fun AllTimeAverageFuelStatisticsCard(
         Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))) {
             Text(stringResource(heading))
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(
                         top = dimensionResource(R.dimen.padding_small),
                         bottom = dimensionResource(R.dimen.padding_small)
                     ),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                AverageValue(
-                    averagePricePerVolume,
-                    "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}"
+                AverageValueText(
+                    value = stats.price,
+                    prefix = { Text("∅") },
+                    suffix = Config.DISPLAY_CURRENCY_SIGN
                 )
-                AverageValue(
-                    averageVolume,
-                    Config.DISPLAY_VOLUME_SIGN
+                AverageValueText(
+                    value = stats.volume,
+                    prefix = { Text("∅") },
+                    suffix = Config.DISPLAY_VOLUME_SIGN
                 )
-                AverageValue(
-                    averagePrice,
-                    Config.DISPLAY_CURRENCY_SIGN
+                AverageValueText(
+                    value = stats.pricePerVolume,
+                    prefix = { Text("∅") },
+                    suffix = "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}"
                 )
             }
         }
@@ -166,14 +142,10 @@ fun AllTimeAverageFuelStatisticsCard(
 fun AverageFuelStatisticsCard(
     @StringRes currentHeading: Int,
     @StringRes previousHeading: Int,
-    @StringRes diffHeading: Int,
-    currentAvgPricePerVolume: BigDecimal,
-    currentAvgVolume: BigDecimal,
-    currentAvgPrice: BigDecimal,
-    previousAvgPricePerVolume: BigDecimal,
-    previousAvgVolume: BigDecimal,
-    previousAvgPrice: BigDecimal,
-    modifier: Modifier = Modifier
+    currentStats: FuelStopDecimalValues,
+    previousStats: FuelStopDecimalValues,
+    modifier: Modifier = Modifier,
+    @StringRes diffHeading: Int? = null
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -187,69 +159,54 @@ fun AverageFuelStatisticsCard(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Absolute.SpaceBetween
         ) {
-            Column {
-                Text(stringResource(currentHeading))
-                AverageValue(currentAvgPricePerVolume,"${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}")
-                AverageValue(currentAvgVolume, Config.DISPLAY_VOLUME_SIGN)
-                AverageValue(currentAvgPrice, Config.DISPLAY_CURRENCY_SIGN)
-            }
-            Column {
-                Text(stringResource(previousHeading))
-                AverageValue(previousAvgPricePerVolume, "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}")
-                AverageValue(previousAvgVolume, Config.DISPLAY_VOLUME_SIGN)
-                AverageValue(previousAvgPrice, Config.DISPLAY_CURRENCY_SIGN)
-            }
-            Column {
-                val diffAvgPricePerVolume = previousAvgPricePerVolume-currentAvgPricePerVolume
-                val diffAvgVolume = previousAvgVolume-currentAvgVolume
-                val diffAvgPrice = previousAvgPrice-currentAvgPrice
-                Text(stringResource(diffHeading))
-                AverageValue(
-                    value = diffAvgPricePerVolume.abs(),
-                    suffix = "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}",
-                    color = valueChangeColor(diffAvgPricePerVolume),
-                    sign = sign(diffAvgPricePerVolume)
-                )
-                AverageValue(
-                    value = diffAvgVolume.abs(),
-                    suffix = Config.DISPLAY_VOLUME_SIGN,
-                    color = valueChangeColor(diffAvgVolume),
-                    sign = sign(diffAvgVolume)
-                )
-                AverageValue(
-                    value = diffAvgPrice.abs(),
-                    suffix = Config.DISPLAY_CURRENCY_SIGN,
-                    color = valueChangeColor(diffAvgPrice),
-                    sign = sign(diffAvgPrice)
-                )
-            }
+            AverageValueColumn(heading = previousHeading, stats = previousStats)
+            AverageValueColumn(heading = currentHeading, stats = currentStats)
+            AverageValueColumn(
+                stats = previousStats-currentStats,
+                isValueDiff = true,
+                heading = diffHeading
+            )
         }
     }
 }
 
-private fun sign(value: BigDecimal): String =
-    if (value.signum() < 0)
-        "-"
-    else if (value.signum() > 0)
-        "+"
-    else
-        ""
-
-private fun valueChangeColor(value: BigDecimal): Color? =
-    if (value.signum() < 0)
-        Config.DECREASE_COLOR
-    else if (value.signum() > 0)
-        Config.INCREASE_COLOR
-    else
-        null
+@Composable
+private fun AverageValueColumn(
+    stats: FuelStopDecimalValues,
+    modifier: Modifier = Modifier,
+    @StringRes heading: Int? = null,
+    isValueDiff: Boolean = false
+) {
+    Column(modifier = modifier) {
+        Text(if (heading != null) stringResource(heading) else "")
+        AverageValueText(
+            value = stats.price,
+            prefix = { Text("∅") },
+            suffix = Config.DISPLAY_CURRENCY_SIGN,
+            isValueDiff = isValueDiff
+        )
+        AverageValueText(
+            value = stats.volume,
+            prefix = { Text("∅") },
+            suffix = Config.DISPLAY_VOLUME_SIGN,
+            isValueDiff = isValueDiff
+        )
+        AverageValueText(
+            value = stats.pricePerVolume,
+            prefix = { Text("∅") },
+            suffix = "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}",
+            isValueDiff = isValueDiff
+        )
+    }
+}
 
 @Composable
-private fun AverageValue(
+private fun AverageValueText(
     value: BigDecimal,
+    prefix: @Composable () -> Unit,
     suffix: String,
-    color: Color? = null,
     modifier: Modifier = Modifier,
-    sign: String = "",
+    isValueDiff: Boolean = false
 ) {
     Row(
         modifier = modifier.padding(
@@ -258,12 +215,15 @@ private fun AverageValue(
         ),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text("∅")
+        prefix()
         Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
-        if (color == null)
-            Text(if (sign.isEmpty()) value.toString() else "$sign $value")
+        if (isValueDiff)
+            Text(
+                text = if (value.sign().isEmpty()) value.toString() else "${value.sign()} ${value.abs()}",
+                color = value.valueChangeColor()
+            )
         else
-            Text(if (sign.isEmpty()) value.toString() else "$sign $value", color = color)
+            Text(value.toString())
         Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
         Text(suffix)
     }
@@ -284,13 +244,8 @@ private fun FuelStatisticsCardPreview() {
         AverageFuelStatisticsCard(
             currentHeading = R.string.current_month_heading,
             previousHeading = R.string.previous_month_heading,
-            diffHeading = R.string.diff_average_heading,
-            currentAvgPricePerVolume = ppv1,
-            currentAvgVolume = vol1,
-            currentAvgPrice = price1,
-            previousAvgPricePerVolume = ppv2,
-            previousAvgVolume = vol2,
-            previousAvgPrice = price2,
+            currentStats = FuelStopDecimalValues(ppv1, vol1, price1),
+            previousStats = FuelStopDecimalValues(ppv2, vol2, price2)
         )
     }
 }
@@ -305,9 +260,29 @@ private fun AllTimeFuelStatisticsCardPreview() {
     RefuelTrackerTheme {
         AllTimeAverageFuelStatisticsCard(
             heading = R.string.all_time_average_heading,
-            averagePricePerVolume = ppv,
-            averageVolume = vol,
-            averagePrice = price
+            stats = FuelStopDecimalValues(ppv, vol, price)
         )
     }
 }
+
+private fun BigDecimal.sign(): String =
+    if (signum() < 0)
+        "-"
+    else if (signum() > 0)
+        "+"
+    else
+        ""
+
+private fun BigDecimal.valueChangeColor(): Color =
+    if (signum() < 0)
+        Config.DECREASE_COLOR
+    else if (signum() > 0)
+        Config.INCREASE_COLOR
+    else
+        Color.Unspecified
+
+private operator fun FuelStopDecimalValues.minus(other: FuelStopDecimalValues) = FuelStopDecimalValues(
+    pricePerVolume = pricePerVolume - other.pricePerVolume,
+    volume = volume - other.volume,
+    price = price - other.price
+)

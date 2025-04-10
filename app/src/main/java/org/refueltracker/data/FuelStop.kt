@@ -17,3 +17,9 @@ data class FuelStop(
     val day: LocalDate,
     val time: LocalTime? = null
 )
+
+data class FuelStopDecimalValues(
+    val pricePerVolume: BigDecimal = BigDecimal.ZERO,
+    val volume: BigDecimal = BigDecimal.ZERO,
+    val price: BigDecimal = BigDecimal.ZERO
+)
