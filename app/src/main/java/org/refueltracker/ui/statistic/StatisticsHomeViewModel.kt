@@ -7,7 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import org.refueltracker.data.FuelStopDecimalValues
+import org.refueltracker.data.FuelStopAverageValues
+import org.refueltracker.data.FuelStopSumValues
 import org.refueltracker.data.FuelStopsRepository
 import org.refueltracker.ui.calendar.CalendarUiState
 import org.refueltracker.ui.calendar.previousMonth
@@ -21,31 +22,33 @@ class StatisticsHomeViewModel(
     init {
         viewModelScope.launch {
             uiState = uiState.copy(
-                allStops = fuelStopsRepository
+                allStopsAvg = fuelStopsRepository
                     .averageFuelStats()
                     .first(),
-                currentYearStops = fuelStopsRepository
+                currentYearAvg = fuelStopsRepository
                     .averageFuelStats(uiState.currentMonthCalendar.year)
                     .first(),
-                previousYearStops = fuelStopsRepository
+                previousYearAvg = fuelStopsRepository
                     .averageFuelStats(uiState.currentMonthCalendar.year-1)
                     .first(),
-                currentMonthStops = fuelStopsRepository
+                currentMonthAvg = fuelStopsRepository
                     .averageFuelStats(uiState.currentMonthCalendar.year, uiState.currentMonthCalendar.month)
                     .first(),
-                previousMonthStops = fuelStopsRepository
+                previousMonthAvg = fuelStopsRepository
                     .averageFuelStats(uiState.currentMonthCalendar.previousMonth().year, uiState.currentMonthCalendar.previousMonth().month)
-                    .first()
+                    .first(),
+                allStopsSum = fuelStopsRepository.sumFuelStats().first()
             )
         }
     }
 }
 
 data class StatisticsHomeUiState(
-    val allStops: FuelStopDecimalValues = FuelStopDecimalValues(),
-    val currentMonthStops: FuelStopDecimalValues = FuelStopDecimalValues(),
-    val previousMonthStops: FuelStopDecimalValues = FuelStopDecimalValues(),
-    val currentYearStops: FuelStopDecimalValues = FuelStopDecimalValues(),
-    val previousYearStops: FuelStopDecimalValues = FuelStopDecimalValues(),
+    val allStopsAvg: FuelStopAverageValues = FuelStopAverageValues(),
+    val allStopsSum: FuelStopSumValues = FuelStopSumValues(),
+    val currentMonthAvg: FuelStopAverageValues = FuelStopAverageValues(),
+    val previousMonthAvg: FuelStopAverageValues = FuelStopAverageValues(),
+    val currentYearAvg: FuelStopAverageValues = FuelStopAverageValues(),
+    val previousYearAvg: FuelStopAverageValues = FuelStopAverageValues(),
     val currentMonthCalendar: CalendarUiState = CalendarUiState()
 )

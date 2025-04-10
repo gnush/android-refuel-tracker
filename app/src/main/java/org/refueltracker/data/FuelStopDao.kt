@@ -58,7 +58,7 @@ interface FuelStopDao {
                      avg(totalPrice) as price,
                      avg(totalVolume) as volume
               from fuel_stops""")
-    fun averageFuelStats(): Flow<FuelStopDecimalValues>
+    fun averageFuelStats(): Flow<FuelStopAverageValues>
 
     /**
      * Retrieve the average price per volume, volume and price
@@ -71,14 +71,14 @@ interface FuelStopDao {
                      avg(totalVolume) as volume
               from fuel_stops
               where day between :from and :to""")
-    fun averageFuelStats(from: LocalDate, to: LocalDate): Flow<FuelStopDecimalValues>
+    fun averageFuelStats(from: LocalDate, to: LocalDate): Flow<FuelStopAverageValues>
 
     /**
      * Retrieve the average price per volume, volume and price
      * of all fuel stops between [from] and [to].
      *
      * Assumes parameters are in yyyyMMdd format.
-     * See [Converters.localDateToInt] for more information on the format or use [FuelStopDao.averageFuelStats].
+     * See [Converters.localDateToInt] for more information on the format.
      * @param from First day of the range (inclusive)
      * @param to Last day of the range (inclusive)
      */
@@ -87,5 +87,40 @@ interface FuelStopDao {
                      avg(totalVolume) as volume
               from fuel_stops 
               where day between :from and :to""")
-    fun averageFuelStats(from: Int, to: Int): Flow<FuelStopDecimalValues>
+    fun averageFuelStats(from: Int, to: Int): Flow<FuelStopAverageValues>
+
+    /**
+     * Retrieve the sum of the volume and price of all fuel stops.
+     */
+    @Query("""select sum(totalPrice) as price,
+                     sum(totalVolume) as volume
+              from fuel_stops""")
+    fun sumFuelStats(): Flow<FuelStopSumValues>
+
+    /**
+     * Retrieve the sum of the volume and price
+     * of all fuel stops between [from] and [to].
+     * @param from First day of the range (inclusive)
+     * @param to Last day of the range (inclusive)
+     */
+    @Query("""select sum(totalPrice) as price,
+                     sum(totalVolume) as volume
+              from fuel_stops
+              where day between :from and :to""")
+    fun sumFuelStats(from: LocalDate, to: LocalDate): Flow<FuelStopSumValues>
+
+    /**
+     * Retrieve the sum of the volume and price
+     * of all fuel stops between [from] and [to].
+     *
+     * Assumes parameters are in yyyyMMdd format.
+     * See [Converters.localDateToInt] for more information on the format.
+     * @param from First day of the range (inclusive)
+     * @param to Last day of the range (inclusive)
+     */
+    @Query("""select sum(totalPrice) as price,
+                     sum(totalVolume) as volume
+              from fuel_stops
+              where day between :from and :to""")
+    fun sumFuelStats(from: Int, to: Int): Flow<FuelStopSumValues>
 }

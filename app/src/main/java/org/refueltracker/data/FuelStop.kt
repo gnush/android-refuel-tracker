@@ -18,8 +18,13 @@ data class FuelStop(
     val time: LocalTime? = null
 )
 
-data class FuelStopDecimalValues(
+data class FuelStopAverageValues(
     val pricePerVolume: BigDecimal = BigDecimal.ZERO,
+    val volume: BigDecimal = BigDecimal.ZERO,
+    val price: BigDecimal = BigDecimal.ZERO
+)
+
+data class FuelStopSumValues(
     val volume: BigDecimal = BigDecimal.ZERO,
     val price: BigDecimal = BigDecimal.ZERO
 )

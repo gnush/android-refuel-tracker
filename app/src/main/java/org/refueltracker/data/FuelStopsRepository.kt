@@ -36,25 +36,50 @@ interface FuelStopsRepository {
     /**
      * Retrieve the average price per volume, volume and price of all fuel stops.
      */
-    fun averageFuelStats(): Flow<FuelStopDecimalValues>
+    fun averageFuelStats(): Flow<FuelStopAverageValues>
 
     /**
      * Retrieve the average price per volume, volume and price
      * of all fuel stops between [from] and [to] (both inclusive).
      */
-    fun averageFuelStats(from: LocalDate, to: LocalDate): Flow<FuelStopDecimalValues>
+    fun averageFuelStats(from: LocalDate, to: LocalDate): Flow<FuelStopAverageValues>
 
     /**
      * Retrieve the average price per volume, volume and price
      * of all fuel stops of [year].
      * E.g. for year=2000, all days with pattern 2000-MM-dd.
      */
-    fun averageFuelStats(year: Int): Flow<FuelStopDecimalValues>
+    fun averageFuelStats(year: Int): Flow<FuelStopAverageValues>
 
     /**
      * Retrieve the average price per volume, volume and price
      * of all fuel stops of month [month] of year [year].
      * E.g. for year=2000 and month=FEBRUARY, all days with pattern 2000-02-dd.
      */
-    fun averageFuelStats(year: Int, month: Month): Flow<FuelStopDecimalValues>
+    fun averageFuelStats(year: Int, month: Month): Flow<FuelStopAverageValues>
+
+    /**
+     * Retrieve the sum of the volume and price of all fuel stops.
+     */
+    fun sumFuelStats(): Flow<FuelStopSumValues>
+
+    /**
+     * Retrieve the sum of the volume and price
+     * of all fuel stops between [from] and [to] (both inclusive).
+     */
+    fun sumFuelStats(from: LocalDate, to: LocalDate): Flow<FuelStopSumValues>
+
+    /**
+     * Retrieve the sum of the volume and price
+     * of all fuel stops of [year].
+     * E.g. for year=2000, all days with pattern 2000-MM-dd.
+     */
+    fun sumFuelStats(year: Int): Flow<FuelStopSumValues>
+
+    /**
+     * Retrieve the sum of the volume and price
+     * of all fuel stops of month [month] of year [year].
+     * E.g. for year=2000 and month=FEBRUARY, all days with pattern 2000-02-dd.
+     */
+    fun sumFuelStats(year: Int, month: Month): Flow<FuelStopSumValues>
 }

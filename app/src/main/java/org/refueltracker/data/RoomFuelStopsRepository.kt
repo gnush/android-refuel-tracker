@@ -45,14 +45,14 @@ class RoomFuelStopsRepository(private val fuelStopDao: FuelStopDao): FuelStopsRe
     /**
      * Retrieve the average price per volume, volume and price of all fuel stops.
      */
-    override fun averageFuelStats(): Flow<FuelStopDecimalValues> =
+    override fun averageFuelStats(): Flow<FuelStopAverageValues> =
         fuelStopDao.averageFuelStats()
 
     /**
      * Retrieve the average price per volume, volume and price
      * of all fuel stops between [from] and [to] (both inclusive).
      */
-    override fun averageFuelStats(from: LocalDate,to: LocalDate): Flow<FuelStopDecimalValues> =
+    override fun averageFuelStats(from: LocalDate,to: LocalDate): Flow<FuelStopAverageValues> =
         fuelStopDao.averageFuelStats(from, to)
 
     /**
@@ -60,7 +60,7 @@ class RoomFuelStopsRepository(private val fuelStopDao: FuelStopDao): FuelStopsRe
      * of all fuel stops of [year].
      * E.g. for year=2000, all days with pattern 2000-MM-dd.
      */
-    override fun averageFuelStats(year: Int): Flow<FuelStopDecimalValues> =
+    override fun averageFuelStats(year: Int): Flow<FuelStopAverageValues> =
         fuelStopDao.averageFuelStats(year*10000, year*10000+9999)
 
     /**
@@ -68,12 +68,38 @@ class RoomFuelStopsRepository(private val fuelStopDao: FuelStopDao): FuelStopsRe
      * of all fuel stops of month [month] of year [year].
      * E.g. for year=2000 and month=FEBRUARY, all days with pattern 2000-02-dd.
      */
-    override fun averageFuelStats(
-        year: Int,
-        month: Month
-    ): Flow<FuelStopDecimalValues> =
-        fuelStopDao.averageFuelStats(
-            from = year*10000 + month.number*100,
-            to = year*10000 + month.number*100 + 99
-        )
+    override fun averageFuelStats(year: Int, month: Month): Flow<FuelStopAverageValues> = fuelStopDao.averageFuelStats(
+        from = year*10000 + month.number*100,
+        to = year*10000 + month.number*100 + 99
+    )
+
+    /**
+     * Retrieve the sum of the volume and price of all fuel stops.
+     */
+    override fun sumFuelStats(): Flow<FuelStopSumValues> = fuelStopDao.sumFuelStats()
+
+    /**
+     * Retrieve the sum of the volume and price
+     * of all fuel stops between [from] and [to] (both inclusive).
+     */
+    override fun sumFuelStats(from: LocalDate,to: LocalDate): Flow<FuelStopSumValues> =
+        fuelStopDao.sumFuelStats(from, to)
+
+    /**
+     * Retrieve the sum of the volume and price
+     * of all fuel stops of [year].
+     * E.g. for year=2000, all days with pattern 2000-MM-dd.
+     */
+    override fun sumFuelStats(year: Int): Flow<FuelStopSumValues> =
+        fuelStopDao.sumFuelStats(year*10000, year*10000 + 9999)
+
+    /**
+     * Retrieve the sum of the volume and price
+     * of all fuel stops of month [month] of year [year].
+     * E.g. for year=2000 and month=FEBRUARY, all days with pattern 2000-02-dd.
+     */
+    override fun sumFuelStats(year: Int, month: Month): Flow<FuelStopSumValues> = fuelStopDao.sumFuelStats(
+        from = year*10000 + month.number*100,
+        to = year*10000 + month.number*100 + 99
+    )
 }
