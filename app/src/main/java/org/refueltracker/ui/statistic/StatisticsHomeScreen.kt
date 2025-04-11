@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -329,7 +330,7 @@ private fun AverageValueColumn(
     isValueDiff: Boolean = false
 ) {
     Column(modifier = modifier) {
-        heading?.invoke()
+        heading?.invoke() ?: Text("") // TODO: how to properly align the card (and the elements), do we really need a grid?
         ValueText(
             value = stats.price,
             prefix = { Text("∅") },
