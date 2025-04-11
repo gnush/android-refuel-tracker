@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -124,8 +125,7 @@ fun FuelStopEntryBody(
 private fun FuelStopInputForm(
     fuelStopDetails: FuelStopDetails,
     onValueChange: (FuelStopDetails) -> Unit,
-    modifier: Modifier = Modifier,
-    inputEnabled: Boolean = true
+    modifier: Modifier = Modifier
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
@@ -133,14 +133,6 @@ private fun FuelStopInputForm(
     ) {
         var showTimeDialog by remember { mutableStateOf(false) }
         var showDateDialog by remember { mutableStateOf(false) }
-
-        val colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-        val modifier = Modifier.fillMaxWidth()
-        val decimalKeyboard = KeyboardOptions(keyboardType = KeyboardType.Decimal)
 
         if (showTimeDialog) {
             PickTimeDialDialog(
@@ -162,99 +154,112 @@ private fun FuelStopInputForm(
             )
         }
 
-        OutlinedTextField(
+        FormTextField(
             value = fuelStopDetails.day,
             onValueChange = { onValueChange(fuelStopDetails.copy(day = it)) },
-            label = { Text(stringResource(R.string.fuel_stop_day_form_label)) },
-            colors = colors,
-            modifier = modifier,
-            enabled = inputEnabled,
-            singleLine = true,
-            trailingIcon = {
-                IconButton(
-                    onClick = { showDateDialog = true }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.DateRange,
-                        contentDescription = stringResource(R.string.pick_time_button_description)
-                    )
-                }
+            labelId = R.string.fuel_stop_day_form_label,
+            icon = {
+                FormTextFieldButton(
+                    onClick = { showDateDialog = true },
+                    icon = Icons.Default.DateRange,
+                    iconDescription = R.string.pick_date_button_description
+                )
             }
         )
-        OutlinedTextField(
+        FormTextField(
             value = fuelStopDetails.time?.format(Config.TIME_FORMAT) ?: "",
             onValueChange = { onValueChange(fuelStopDetails.copy(time = it)) },
-            label = { Text(stringResource(R.string.fuel_stop_time_form_label)) },
-            colors = colors,
-            modifier = modifier,
-            enabled = inputEnabled,
-            singleLine = true,
-            trailingIcon = {
-                IconButton(
-                    onClick = { showTimeDialog = true }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.pick_time_button_description)
-                    )
-                }
+            labelId = R.string.fuel_stop_time_form_label,
+            icon = {
+                FormTextFieldButton(
+                    onClick = { showTimeDialog = true },
+                    icon = Icons.Default.Edit,
+                    iconDescription = R.string.pick_time_button_description
+                )
             }
         )
-        OutlinedTextField(
+        FormTextField(
             value = fuelStopDetails.station,
             onValueChange = { onValueChange(fuelStopDetails.copy(station = it)) },
-            label = { Text(stringResource(R.string.fuel_stop_station_form_label)) },
-            colors = colors,
-            modifier = modifier,
-            enabled = inputEnabled,
-            singleLine = true
+            labelId = R.string.fuel_stop_station_form_label,
+            icon = {}
         )
-        OutlinedTextField(
+        FormTextField(
             value = fuelStopDetails.fuelSort,
             onValueChange = { onValueChange(fuelStopDetails.copy(fuelSort = it)) },
-            label = { Text(stringResource(R.string.fuel_stop_sort_form_label)) },
-            colors = colors,
-            modifier = modifier,
-            enabled = inputEnabled,
-            singleLine = true
+            labelId = R.string.fuel_stop_sort_form_label,
         )
-        OutlinedTextField(
+        FormTextField(
             value = fuelStopDetails.pricePerVolume,
             onValueChange = { onValueChange(fuelStopDetails.updateBasedOnPricePerVolume(it)) },
-            label = { Text(stringResource(R.string.fuel_stop_price_per_volume_form_label)) },
-            colors = colors,
-            modifier = modifier,
-            enabled = inputEnabled,
-            singleLine = true,
-            keyboardOptions = decimalKeyboard,
-            trailingIcon = {
+            labelId = R.string.fuel_stop_price_per_volume_form_label,
+            hasDecimalKeyboard = true,
+            icon = {
                 Row {
                     Text(Config.DISPLAY_CURRENCY_SIGN)
                     Text("/${Config.DISPLAY_VOLUME_SIGN}")
                 }
             }
         )
-        OutlinedTextField(
+        FormTextField(
             value = fuelStopDetails.totalVolume,
             onValueChange = { onValueChange(fuelStopDetails.updateBasedOnTotalVolume(it)) },
-            label = { Text(stringResource(R.string.fuel_stop_total_volume_form_label)) },
-            colors = colors,
-            modifier = modifier,
-            enabled = inputEnabled,
-            singleLine = true,
-            keyboardOptions = decimalKeyboard,
-            trailingIcon = { Text(Config.DISPLAY_VOLUME_SIGN) }
+            labelId = R.string.fuel_stop_total_volume_form_label,
+            hasDecimalKeyboard = true,
+            icon = { Text(Config.DISPLAY_VOLUME_SIGN) }
         )
-        OutlinedTextField(
+        FormTextField(
             value = fuelStopDetails.totalPrice,
             onValueChange = { onValueChange(fuelStopDetails.updateBasedOnTotalPrice(it)) },
-            label = { Text(stringResource(R.string.fuel_stop_total_paid_form_label)) },
-            colors = colors,
-            modifier = modifier,
-            enabled = inputEnabled,
-            singleLine = true,
-            keyboardOptions = decimalKeyboard,
-            leadingIcon = { Text(Config.DISPLAY_CURRENCY_SIGN) }
+            labelId = R.string.fuel_stop_total_paid_form_label,
+            hasDecimalKeyboard = true,
+            icon = { Text(Config.DISPLAY_CURRENCY_SIGN) }
+        )
+    }
+}
+
+@Composable
+private fun FormTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    @StringRes labelId: Int,
+    modifier: Modifier = Modifier,
+    hasDecimalKeyboard: Boolean = false,
+    isIconLeading: Boolean = false,
+    icon: @Composable (() -> Unit)? = null
+) {
+    val colors = OutlinedTextFieldDefaults.colors(
+        focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+        unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer
+    )
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(stringResource(labelId)) },
+        colors = colors,
+        singleLine = true,
+        keyboardOptions =
+            if (hasDecimalKeyboard) KeyboardOptions(keyboardType = KeyboardType.Decimal)
+            else KeyboardOptions.Default,
+        leadingIcon = if (isIconLeading) icon else null,
+        trailingIcon = if (!isIconLeading) icon else null,
+        modifier = modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+private fun FormTextFieldButton(
+    onClick: () -> Unit,
+    icon: ImageVector,
+    @StringRes iconDescription: Int
+) {
+    IconButton(
+        onClick = onClick
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = stringResource(iconDescription)
         )
     }
 }

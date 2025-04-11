@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -50,6 +49,16 @@ class FuelStopEntryViewModel(
             details = fuelStopDetails,
             isValid = fuelStopDetails.validate()
         )
+    }
+
+    suspend fun dropDownFuelSorts(recent: Boolean = false): List<String> = when (recent) {
+        true -> fuelStopsRepository.mostRecentFuelSorts(10).first()
+        false -> fuelStopsRepository.mostUsedFuelSorts(10).first()
+    }
+
+    suspend fun dropDownStations(recent: Boolean = false): List<String> = when (recent) {
+        true -> fuelStopsRepository.mostRecentFuelStations(10).first()
+        false -> fuelStopsRepository.mostUsedFuelStations(10).first()
     }
 
     /**

@@ -8,6 +8,8 @@ import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.format.char
 import kotlinx.datetime.format.optional
+import java.math.BigDecimal
+import java.text.NumberFormat
 
 // TODO: Make config... configurable!
 @OptIn(FormatStringsInDatetimeFormats::class)
@@ -18,6 +20,10 @@ object Config {
     val TIME_FORMAT: DateTimeFormat<LocalTime> = LocalTime.Format {
         hour(); char(':'); minute(); optional { char(':'); second() }
     }
+
+    val NUMBER_FORMAT: NumberFormat = NumberFormat.getInstance()
+
+//    val saddsa: BigDecimal = NUMBER_FORMAT.parse("1.2223") as BigDecimal
 
     // MonthNames list must contain 12 entries
 //    val CALENDAR_MONTH_AND_YEAR = LocalDate.Format {
