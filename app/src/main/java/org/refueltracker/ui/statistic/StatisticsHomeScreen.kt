@@ -253,16 +253,19 @@ private fun AverageFuelStatisticsCard(
     diffHeading: @Composable (() -> Unit)? = null
 ) {
     Card(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = dimensionResource(R.dimen.card_elevation)
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        shape = RectangleShape,
         modifier = modifier
             .fillMaxWidth()
             .padding(
                 top = dimensionResource(R.dimen.padding_small),
                 bottom = dimensionResource(R.dimen.padding_small)
-            ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = dimensionResource(R.dimen.card_elevation)
-        ),
-        shape = RectangleShape
+            )
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             NavigationButton(

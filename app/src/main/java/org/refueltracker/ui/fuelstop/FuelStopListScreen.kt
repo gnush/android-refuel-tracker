@@ -51,6 +51,7 @@ import org.refueltracker.ui.RefuelTrackerViewModelProvider
 import org.refueltracker.ui.extensions.defaultText
 import org.refueltracker.ui.extensions.specialText
 import org.refueltracker.ui.navigation.BottomNavigationDestination
+import org.refueltracker.ui.theme.FuelCardShape
 import org.refueltracker.ui.theme.RefuelTrackerTheme
 import java.math.BigDecimal
 
@@ -144,7 +145,8 @@ private fun FuelStopListItem(fuelStop: FuelStop, modifier: Modifier = Modifier) 
         ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
+        ),
+        shape = FuelCardShape
     ) {
         Column(
             modifier = Modifier.padding(dimensionResource(R.dimen.padding_large)),
