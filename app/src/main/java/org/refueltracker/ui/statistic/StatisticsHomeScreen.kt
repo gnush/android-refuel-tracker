@@ -22,6 +22,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -168,13 +169,16 @@ private fun AllTimeAverageFuelStatisticsCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = dimensionResource(R.dimen.card_elevation)
         ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        shape = RectangleShape,
         modifier = modifier
             .fillMaxWidth()
             .padding(
                 top = dimensionResource(R.dimen.padding_small),
                 bottom = dimensionResource(R.dimen.padding_small)
-            ),
-        shape = RectangleShape
+            )
     ) {
         Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))) {
             Text(stringResource(heading))
