@@ -8,9 +8,6 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import java.math.BigDecimal
 
-// TODO: Change database schema
-//  - FuelSort Table, with foreign key
-//  - Station table, with foreign key?
 @Entity(
     tableName = "fuel_stops",
     foreignKeys = [

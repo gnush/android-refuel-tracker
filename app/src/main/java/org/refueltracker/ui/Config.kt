@@ -1,5 +1,7 @@
 package org.refueltracker.ui
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -53,10 +55,6 @@ object Config {
 
     const val DROP_DOWN_LENGTH = 5
     val DROP_DOWN_SELECTION = DropDownSelection.MostUsed
-
-    // TODO: Pick based on theme
-    val INCREASE_COLOR = Color.Red
-    val DECREASE_COLOR = Color.Blue
 }
 
 enum class DropDownSelection {

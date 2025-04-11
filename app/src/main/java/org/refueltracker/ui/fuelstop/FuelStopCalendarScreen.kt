@@ -69,7 +69,7 @@ fun FuelStopCalendarScreen(
                 onNavigationItemClicked = navigateTo,
                 floatingActionButton = {
                     FloatingActionButton(
-                        onClick = navigateToFuelStopEntry, // TODO: remember selected month on return or jump to month of newly added entry
+                        onClick = navigateToFuelStopEntry,
                         shape = MaterialTheme.shapes.medium,
                         containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
                         elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
@@ -106,7 +106,6 @@ fun FuelStopCalendar(
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // TODO: maybe set hasClickableCells, onCellClick to mark the cell and retrieve and show all fuel stops on that day
     CalendarView(
         firstDisplayMonth = uiState.month,
         firstDisplayYear = uiState.year,

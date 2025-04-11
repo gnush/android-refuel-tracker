@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Functions
@@ -36,8 +38,10 @@ import org.refueltracker.data.FuelStopAverageValues
 import org.refueltracker.data.FuelStopSumValues
 import org.refueltracker.ui.Config
 import org.refueltracker.ui.RefuelTrackerViewModelProvider
+import org.refueltracker.ui.calendar.previousMonth
 import org.refueltracker.ui.extensions.displaySign
 import org.refueltracker.ui.extensions.defaultText
+import org.refueltracker.ui.extensions.monthOfYearId
 import org.refueltracker.ui.extensions.valueChangeColor
 import org.refueltracker.ui.navigation.BottomNavigationDestination
 import org.refueltracker.ui.theme.RefuelTrackerTheme
@@ -52,9 +56,6 @@ object StatisticsHomeDestination: BottomNavigationDestination {
     @StringRes override val iconDescriptionRes: Int = R.string.nav_bar_stat_button_description
     @StringRes override val labelRes: Int = R.string.nav_bar_stat_button_label
 }
-
-// TODO:
-//  - add statistics for favourite fuel sort etc?
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,7 +84,9 @@ fun StatisticsHomeScreen(
     ) { innerPadding ->
         StatisticsBody(
             uiState = viewModel.uiState,
-            paddingValues = innerPadding
+            paddingValues = innerPadding,
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
         )
     }
 }
@@ -95,17 +98,30 @@ private fun StatisticsBody(
     paddingValues: PaddingValues = PaddingValues(0.dp)
 ) {
     Column(modifier = modifier.padding(paddingValues)) {
+        // TODO: make statistic cards navigable: left -1 month, right +1 month
+        //       requires dynamic loading of averages
+        //       add left, right buttons
         AverageFuelStatisticsCard(
-            currentHeading = R.string.current_month_heading,
+            currentHeading = {
+                AverageStatisticsMonthHeading(
+                    uiState.currentMonthCalendar.month.monthOfYearId,
+                    uiState.currentMonthCalendar.year
+                )
+            },
             currentStats = uiState.currentMonthAvg,
-            previousHeading = R.string.previous_month_heading,
+            previousHeading = {
+                val previousCalendar = uiState.currentMonthCalendar.previousMonth()
+                AverageStatisticsMonthHeading(
+                    previousCalendar.month.monthOfYearId,
+                    previousCalendar.year
+                )
+            },
             previousStats = uiState.previousMonthAvg
         )
-        // TODO: add comparison of two previous months
         AverageFuelStatisticsCard(
-            currentHeading = R.string.current_year_heading,
+            currentHeading = { Text(uiState.currentMonthCalendar.year.toString()) },
             currentStats = uiState.currentYearAvg,
-            previousHeading = R.string.previous_year_heading,
+            previousHeading = { Text((uiState.currentMonthCalendar.year-1).toString()) },
             previousStats = uiState.previousYearAvg
         )
         AllTimeAverageFuelStatisticsCard(
@@ -113,6 +129,18 @@ private fun StatisticsBody(
             averages = uiState.allStopsAvg,
             sums = uiState.allStopsSum
         )
+    }
+}
+
+@Composable
+private fun AverageStatisticsMonthHeading(
+    @StringRes monthOfYearId: Int,
+    year: Int
+) {
+    Row {
+        Text(stringResource(monthOfYearId))
+        Spacer(Modifier.width(dimensionResource(R.dimen.padding_tiny)))
+        Text(year.toString())
     }
 }
 
@@ -196,15 +224,14 @@ private fun AllTimeAverageFuelStatisticsCard(
     }
 }
 
-// TODO: change heading to month+year combination, e.g. Feb 2025
 @Composable
 private fun AverageFuelStatisticsCard(
-    @StringRes currentHeading: Int,
-    @StringRes previousHeading: Int,
+    currentHeading: @Composable () -> Unit,
+    previousHeading: @Composable () -> Unit,
     currentStats: FuelStopAverageValues,
     previousStats: FuelStopAverageValues,
     modifier: Modifier = Modifier,
-    @StringRes diffHeading: Int? = null
+    diffHeading: @Composable (() -> Unit)? = null
 ) {
     Card(
         modifier = modifier
@@ -239,11 +266,11 @@ private fun AverageFuelStatisticsCard(
 private fun AverageValueColumn(
     stats: FuelStopAverageValues,
     modifier: Modifier = Modifier,
-    @StringRes heading: Int? = null,
+    heading: @Composable (() -> Unit)? = null,
     isValueDiff: Boolean = false
 ) {
     Column(modifier = modifier) {
-        Text(if (heading != null) stringResource(heading) else "")
+        heading?.invoke()
         ValueText(
             value = stats.price,
             prefix = { Text("∅") },
@@ -325,8 +352,8 @@ private fun FuelStatisticsCardPreview() {
 
     RefuelTrackerTheme {
         AverageFuelStatisticsCard(
-            currentHeading = R.string.current_month_heading,
-            previousHeading = R.string.previous_month_heading,
+            currentHeading = { Text(stringResource(R.string.current_month_heading)) },
+            previousHeading = { Text(stringResource(R.string.previous_month_heading)) },
             currentStats = FuelStopAverageValues(ppv1, vol1, price1),
             previousStats = FuelStopAverageValues(ppv2, vol2, price2)
         )

@@ -1,5 +1,7 @@
 package org.refueltracker.ui.extensions
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import org.refueltracker.ui.Config
 import java.math.BigDecimal
@@ -31,14 +33,13 @@ val BigDecimal.displaySign: String
                 ""
 
 /**
- * Returns [Config.DECREASE_COLOR] when the the value is below zero
- * *       [Config.INCREASE_COLOR] when the the value is above zero
+ * Returns colors from the current [MaterialTheme] when the the value above or below zero
  * *       [Color.Unspecified] when the value is zero
  */
 val BigDecimal.valueChangeColor: Color
-    get() = if (signum() < 0)
-                Config.DECREASE_COLOR
-            else if (signum() > 0)
-                Config.INCREASE_COLOR
-            else
-                Color.Unspecified
+    @Composable get() = if (signum() < 0)
+                            MaterialTheme.colorScheme.primary
+                        else if (signum() > 0)
+                            MaterialTheme.colorScheme.error
+                        else
+                            Color.Unspecified
