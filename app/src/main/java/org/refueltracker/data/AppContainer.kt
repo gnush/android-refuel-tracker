@@ -14,6 +14,10 @@ interface AppContainer {
  */
 class AppDataContainer(private val context: Context): AppContainer {
     override val fuelStopsRepository: FuelStopsRepository by lazy {
-        RoomFuelStopsRepository(RefuelTrackerDatabase.getDatabase(context).fuelStopDao())
+        RoomFuelStopsRepository(
+            fuelStopDao = RefuelTrackerDatabase.getDatabase(context).fuelStopDao(),
+            fuelStationDao = RefuelTrackerDatabase.getDatabase(context).fuelStationDao(),
+            fuelSortDao = RefuelTrackerDatabase.getDatabase(context).fuelSortDao()
+        )
     }
 }

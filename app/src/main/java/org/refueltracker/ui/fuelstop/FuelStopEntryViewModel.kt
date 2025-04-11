@@ -36,7 +36,7 @@ class FuelStopEntryViewModel(
         viewModelScope.launch {
             uiState = uiState.copy(
                 details = uiState.details.copy(
-                    fuelSort = fuelStopsRepository.mostUsedFuelSort().first()
+                    fuelSort = fuelStopsRepository.mostUsedFuelSort().first() ?: ""
                 ),
                 fuelSortDropDownItems = when(Config.DROP_DOWN_SELECTION) {
                     DropDownSelection.MostUsed ->

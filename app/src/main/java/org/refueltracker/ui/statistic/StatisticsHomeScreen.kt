@@ -101,6 +101,7 @@ private fun StatisticsBody(
             previousHeading = R.string.previous_month_heading,
             previousStats = uiState.previousMonthAvg
         )
+        // TODO: add comparison of two previous months
         AverageFuelStatisticsCard(
             currentHeading = R.string.current_year_heading,
             currentStats = uiState.currentYearAvg,
@@ -195,6 +196,7 @@ private fun AllTimeAverageFuelStatisticsCard(
     }
 }
 
+// TODO: change heading to month+year combination, e.g. Feb 2025
 @Composable
 private fun AverageFuelStatisticsCard(
     @StringRes currentHeading: Int,

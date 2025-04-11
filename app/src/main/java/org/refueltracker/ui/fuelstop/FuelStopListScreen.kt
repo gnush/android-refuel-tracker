@@ -68,7 +68,7 @@ object FuelStopListDestination: BottomNavigationDestination {
 fun FuelStopListScreen(
     navigateTo: (String) -> Unit,
     navigateToFuelStopEntry: () -> Unit,
-    navigateToFuelStopEdit: (Int) -> Unit,
+    navigateToFuelStopEdit: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FuelStopListViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {

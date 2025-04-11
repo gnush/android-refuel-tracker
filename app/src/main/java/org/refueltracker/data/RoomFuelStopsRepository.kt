@@ -1,46 +1,122 @@
 package org.refueltracker.data
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
 import java.time.Month
 
-class RoomFuelStopsRepository(private val fuelStopDao: FuelStopDao): FuelStopsRepository {
-    override suspend fun insert(fuelStop: FuelStop) = fuelStopDao.insert(fuelStop)
+fun FuelStopEntity.toFuelStop(station: String, sort: String): FuelStop = FuelStop(
+    id = id,
+    station = station,
+    fuelSort = sort,
+    pricePerVolume = pricePerVolume,
+    totalVolume = totalVolume,
+    totalPrice = totalPrice,
+    day = day,
+    time = time
+)
 
-    override suspend fun update(fuelStop: FuelStop) = fuelStopDao.update(fuelStop)
+fun FuelStop.toFuelStopEntity(stationId: Long, sortId: Long): FuelStopEntity = FuelStopEntity(
+    id = id,
+    stationId = stationId,
+    fuelSortId = sortId,
+    pricePerVolume = pricePerVolume,
+    totalVolume = totalVolume,
+    totalPrice = totalPrice,
+    day = day,
+    time = time
+)
 
-    override suspend fun delete(fuelStop: FuelStop) = fuelStopDao.delete(fuelStop)
+class RoomFuelStopsRepository(
+    private val fuelStopDao: FuelStopDao,
+    private val fuelStationDao: FuelStationDao,
+    private val fuelSortDao: FuelSortDao
+): FuelStopsRepository {
+    private suspend fun getSortIdOrInsert(fuelSort: String): Long =
+        fuelSortDao.getIdFrom(fuelSort).first()
+            ?: fuelSortDao.insert(FuelSort(label = fuelSort))
+
+    private suspend fun getStationIdOrInsert(name: String): Long =
+        fuelStationDao.getIdFrom(name).first()
+            ?: fuelStationDao.insert(FuelStation(name = name))
+
+    override suspend fun insert(fuelStop: FuelStop): Long = fuelStopDao.insert(
+        fuelStop.toFuelStopEntity(
+            stationId = getStationIdOrInsert(fuelStop.station),
+            sortId    = getSortIdOrInsert(fuelStop.fuelSort)
+        )
+    )
+
+    override suspend fun update(fuelStop: FuelStop) = fuelStopDao.update(
+        fuelStop.toFuelStopEntity(
+            stationId = getStationIdOrInsert(fuelStop.station),
+            sortId = getSortIdOrInsert(fuelStop.fuelSort)
+        )
+    )
+
+    override suspend fun delete(fuelStop: FuelStop) = fuelStopDao.delete(
+        fuelStop.toFuelStopEntity(
+            stationId = getStationIdOrInsert(fuelStop.station),
+            sortId = getSortIdOrInsert(fuelStop.fuelSort)
+        )
+    )
 
     /**
      * Retrieves all fuel stops ordered by time  in descending order by day/time
      */
     override fun fuelStopsOrderedNewestFirst(): Flow<List<FuelStop>> =
-        fuelStopDao.allFuelStopsOrderedNewestFirst()
+        fuelStopDao.allFuelStopsOrderedNewestFirst().map { it.map {
+            it.toFuelStop(
+                station = fuelStationDao.getName(it.stationId).first() ?: "",
+                sort = fuelSortDao.getLabel(it.fuelSortId).first() ?: ""
+            )
+        } }
 
     /**
      * Retrieves a specific fuel stop
      * @param id The id of the fuel stop to retrieve
      */
-    override fun fuelStop(id: Int): Flow<FuelStop?> = fuelStopDao.fuelStop(id)
+    override fun fuelStop(id: Int): Flow<FuelStop?> = fuelStopDao.fuelStop(id).map {
+        it.toFuelStop(
+            station = fuelStationDao.getName(it.stationId).first() ?: "",
+            sort = fuelSortDao.getLabel(it.fuelSortId).first() ?: ""
+        )
+    }
 
     /**
      * Retrieves all fuel stops between [from] and [to] (inclusive)  in descending order by day/time
      */
     override fun fuelStopsBetween(from: LocalDate, to: LocalDate): Flow<List<FuelStop>> =
-        fuelStopDao.fuelStopsBetween(from, to)
+        fuelStopDao.fuelStopsBetween(from, to).map { l  -> l.map {
+            it.toFuelStop(
+                station = fuelStationDao.getName(it.stationId).first() ?: "",
+                sort = fuelSortDao.getLabel(it.fuelSortId).first() ?: ""
+            )
+        } }
 
     /**
      * Retrieves all fuel stops with year [year] and month [month] in descending order by day/time
      */
     override fun fuelStopsOn(year: Int, month: Month): Flow<List<FuelStop>> =
-        fuelStopDao.fuelStopsOnMonthOfYear(year*10000 + month.number*100)
+        fuelStopDao.fuelStopsOnMonthOfYear(year*10000 + month.number*100).map { it.map {
+            it.toFuelStop(
+                station = fuelStationDao.getName(it.stationId).first() ?: "",
+                sort = fuelSortDao.getLabel(it.fuelSortId).first() ?: ""
+            )
+        } }
 
     /**
      * Retrieves all fuel stops from [year] in descending order by day/time
      */
     override fun fuelStopsOn(year: Int): Flow<List<FuelStop>> =
-        fuelStopDao.fuelStopsOnYear(year*10000)
+        fuelStopDao.fuelStopsOnYear(year*10000).map { it.map {
+            it.toFuelStop(
+                station = fuelStationDao.getName(it.stationId).first() ?: "",
+                sort = fuelSortDao.getLabel(it.fuelSortId).first() ?: ""
+            )
+        } }
 
     /**
      * Retrieve the average price per volume, volume and price of all fuel stops.
@@ -106,7 +182,7 @@ class RoomFuelStopsRepository(private val fuelStopDao: FuelStopDao): FuelStopsRe
     /**
      * Retrieves the most often fueled fuel sort.
      */
-    override fun mostUsedFuelSort(): Flow<String> = fuelStopDao.mostUsedFuelSort()
+    override fun mostUsedFuelSort(): Flow<String?> = fuelStopDao.mostUsedFuelSort()
 
     /**
      * Retrieves the [n] most often fueled fuel sorts.

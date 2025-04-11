@@ -1,7 +1,7 @@
 package org.refueltracker.ui.data
 
 data class FuelStopDetails(
-    val id: Int = 0,
+    val id: Long = 0L,
     val station: String = "",
     val fuelSort: String = "",
     val pricePerVolume: String = "",

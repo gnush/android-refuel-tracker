@@ -5,7 +5,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 
 interface FuelStopsRepository {
-    suspend fun insert(fuelStop: FuelStop)
+    suspend fun insert(fuelStop: FuelStop): Long
     suspend fun update(fuelStop: FuelStop)
     suspend fun delete(fuelStop: FuelStop)
 
@@ -86,7 +86,7 @@ interface FuelStopsRepository {
     /**
      * Retrieves the most often fueled fuel sort.
      */
-    fun mostUsedFuelSort(): Flow<String>
+    fun mostUsedFuelSort(): Flow<String?>
 
     /**
      * Retrieves the [n] most often fueled fuel sorts.

@@ -12,44 +12,44 @@ import kotlinx.datetime.LocalDate
 @Dao
 interface FuelStopDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(fuelStop: FuelStop)
+    suspend fun insert(fuelStop: FuelStopEntity): Long
 
     @Update
-    suspend fun update(fuelStop: FuelStop)
+    suspend fun update(fuelStop: FuelStopEntity)
 
     @Delete
-    suspend fun delete(fuelStop: FuelStop)
+    suspend fun delete(fuelStop: FuelStopEntity)
 
     /**
      * Retrieves a specific fuel stop
      * @param id The id of the fuel stop to retrieve
      */
     @Query("select * from fuel_stops where id = :id")
-    fun fuelStop(id: Int): Flow<FuelStop>
+    fun fuelStop(id: Int): Flow<FuelStopEntity>
 
     /**
      * Retrieves all fuel stops in descending order by day/time
      */
     @Query("select * from fuel_stops order by day desc, time desc")
-    fun allFuelStopsOrderedNewestFirst(): Flow<List<FuelStop>>
+    fun allFuelStopsOrderedNewestFirst(): Flow<List<FuelStopEntity>>
 
     /**
      * Retrieves all fuel stops between [from] and [to] in descending order by day/time
      */
     @Query("select * from fuel_stops where day between :from and :to order by day desc, time desc")
-    fun fuelStopsBetween(from: LocalDate, to: LocalDate): Flow<List<FuelStop>>
+    fun fuelStopsBetween(from: LocalDate, to: LocalDate): Flow<List<FuelStopEntity>>
 
     /**
      * Retrieves all fuel stops from [monthOfYear] in descending order by day/time
      */
     @Query("select * from fuel_stops where day between :monthOfYear and :monthOfYear+99 order by day desc, time desc")
-    fun fuelStopsOnMonthOfYear(monthOfYear: Int): Flow<List<FuelStop>>
+    fun fuelStopsOnMonthOfYear(monthOfYear: Int): Flow<List<FuelStopEntity>>
 
     /**
      * Retrieves all fuel stops from [year] in descending order by day/time
      */
     @Query("select * from fuel_stops where day between :year and :year+9999 order by day desc, time desc")
-    fun fuelStopsOnYear(year: Int): Flow<List<FuelStop>>
+    fun fuelStopsOnYear(year: Int): Flow<List<FuelStopEntity>>
 
     /**
      * Retrieve the average price per volume, volume and price of all fuel stops.
@@ -127,19 +127,23 @@ interface FuelStopDao {
     /**
      * Retrieves the most often fueled fuel sort.
      */
-    @Query("""select fuelSort
-              from fuel_stops
-              group by fuelSort
+    @Query("""select fuel_sort.label
+              from fuel_sort
+              join fuel_stops
+              on fuelSortId = fuel_sort.id
+              group by fuelSortId
               order by count(*) desc
               limit 1""")
-    fun mostUsedFuelSort(): Flow<String>
+    fun mostUsedFuelSort(): Flow<String?>
 
     /**
      * Retrieves the [n] most often fueled fuel sorts.
      */
-    @Query("""select fuelSort
-              from fuel_stops
-              group by fuelSort
+    @Query("""select fuel_sort.label
+              from fuel_sort
+              join fuel_stops
+              on fuelSortId = fuel_sort.id
+              group by fuelSortId
               order by count(*) desc
               limit :n""")
     fun mostUsedFuelSorts(n: Int): Flow<List<String>>
@@ -147,9 +151,11 @@ interface FuelStopDao {
     /**
      * Retrieves the [n] most recently fueled fuel sorts.
      */
-    @Query("""select fuelSort
-              from fuel_stops
-              group by fuelSort
+    @Query("""select fuel_sort.label
+              from fuel_sort
+              join fuel_stops
+              on fuelSortId = fuel_sort.id
+              group by fuelSortId
               order by day desc, time desc
               limit :n""")
     fun mostRecentFuelSorts(n: Int): Flow<List<String>>
@@ -157,9 +163,11 @@ interface FuelStopDao {
     /**
      * Retrieves the [n] most often fueled fuel sorts.
      */
-    @Query("""select station
-              from fuel_stops
-              group by station
+    @Query("""select fuel_station.name
+              from fuel_station
+              join fuel_stops
+              on stationId = fuel_station.id
+              group by stationId
               order by count(*) desc
               limit :n""")
     fun mostUsedFuelStations(n: Int): Flow<List<String>>
@@ -167,9 +175,11 @@ interface FuelStopDao {
     /**
      * Retrieves the [n] most recently fueled fuel sorts.
      */
-    @Query("""select station
-              from fuel_stops
-              group by station
+    @Query("""select fuel_station.name
+              from fuel_station
+              join fuel_stops
+              on stationId = fuel_station.id
+              group by stationId
               order by day desc, time desc
               limit :n""")
     fun mostRecentFuelStations(n: Int): Flow<List<String>>

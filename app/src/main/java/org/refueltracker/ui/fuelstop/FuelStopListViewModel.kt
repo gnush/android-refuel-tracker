@@ -11,7 +11,7 @@ import org.refueltracker.data.FuelStopsRepository
 import org.refueltracker.ui.data.FuelStopListUiState
 
 class FuelStopListViewModel(
-    fuelStopsRepository: FuelStopsRepository
+    val fuelStopsRepository: FuelStopsRepository
 ): ViewModel() {
     val uiState: StateFlow<FuelStopListUiState> = fuelStopsRepository
         .fuelStopsOrderedNewestFirst()

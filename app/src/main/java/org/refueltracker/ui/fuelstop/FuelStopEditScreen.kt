@@ -24,7 +24,7 @@ object FuelStopEditDestination: NavigationDestination {
     override val titleRes: Int = R.string.fuel_stop_edit_screen
     const val FUEL_STOP_ID = "fuelStopId"
     val routeWithFuelStopId = "$route/{$FUEL_STOP_ID}"
-    fun routeWithFuelStopId(id: Int): String = "$route/$id"
+    fun routeWithFuelStopId(id: Long): String = "$route/$id"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

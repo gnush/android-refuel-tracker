@@ -46,7 +46,7 @@ object FuelStopCalendarDestination: BottomNavigationDestination {
 fun FuelStopCalendarScreen(
     navigateTo: (String) -> Unit,
     navigateToFuelStopEntry: () -> Unit,
-    navigateToFuelStopEdit: (Int) -> Unit,
+    navigateToFuelStopEdit: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FuelStopCalendarViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
