@@ -82,4 +82,29 @@ interface FuelStopsRepository {
      * E.g. for year=2000 and month=FEBRUARY, all days with pattern 2000-02-dd.
      */
     fun sumFuelStats(year: Int, month: Month): Flow<FuelStopSumValues>
+
+    /**
+     * Retrieves the most often fueled fuel sort.
+     */
+    fun mostUsedFuelSort(): Flow<String>
+
+    /**
+     * Retrieves the [n] most often fueled fuel sorts.
+     */
+    fun mostUsedFuelSorts(n: Int): Flow<List<String>>
+
+    /**
+     * Retrieves the [n] most recently fueled fuel sorts.
+     */
+    fun mostRecentFuelSorts(n: Int): Flow<List<String>>
+
+    /**
+     * Retrieves the [n] most often fueled fuel sorts.
+     */
+    fun mostUsedFuelStations(n: Int): Flow<List<String>>
+
+    /**
+     * Retrieves the [n] most recently fueled fuel sorts.
+     */
+    fun mostRecentFuelStations(n: Int): Flow<List<String>>
 }

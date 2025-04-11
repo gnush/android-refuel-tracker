@@ -4,17 +4,43 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
 import org.refueltracker.data.FuelStopsRepository
+import org.refueltracker.ui.Config
 import org.refueltracker.ui.data.FuelStopDetails
 import org.refueltracker.ui.data.FuelStopUiState
 import org.refueltracker.ui.extensions.toFuelStop
 import org.refueltracker.ui.extensions.validate
+import java.util.Calendar
 
 class FuelStopEntryViewModel(
     private val fuelStopsRepository: FuelStopsRepository
 ): ViewModel() {
-    var uiState by mutableStateOf(FuelStopUiState())
+    var uiState by mutableStateOf(FuelStopUiState(
+        details = FuelStopDetails(
+            day = LocalDate(
+                year = Calendar.getInstance().get(Calendar.YEAR),
+                monthNumber = Calendar.getInstance().get(Calendar.MONTH),
+                dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
+            ).format(Config.DATE_FORMAT)
+        )
+    ))
         private set
+
+    init {
+        viewModelScope.launch {
+            uiState = uiState.copy(
+                details = uiState.details.copy(
+                    fuelSort = fuelStopsRepository.mostUsedFuelSort().first()
+                )
+            )
+        }
+    }
 
     /**
      * Updates the [uiState] with the provided values and validates the input values.

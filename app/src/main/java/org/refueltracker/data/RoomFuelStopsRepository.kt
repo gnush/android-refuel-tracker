@@ -102,4 +102,37 @@ class RoomFuelStopsRepository(private val fuelStopDao: FuelStopDao): FuelStopsRe
         from = year*10000 + month.number*100,
         to = year*10000 + month.number*100 + 99
     )
+
+    /**
+     * Retrieves the most often fueled fuel sort.
+     */
+    override fun mostUsedFuelSort(): Flow<String> = fuelStopDao.mostUsedFuelSort()
+
+    /**
+     * Retrieves the [n] most often fueled fuel sorts.
+     */
+    override fun mostUsedFuelSorts(n: Int): Flow<List<String>> = fuelStopDao.mostUsedFuelSorts(n)
+
+    /**
+     * Retrieves the [n] most recently fueled fuel sorts.
+     */
+    override fun mostRecentFuelSorts(n: Int): Flow<List<String>> = fuelStopDao.mostRecentFuelSorts(n)
+
+    /**
+     * Retrieves the [n] most often fueled fuel sorts.
+     */
+    override fun mostUsedFuelStations(n: Int): Flow<List<String>> = fuelStopDao.mostUsedFuelStations(n)
+
+    /**
+     * Retrieves the [n] most recently fueled fuel sorts.
+     */
+    override fun mostRecentFuelStations(n: Int): Flow<List<String>> = fuelStopDao.mostRecentFuelStations(n)
+
+    // unclean interface
+//    fun foobar(n: Int, stations: Boolean = true, mostRecent: Boolean = true): Flow<List<String>> = when {
+//        stations && mostRecent -> fuelStopDao.mostRecentFuelStations(n)
+//        stations && !mostRecent -> fuelStopDao.mostUsedFuelStations(n)
+//        !stations && mostRecent -> fuelStopDao.mostRecentFuelSorts(n)
+//        else -> fuelStopDao.mostUsedFuelSorts(n)
+//    }
 }

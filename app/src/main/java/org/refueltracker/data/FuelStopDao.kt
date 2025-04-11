@@ -123,4 +123,54 @@ interface FuelStopDao {
               from fuel_stops
               where day between :from and :to""")
     fun sumFuelStats(from: Int, to: Int): Flow<FuelStopSumValues>
+
+    /**
+     * Retrieves the most often fueled fuel sort.
+     */
+    @Query("""select fuelSort
+              from fuel_stops
+              group by fuelSort
+              order by count(*) desc
+              limit 1""")
+    fun mostUsedFuelSort(): Flow<String>
+
+    /**
+     * Retrieves the [n] most often fueled fuel sorts.
+     */
+    @Query("""select fuelSort
+              from fuel_stops
+              group by fuelSort
+              order by count(*) desc
+              limit :n""")
+    fun mostUsedFuelSorts(n: Int): Flow<List<String>>
+
+    /**
+     * Retrieves the [n] most recently fueled fuel sorts.
+     */
+    @Query("""select fuelSort
+              from fuel_stops
+              group by fuelSort
+              order by day desc, time desc
+              limit :n""")
+    fun mostRecentFuelSorts(n: Int): Flow<List<String>>
+
+    /**
+     * Retrieves the [n] most often fueled fuel sorts.
+     */
+    @Query("""select station
+              from fuel_stops
+              group by station
+              order by count(*) desc
+              limit :n""")
+    fun mostUsedFuelStations(n: Int): Flow<List<String>>
+
+    /**
+     * Retrieves the [n] most recently fueled fuel sorts.
+     */
+    @Query("""select station
+              from fuel_stops
+              group by station
+              order by day desc, time desc
+              limit :n""")
+    fun mostRecentFuelStations(n: Int): Flow<List<String>>
 }
