@@ -2,6 +2,7 @@ package org.refueltracker.ui.statistic
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,16 +13,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Functions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -38,7 +43,6 @@ import org.refueltracker.data.FuelStopAverageValues
 import org.refueltracker.data.FuelStopSumValues
 import org.refueltracker.ui.Config
 import org.refueltracker.ui.RefuelTrackerViewModelProvider
-import org.refueltracker.ui.calendar.previousMonth
 import org.refueltracker.ui.extensions.displaySign
 import org.refueltracker.ui.extensions.defaultText
 import org.refueltracker.ui.extensions.monthOfYearId
@@ -85,6 +89,10 @@ fun StatisticsHomeScreen(
         StatisticsBody(
             uiState = viewModel.uiState,
             paddingValues = innerPadding,
+            onNavigateLeftMonth = viewModel::navigatePreviousMonth,
+            onNavigateRightMonth = viewModel::navigateNextMonth,
+            onNavigateLeftYear = viewModel::navigatePreviousYear,
+            onNavigateRightYear = viewModel::navigateNextYear,
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
         )
@@ -94,35 +102,40 @@ fun StatisticsHomeScreen(
 @Composable
 private fun StatisticsBody(
     modifier: Modifier = Modifier,
+    onNavigateLeftMonth: () -> Unit,
+    onNavigateRightMonth: () -> Unit,
+    onNavigateLeftYear: () -> Unit,
+    onNavigateRightYear: () -> Unit,
     uiState: StatisticsHomeUiState = StatisticsHomeUiState(),
     paddingValues: PaddingValues = PaddingValues(0.dp)
 ) {
     Column(modifier = modifier.padding(paddingValues)) {
-        // TODO: make statistic cards navigable: left -1 month, right +1 month
-        //       requires dynamic loading of averages
-        //       add left, right buttons
         AverageFuelStatisticsCard(
             currentHeading = {
                 AverageStatisticsMonthHeading(
-                    uiState.currentMonthCalendar.month.monthOfYearId,
-                    uiState.currentMonthCalendar.year
+                    uiState.monthCalendar.month.monthOfYearId,
+                    uiState.monthCalendar.year
                 )
             },
             currentStats = uiState.currentMonthAvg,
             previousHeading = {
-                val previousCalendar = uiState.currentMonthCalendar.previousMonth()
+                val previousCalendar = uiState.monthCalendar.previousMonth()
                 AverageStatisticsMonthHeading(
                     previousCalendar.month.monthOfYearId,
                     previousCalendar.year
                 )
             },
-            previousStats = uiState.previousMonthAvg
+            previousStats = uiState.previousMonthAvg,
+            onNavigateLeft = onNavigateLeftMonth,
+            onNavigateRight = onNavigateRightMonth
         )
         AverageFuelStatisticsCard(
-            currentHeading = { Text(uiState.currentMonthCalendar.year.toString()) },
+            currentHeading = { Text(uiState.year.toString()) },
             currentStats = uiState.currentYearAvg,
-            previousHeading = { Text((uiState.currentMonthCalendar.year-1).toString()) },
-            previousStats = uiState.previousYearAvg
+            previousHeading = { Text((uiState.year-1).toString()) },
+            previousStats = uiState.previousYearAvg,
+            onNavigateLeft = onNavigateLeftYear,
+            onNavigateRight = onNavigateRightYear
         )
         AllTimeAverageFuelStatisticsCard(
             heading = R.string.all_time_average_heading,
@@ -230,6 +243,8 @@ private fun AverageFuelStatisticsCard(
     previousHeading: @Composable () -> Unit,
     currentStats: FuelStopAverageValues,
     previousStats: FuelStopAverageValues,
+    onNavigateLeft: () -> Unit,
+    onNavigateRight: () -> Unit,
     modifier: Modifier = Modifier,
     diffHeading: @Composable (() -> Unit)? = null
 ) {
@@ -245,20 +260,57 @@ private fun AverageFuelStatisticsCard(
         ),
         shape = RectangleShape
     ) {
-        Row(
-            modifier = Modifier
-                .padding(dimensionResource(R.dimen.padding_large))
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Absolute.SpaceBetween
-        ) {
-            AverageValueColumn(heading = previousHeading, stats = previousStats)
-            AverageValueColumn(heading = currentHeading, stats = currentStats)
-            AverageValueColumn(
-                stats = currentStats-previousStats,
-                isValueDiff = true,
-                heading = diffHeading
+        Box(modifier = Modifier.fillMaxWidth()) {
+            NavigationButton(
+                onClick = onNavigateLeft,
+                icon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                iconDescription = R.string.calendar_previous_button_description,
+                modifier = Modifier.align(Alignment.CenterStart)
+            )
+            Row(
+                modifier = Modifier
+                    .padding(
+                        top = dimensionResource(R.dimen.padding_large),
+                        bottom = dimensionResource(R.dimen.padding_large)
+                    )
+                    .align(Alignment.Center),
+                horizontalArrangement = Arrangement.Absolute.SpaceBetween
+            ) {
+                AverageValueColumn(heading = previousHeading, stats = previousStats)
+                Spacer(Modifier.width(dimensionResource(R.dimen.padding_medium)))
+                AverageValueColumn(heading = currentHeading, stats = currentStats)
+                Spacer(Modifier.width(dimensionResource(R.dimen.padding_medium)))
+                AverageValueColumn(
+                    stats = currentStats-previousStats,
+                    isValueDiff = true,
+                    heading = diffHeading
+                )
+            }
+            NavigationButton(
+                onClick = onNavigateRight,
+                icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                iconDescription = R.string.calendar_next_button_description,
+                modifier = Modifier.align(Alignment.CenterEnd)
             )
         }
+    }
+}
+
+@Composable
+private fun NavigationButton(
+    onClick: () -> Unit,
+    icon: ImageVector,
+    @StringRes iconDescription: Int,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = stringResource(iconDescription)
+        )
     }
 }
 
@@ -355,7 +407,9 @@ private fun FuelStatisticsCardPreview() {
             currentHeading = { Text(stringResource(R.string.current_month_heading)) },
             previousHeading = { Text(stringResource(R.string.previous_month_heading)) },
             currentStats = FuelStopAverageValues(ppv1, vol1, price1),
-            previousStats = FuelStopAverageValues(ppv2, vol2, price2)
+            previousStats = FuelStopAverageValues(ppv2, vol2, price2),
+            onNavigateLeft = {},
+            onNavigateRight = {},
         )
     }
 }
@@ -364,6 +418,11 @@ private fun FuelStatisticsCardPreview() {
 @Composable
 private fun StatisticsBodyPreview() {
     RefuelTrackerTheme {
-        StatisticsBody()
+        StatisticsBody(
+            onNavigateLeftMonth = {},
+            onNavigateRightMonth = {},
+            onNavigateLeftYear = {},
+            onNavigateRightYear = {}
+        )
     }
 }

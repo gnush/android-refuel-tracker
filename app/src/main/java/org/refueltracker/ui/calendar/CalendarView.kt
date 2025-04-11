@@ -87,35 +87,6 @@ fun CalendarView(
     if (firstDisplayYear != null)
         viewModel.updateDisplayYear(firstDisplayYear)
 
-    /////////////////
-    // TODO: preserve
-//    val density = LocalDensity.current
-//    val defaultActionSize = 80.dp
-//    val endActionSizePx = with(density) { (defaultActionSize*3).toPx() }
-//    val startActionSizePx = with(density) { defaultActionSize.toPx() }
-//
-//    val anchoredState = remember {
-//        AnchoredDraggableState(
-//            initialValue = DragAnchors.Center,
-//            anchors = DraggableAnchors {
-//                DragAnchors.Start at - startActionSizePx
-//                DragAnchors.Center at 0f
-//                DragAnchors.End at endActionSizePx
-//            },
-//            positionalThreshold = { distance: Float -> distance*0.5f },
-//            velocityThreshold = { with(density) { 100.dp.toPx() } },
-//            decayAnimationSpec = exponentialDecay(),
-//            snapAnimationSpec = spring()
-//        )
-//    }
-//    Log.d("ME", "current state = ${anchoredState.currentValue.name}")
-//    if (anchoredState.currentValue == DragAnchors.Start) {
-//        // DO SOMETHING
-//    }
-//        AnchoredDraggableItem(
-//            state = anchoredState,
-//            content = { Icon(Icons.Default.Add, contentDescription = "") }
-//        )
     Column(
         modifier = modifier
     ) {
@@ -211,45 +182,6 @@ private fun CalendarHeader(
                     },
                     orientation = Orientation.Horizontal
                 )
-        )
-    }
-}
-
-// TODO: preserve: move to AnchoredDraggableExample project
-enum class DragAnchors {
-    Start,
-    Center,
-    End
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun AnchoredDraggableItem(
-    state: AnchoredDraggableState<DragAnchors>,
-    content: @Composable BoxScope.() -> Unit
-) {
-    Box(modifier = Modifier
-        .padding(16.dp)
-        .fillMaxWidth()
-        .height(100.dp)
-        .clip(RectangleShape)
-        .background(Color.Gray)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center)
-                .offset {
-                    IntOffset(
-                        x = -state
-                            .requireOffset()
-                            .roundToInt(),
-                        y = 0
-                    )
-                }
-                .anchoredDraggable(state, Orientation.Horizontal)
-                .background(Color.DarkGray),
-            content = content
         )
     }
 }

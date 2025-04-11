@@ -11,7 +11,6 @@ import org.refueltracker.data.FuelStopAverageValues
 import org.refueltracker.data.FuelStopSumValues
 import org.refueltracker.data.FuelStopsRepository
 import org.refueltracker.ui.calendar.CalendarUiState
-import org.refueltracker.ui.calendar.previousMonth
 
 class StatisticsHomeViewModel(
     private val fuelStopsRepository: FuelStopsRepository
@@ -22,22 +21,77 @@ class StatisticsHomeViewModel(
     init {
         viewModelScope.launch {
             uiState = uiState.copy(
+                year = uiState.monthCalendar.year,
                 allStopsAvg = fuelStopsRepository
                     .averageFuelStats()
                     .first(),
                 currentYearAvg = fuelStopsRepository
-                    .averageFuelStats(uiState.currentMonthCalendar.year)
+                    .averageFuelStats(uiState.monthCalendar.year)
                     .first(),
                 previousYearAvg = fuelStopsRepository
-                    .averageFuelStats(uiState.currentMonthCalendar.year-1)
+                    .averageFuelStats(uiState.monthCalendar.year-1)
                     .first(),
                 currentMonthAvg = fuelStopsRepository
-                    .averageFuelStats(uiState.currentMonthCalendar.year, uiState.currentMonthCalendar.month)
+                    .averageFuelStats(uiState.monthCalendar.year, uiState.monthCalendar.month)
                     .first(),
                 previousMonthAvg = fuelStopsRepository
-                    .averageFuelStats(uiState.currentMonthCalendar.previousMonth().year, uiState.currentMonthCalendar.previousMonth().month)
+                    .averageFuelStats(uiState.monthCalendar.previousMonth().year, uiState.monthCalendar.previousMonth().month)
                     .first(),
                 allStopsSum = fuelStopsRepository.sumFuelStats().first()
+            )
+        }
+    }
+
+    fun navigatePreviousMonth() {
+        uiState = uiState.copy(
+            monthCalendar = uiState.monthCalendar.previousMonth()
+        )
+        updateMonthlyStatsFromDatabase()
+    }
+
+    fun navigateNextMonth() {
+        uiState = uiState.copy(
+            monthCalendar = uiState.monthCalendar.nextMonth()
+        )
+        updateMonthlyStatsFromDatabase()
+    }
+
+    fun navigatePreviousYear() {
+        uiState = uiState.copy(
+            year = uiState.year-1
+        )
+        updateYearlyStatsFromDatabase()
+    }
+
+    fun navigateNextYear() {
+        uiState = uiState.copy(
+            year = uiState.year+1
+        )
+        updateYearlyStatsFromDatabase()
+    }
+
+    private fun updateMonthlyStatsFromDatabase() {
+        viewModelScope.launch {
+            uiState = uiState.copy(
+                currentMonthAvg = fuelStopsRepository
+                    .averageFuelStats(uiState.monthCalendar.year, uiState.monthCalendar.month)
+                    .first(),
+                previousMonthAvg = fuelStopsRepository
+                    .averageFuelStats(uiState.monthCalendar.previousMonth().year, uiState.monthCalendar.previousMonth().month)
+                    .first(),
+            )
+        }
+    }
+
+    private fun updateYearlyStatsFromDatabase() {
+        viewModelScope.launch {
+            uiState = uiState.copy(
+                currentYearAvg = fuelStopsRepository
+                    .averageFuelStats(uiState.year)
+                    .first(),
+                previousYearAvg = fuelStopsRepository
+                    .averageFuelStats(uiState.year-1)
+                    .first(),
             )
         }
     }
@@ -50,5 +104,6 @@ data class StatisticsHomeUiState(
     val previousMonthAvg: FuelStopAverageValues = FuelStopAverageValues(),
     val currentYearAvg: FuelStopAverageValues = FuelStopAverageValues(),
     val previousYearAvg: FuelStopAverageValues = FuelStopAverageValues(),
-    val currentMonthCalendar: CalendarUiState = CalendarUiState()
+    val monthCalendar: CalendarUiState = CalendarUiState(),
+    val year: Int = 0
 )
