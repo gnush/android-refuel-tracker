@@ -28,6 +28,7 @@
     <string name="add_fuel_stop_button_description">Add Fuel Stop</string>
     <string name="pick_date_button_description">Pick a date</string>
     <string name="pick_time_button_description">Pick time</string>
+    <string name="drop_down_button_description">Select</string>
     <string name="sum_aggregate_icon_description">Sum sign</string>
 
     <string name="save_button">Save</string>

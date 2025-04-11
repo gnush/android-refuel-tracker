@@ -2,6 +2,7 @@ package org.refueltracker.ui.fuelstop
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,9 +11,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -107,6 +111,8 @@ fun FuelStopEntryBody(
         FuelStopInputForm(
             fuelStopDetails = uiState.details,
             onValueChange = onFuelStopValueChange,
+            stationDropDownItems = uiState.stationDropDownItems,
+            fuelSortDropDownItems = uiState.fuelSortDropDownItems,
             modifier = Modifier.fillMaxWidth()
         )
         Button(
@@ -125,6 +131,8 @@ fun FuelStopEntryBody(
 private fun FuelStopInputForm(
     fuelStopDetails: FuelStopDetails,
     onValueChange: (FuelStopDetails) -> Unit,
+    stationDropDownItems: List<String>,
+    fuelSortDropDownItems: List<String>,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -182,12 +190,23 @@ private fun FuelStopInputForm(
             value = fuelStopDetails.station,
             onValueChange = { onValueChange(fuelStopDetails.copy(station = it)) },
             labelId = R.string.fuel_stop_station_form_label,
-            icon = {}
+            icon = {
+                FormTextFieldDropDownMenu(
+                    menuItems = stationDropDownItems,
+                    onItemSelected = { onValueChange(fuelStopDetails.copy(station = it)) }
+                )
+            }
         )
         FormTextField(
             value = fuelStopDetails.fuelSort,
             onValueChange = { onValueChange(fuelStopDetails.copy(fuelSort = it)) },
             labelId = R.string.fuel_stop_sort_form_label,
+            icon = {
+                FormTextFieldDropDownMenu(
+                    menuItems = fuelSortDropDownItems,
+                    onItemSelected = { onValueChange(fuelStopDetails.copy(fuelSort = it)) }
+                )
+            }
         )
         FormTextField(
             value = fuelStopDetails.pricePerVolume,
@@ -264,6 +283,36 @@ private fun FormTextFieldButton(
     }
 }
 
+@Composable
+private fun FormTextFieldDropDownMenu(
+    menuItems: List<String>,
+    onItemSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) { // TODO: why does it move to the side if value of text field this is embedded to changes?
+    var expanded: Boolean by remember { mutableStateOf(false) }
+    Box(modifier = modifier) {
+        FormTextFieldButton(
+            onClick = { expanded = !expanded },
+            icon = Icons.Default.ArrowDropDown,
+            iconDescription = R.string.drop_down_button_description
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            menuItems.forEach {
+                DropdownMenuItem(
+                    text = { Text(it) },
+                    onClick = {
+                        expanded = false
+                        onItemSelected(it)
+                    }
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun FuelStopEntryPreview() {
@@ -279,7 +328,7 @@ private fun FuelStopEntryPreview() {
                     day = "10.02.2007",
                     time = "07:33"
                 ),
-                isValid = true
+                isValid = true,
             ),
             onSaveClick = {},
             onFuelStopValueChange = {}

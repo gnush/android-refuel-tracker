@@ -51,7 +51,15 @@ object Config {
     const val DECIMAL_PLACES_DEFAULT = 2
     const val DECIMAL_PLACES_SPECIAL = 3
 
+    const val DROP_DOWN_LENGTH = 5
+    val DROP_DOWN_SELECTION = DropDownSelection.MostUsed
+
     // TODO: Pick based on theme
     val INCREASE_COLOR = Color.Red
     val DECREASE_COLOR = Color.Blue
+}
+
+enum class DropDownSelection {
+    MostRecent,
+    MostUsed
 }

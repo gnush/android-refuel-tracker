@@ -11,6 +11,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
 import org.refueltracker.data.FuelStopsRepository
 import org.refueltracker.ui.Config
+import org.refueltracker.ui.DropDownSelection
 import org.refueltracker.ui.data.FuelStopDetails
 import org.refueltracker.ui.data.FuelStopUiState
 import org.refueltracker.ui.extensions.toFuelStop
@@ -36,7 +37,19 @@ class FuelStopEntryViewModel(
             uiState = uiState.copy(
                 details = uiState.details.copy(
                     fuelSort = fuelStopsRepository.mostUsedFuelSort().first()
-                )
+                ),
+                fuelSortDropDownItems = when(Config.DROP_DOWN_SELECTION) {
+                    DropDownSelection.MostUsed ->
+                        fuelStopsRepository.mostUsedFuelSorts(Config.DROP_DOWN_LENGTH).first()
+                    DropDownSelection.MostRecent ->
+                        fuelStopsRepository.mostRecentFuelSorts(Config.DROP_DOWN_LENGTH).first()
+                },
+                stationDropDownItems = when(Config.DROP_DOWN_SELECTION) {
+                    DropDownSelection.MostUsed ->
+                        fuelStopsRepository.mostUsedFuelStations(Config.DROP_DOWN_LENGTH).first()
+                    DropDownSelection.MostRecent ->
+                        fuelStopsRepository.mostRecentFuelStations(Config.DROP_DOWN_LENGTH).first()
+                }
             )
         }
     }
@@ -49,16 +62,6 @@ class FuelStopEntryViewModel(
             details = fuelStopDetails,
             isValid = fuelStopDetails.validate()
         )
-    }
-
-    suspend fun dropDownFuelSorts(recent: Boolean = false): List<String> = when (recent) {
-        true -> fuelStopsRepository.mostRecentFuelSorts(10).first()
-        false -> fuelStopsRepository.mostUsedFuelSorts(10).first()
-    }
-
-    suspend fun dropDownStations(recent: Boolean = false): List<String> = when (recent) {
-        true -> fuelStopsRepository.mostRecentFuelStations(10).first()
-        false -> fuelStopsRepository.mostUsedFuelStations(10).first()
     }
 
     /**
