@@ -25,7 +25,7 @@ class FuelStopEntryViewModel(
         details = FuelStopDetails(
             day = LocalDate(
                 year = Calendar.getInstance().get(Calendar.YEAR),
-                monthNumber = Calendar.getInstance().get(Calendar.MONTH),
+                monthNumber = Calendar.getInstance().get(Calendar.MONTH)+1,
                 dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
             ).format(Config.DATE_FORMAT)
         )
