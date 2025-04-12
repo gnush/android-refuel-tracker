@@ -1,0 +1,46 @@
+name: Release APK/ABB
+
+env:
+  module: app
+  buildpath: build/outputs
+  basename: foobar
+
+on:
+  workflow_run:
+    workflows: [ "Android CI" ]
+    branches: [ "master" ]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  upload-artifacts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - run: echo "today=$(date -u +'%Y-%m-%d')" >> $GITHUB_ENV
+      - name: Fail when CI build was not successful
+        if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+        run: exit 1
+      - uses: actions/checkout@v4
+      - name: setup jdk 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+      - name: gradlew exec
+        run: chmod +x gradlew
+      - name: assemble release apk
+        run: ./gradlew assembleRelease
+      - name: bundle release
+        run: ./gradlew bundleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.basename }}-${{ env.today }}-apk
+          path: ${{ env.module }}/${{ env.buildpath }}/apk/release/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.basename }}-${{ env.today }}-abb
+          path: ${{ env.module }}/${{ env.buildpath }}/bundle/release/
