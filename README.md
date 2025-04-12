@@ -1,5 +1,5 @@
 [![Android CI](https://github.com/gnush/android-refuel-tracker/actions/workflows/android.yml/badge.svg)](https://github.com/gnush/android-refuel-tracker/actions/workflows/android.yml)
-[![Release APK/ABB](https://github.com/gnush/android-refuel-tracker/actions/workflows/upload_apk_abb.yml/badge.svg)](https://github.com/gnush/android-refuel-tracker/actions/workflows/upload_apk_abb.yml)
+[![Release APK/AAB](https://github.com/gnush/android-refuel-tracker/actions/workflows/upload_apk_aab.yml/badge.svg)](https://github.com/gnush/android-refuel-tracker/actions/workflows/upload_apk_aab.yml)
 
 # android-refuel-tracker
 A lightweight app to keep track of your refuelling stops
