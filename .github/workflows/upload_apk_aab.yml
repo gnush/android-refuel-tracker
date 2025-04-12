@@ -1,4 +1,4 @@
-name: Release APK/ABB
+name: Release APK/AAB
 
 env:
   module: app
@@ -19,7 +19,8 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      - run: echo "today=$(date -u +'%Y-%m-%d')" >> $GITHUB_ENV
+      - name: Set current day in env
+        run: echo "today=$(date -u +'%Y-%m-%d')" >> $GITHUB_ENV
       - name: Fail when CI build was not successful
         if: ${{ github.event.workflow_run.conclusion == 'failure' }}
         run: exit 1
@@ -36,11 +37,13 @@ jobs:
         run: ./gradlew assembleRelease
       - name: bundle release
         run: ./gradlew bundleRelease
-      - uses: actions/upload-artifact@v4
+      - name: Upload apk
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.basename }}-${{ env.today }}-apk
           path: ${{ env.module }}/${{ env.buildpath }}/apk/release/
-      - uses: actions/upload-artifact@v4
+      - name: Upload aab
+        uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.basename }}-${{ env.today }}-abb
+          name: ${{ env.basename }}-${{ env.today }}-aab
           path: ${{ env.module }}/${{ env.buildpath }}/bundle/release/
