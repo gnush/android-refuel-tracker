@@ -1,5 +1,6 @@
 package org.refueltracker.ui.fuelstop
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,9 +12,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -181,7 +182,7 @@ private fun FuelStopInputForm(
             icon = {
                 FormTextFieldButton(
                     onClick = { showTimeDialog = true },
-                    icon = Icons.Default.Edit,
+                    icon = Icons.Default.AccessTime,
                     iconDescription = R.string.pick_time_button_description
                 )
             }
@@ -289,7 +290,9 @@ private fun FormTextFieldDropDownMenu(
     onItemSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) { // TODO: why does it move to the side if value of text field this is embedded to changes?
+    //       replicate with minimal example
     var expanded: Boolean by remember { mutableStateOf(false) }
+    Log.d("ME", "expanded = $expanded")
     Box(modifier = modifier) {
         FormTextFieldButton(
             onClick = { expanded = !expanded },
