@@ -3,7 +3,7 @@ name: Release APK/AAB
 env:
   module: app
   buildpath: build/outputs
-  basename: foobar
+  basename: refuel-tracker
 
 on:
   workflow_run:
