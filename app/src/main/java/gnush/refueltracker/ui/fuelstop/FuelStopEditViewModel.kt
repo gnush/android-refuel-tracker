@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import gnush.refueltracker.data.FuelStopsRepository
+import gnush.refueltracker.ui.Config
 import gnush.refueltracker.ui.data.FuelStopDetails
 import gnush.refueltracker.ui.data.FuelStopUiState
 import gnush.refueltracker.ui.extensions.toFuelStop
@@ -25,13 +26,15 @@ class FuelStopEditViewModel(
 
     private val fuelStopId: Int = checkNotNull(savedStateHandle[FuelStopEditDestination.FUEL_STOP_ID])
 
-    // TODO: init drop down menu items
     init {
         viewModelScope.launch {
             uiState = fuelStopsRepository.fuelStop(fuelStopId)
                 .filterNotNull()
                 .first()
-                .toFuelStopUiState()
+                .toFuelStopUiState().copy(
+                    stationDropDownItems = fuelStopsRepository.mostRecentFuelStations(Config.DROP_DOWN_LENGTH).first(),
+                    fuelSortDropDownItems = fuelStopsRepository.mostRecentFuelSorts(Config.DROP_DOWN_LENGTH).first()
+                )
         }
     }
 
