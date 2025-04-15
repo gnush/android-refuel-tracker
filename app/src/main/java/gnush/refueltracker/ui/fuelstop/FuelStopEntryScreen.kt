@@ -1,6 +1,5 @@
 package gnush.refueltracker.ui.fuelstop
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,18 +36,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import gnush.refueltracker.CommonTopAppBar
 import gnush.refueltracker.R
 import gnush.refueltracker.ui.Config
+import gnush.refueltracker.ui.DropDownSelection
 import gnush.refueltracker.ui.data.FuelStopDetails
 import gnush.refueltracker.ui.data.FuelStopUiState
 import gnush.refueltracker.ui.RefuelTrackerViewModelProvider
+import gnush.refueltracker.ui.data.DropDownItemsUiState
 import gnush.refueltracker.ui.dialog.PickDateDialog
 import gnush.refueltracker.ui.dialog.PickTimeDialDialog
 import gnush.refueltracker.ui.extensions.updateBasedOnPricePerVolume
@@ -114,9 +114,8 @@ fun FuelStopEntryBody(
         FuelStopInputForm(
             fuelStopDetails = uiState.details,
             onValueChange = onFuelStopValueChange,
-            stationDropDownItems = uiState.stationDropDownItems,
-            fuelSortDropDownItems = uiState.fuelSortDropDownItems,
-            modifier = Modifier.fillMaxWidth()
+            dropDownItems = uiState.dropDownItems,
+            modifier = Modifier.fillMaxWidth(),
         )
         Button(
             onClick = onSaveClick,
@@ -133,8 +132,7 @@ fun FuelStopEntryBody(
 private fun FuelStopInputForm(
     fuelStopDetails: FuelStopDetails,
     onValueChange: (FuelStopDetails) -> Unit,
-    stationDropDownItems: List<String>,
-    fuelSortDropDownItems: List<String>,
+    dropDownItems: DropDownItemsUiState,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -194,8 +192,9 @@ private fun FuelStopInputForm(
             labelId = R.string.fuel_stop_station_form_label,
             icon = {
                 FormTextFieldDropDownMenu(
-                    menuItems = stationDropDownItems,
-                    onItemSelected = { onValueChange(fuelStopDetails.copy(station = it)) }
+                    mostRecentItems = dropDownItems.stationRecentDropDownItems,
+                    mostUsedItems = dropDownItems.stationUsedDropDownItems,
+                    onItemSelected = { onValueChange(fuelStopDetails.copy(station = it)) },
                 )
             }
         )
@@ -205,7 +204,8 @@ private fun FuelStopInputForm(
             labelId = R.string.fuel_stop_sort_form_label,
             icon = {
                 FormTextFieldDropDownMenu(
-                    menuItems = fuelSortDropDownItems,
+                    mostRecentItems = dropDownItems.fuelSortRecentDropDownItems,
+                    mostUsedItems = dropDownItems.fuelSortUsedDropDownItems,
                     onItemSelected = { onValueChange(fuelStopDetails.copy(fuelSort = it)) }
                 )
             }
@@ -287,11 +287,14 @@ private fun FormTextFieldButton(
 
 @Composable
 private fun FormTextFieldDropDownMenu(
-    menuItems: List<String>,
+    mostRecentItems: List<String>,
+    mostUsedItems: List<String>,
     onItemSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var expanded: Boolean by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
+    var selection by remember { mutableStateOf(Config.DROP_DOWN_SELECTION) }
+
     Box(modifier = modifier) {
         FormTextFieldButton(
             onClick = { expanded = !expanded },
@@ -302,14 +305,32 @@ private fun FormTextFieldDropDownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            menuItems.forEach {
-                DropdownMenuItem(
-                    text = { Text(it) },
-                    onClick = {
-                        expanded = false
-                        onItemSelected(it)
+            Column {
+                Row {
+                    Button(
+                        onClick = { selection = DropDownSelection.MostUsed }
+                    ) {
+                        Text("Used")
                     }
-                )
+                    Button(
+                        onClick = { selection = DropDownSelection.MostRecent }
+                    ) {
+                        Text("Recent")
+                    }
+                }
+                HorizontalDivider()
+                when (selection) {
+                    DropDownSelection.MostRecent -> mostRecentItems
+                    DropDownSelection.MostUsed -> mostUsedItems
+                }.forEach {
+                    DropdownMenuItem(
+                        text = { Text(it) },
+                        onClick = {
+                            expanded = false
+                            onItemSelected(it)
+                        }
+                    )
+                }
             }
         }
     }
@@ -333,7 +354,7 @@ private fun FuelStopEntryPreview() {
                 isValid = true,
             ),
             onSaveClick = {},
-            onFuelStopValueChange = {}
+            onFuelStopValueChange = {},
         )
     }
 }

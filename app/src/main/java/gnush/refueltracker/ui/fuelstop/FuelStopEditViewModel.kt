@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import gnush.refueltracker.data.FuelStopsRepository
 import gnush.refueltracker.ui.Config
+import gnush.refueltracker.ui.data.DropDownItemsUiState
 import gnush.refueltracker.ui.data.FuelStopDetails
 import gnush.refueltracker.ui.data.FuelStopUiState
 import gnush.refueltracker.ui.extensions.toFuelStop
@@ -32,8 +33,12 @@ class FuelStopEditViewModel(
                 .filterNotNull()
                 .first()
                 .toFuelStopUiState().copy(
-                    stationDropDownItems = fuelStopsRepository.mostRecentFuelStations(Config.DROP_DOWN_LENGTH).first(),
-                    fuelSortDropDownItems = fuelStopsRepository.mostRecentFuelSorts(Config.DROP_DOWN_LENGTH).first()
+                    dropDownItems = DropDownItemsUiState(
+                        fuelSortRecentDropDownItems = fuelStopsRepository.mostRecentFuelSorts(Config.DROP_DOWN_LENGTH).first(),
+                        fuelSortUsedDropDownItems = fuelStopsRepository.mostUsedFuelSorts(Config.DROP_DOWN_LENGTH).first(),
+                        stationRecentDropDownItems = fuelStopsRepository.mostRecentFuelStations(Config.DROP_DOWN_LENGTH).first(),
+                        stationUsedDropDownItems = fuelStopsRepository.mostUsedFuelStations(Config.DROP_DOWN_LENGTH).first()
+                    )
                 )
         }
     }
