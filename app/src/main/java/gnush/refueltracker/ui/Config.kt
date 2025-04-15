@@ -20,9 +20,17 @@ object Config {
         hour(); char(':'); minute(); optional { char(':'); second() }
     }
 
+    ///////////////
+    // TODO: remove from config and migrate to preference store
     private const val VOLUME_DECIMAL_PLACES = 2
     private const val CURRENCY_DECIMAL_PLACES = 2
     private const val CURRENCY_VOLUME_RATIO_DECIMAL_PLACES = 3
+    const val DISPLAY_CURRENCY_SIGN: String = "€"
+    const val DISPLAY_VOLUME_SIGN: String = "L"
+
+    const val DROP_DOWN_LENGTH = 5
+    val DROP_DOWN_SELECTION = DropDownSelection.MostUsed
+    //////////////
 
     val VOLUME_FORMAT: NumberFormat = DecimalFormat("#,##0.${(1..VOLUME_DECIMAL_PLACES).toList().map { "0" }.fold(""){ x, xs -> x+xs }}")
     val CURRENCY_FORMAT: NumberFormat = DecimalFormat("#,##0.${(1..CURRENCY_DECIMAL_PLACES).toList().map { "0" }.fold(""){ x, xs -> x+xs }}")
@@ -37,12 +45,6 @@ object Config {
     fun baz2(): DateTimeFormat<LocalTime> = LocalTime.Format {
         byUnicodePattern(bar)
     }
-
-    const val DISPLAY_CURRENCY_SIGN: String = "€"
-    const val DISPLAY_VOLUME_SIGN: String = "L"
-
-    const val DROP_DOWN_LENGTH = 5
-    val DROP_DOWN_SELECTION = DropDownSelection.MostUsed
 }
 
 enum class DropDownSelection {
