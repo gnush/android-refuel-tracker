@@ -31,6 +31,10 @@
     <string name="drop_down_button_description">Select</string>
     <string name="sum_aggregate_icon_description">Sum sign</string>
 
+    <string name="entry_screen_drop_down_selection">Filter:</string>
+    <string name="entry_screen_drop_down_selection_most_used">#Used</string>
+    <string name="entry_screen_drop_down_selection_most_recent">Recent</string>
+
     <string name="save_button">Save</string>
 
     <string name="current_month_heading">Current month</string>

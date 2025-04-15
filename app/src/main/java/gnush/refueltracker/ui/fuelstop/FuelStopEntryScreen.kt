@@ -1,12 +1,17 @@
 package gnush.refueltracker.ui.fuelstop
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -15,12 +20,14 @@ import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -32,12 +39,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import gnush.refueltracker.CommonTopAppBar
@@ -293,7 +304,6 @@ private fun FormTextFieldDropDownMenu(
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selection by remember { mutableStateOf(Config.DROP_DOWN_SELECTION) }
 
     Box(modifier = modifier) {
         FormTextFieldButton(
@@ -305,35 +315,88 @@ private fun FormTextFieldDropDownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            Column {
-                Row {
-                    Button(
-                        onClick = { selection = DropDownSelection.MostUsed }
-                    ) {
-                        Text("Used")
-                    }
-                    Button(
-                        onClick = { selection = DropDownSelection.MostRecent }
-                    ) {
-                        Text("Recent")
-                    }
+            FormTextFieldDropDownMenuBody(
+                mostRecentItems = mostRecentItems,
+                mostUsedItems = mostUsedItems,
+                onItemSelected = {
+                    expanded = false
+                    onItemSelected(it)
                 }
-                HorizontalDivider()
-                when (selection) {
-                    DropDownSelection.MostRecent -> mostRecentItems
-                    DropDownSelection.MostUsed -> mostUsedItems
-                }.forEach {
-                    DropdownMenuItem(
-                        text = { Text(it) },
-                        onClick = {
-                            expanded = false
-                            onItemSelected(it)
-                        }
-                    )
-                }
-            }
+            )
         }
     }
+}
+
+@Composable
+private fun FormTextFieldDropDownMenuBody(
+    mostRecentItems: List<String>,
+    mostUsedItems: List<String>,
+    onItemSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var selection by remember { mutableStateOf(Config.DROP_DOWN_SELECTION) }
+
+    Column(modifier) {
+        DropDownFilter(
+            onFilterClick = { selection = it },
+            selection = selection
+        )
+        HorizontalDivider()
+        when (selection) {
+            DropDownSelection.MostRecent -> mostRecentItems
+            DropDownSelection.MostUsed -> mostUsedItems
+        }.forEach {
+            DropdownMenuItem(
+                text = { Text(it) },
+                onClick = { onItemSelected(it) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun DropDownFilter(
+    onFilterClick: (DropDownSelection) -> Unit,
+    selection: DropDownSelection,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.padding(
+            start = dimensionResource(R.dimen.padding_small),
+            end = dimensionResource(R.dimen.padding_small),
+            top = dimensionResource(R.dimen.padding_small),
+            bottom = dimensionResource(R.dimen.padding_small)
+        ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(stringResource(R.string.entry_screen_drop_down_selection))
+        Spacer(Modifier.weight(1f))
+        DropDownFilterButton(
+            onClick = { onFilterClick(DropDownSelection.MostUsed) },
+            buttonText = R.string.entry_screen_drop_down_selection_most_used,
+            isSelected = selection == DropDownSelection.MostUsed
+        )
+        Spacer(Modifier.width(dimensionResource(R.dimen.padding_medium)))
+        DropDownFilterButton(
+            onClick = { onFilterClick(DropDownSelection.MostRecent) },
+            buttonText = R.string.entry_screen_drop_down_selection_most_recent,
+            isSelected = selection == DropDownSelection.MostRecent
+        )
+    }
+}
+
+@Composable
+private fun DropDownFilterButton(
+    onClick: () -> Unit,
+    isSelected: Boolean,
+    @StringRes buttonText: Int,
+) {
+    Text(
+        text = stringResource(buttonText),
+        textDecoration = if (isSelected) TextDecoration.Underline else null,
+        color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else Color.Unspecified,
+        modifier = Modifier.clickable(onClick = onClick)
+    )
 }
 
 @Preview(showBackground = true)
@@ -355,6 +418,18 @@ private fun FuelStopEntryPreview() {
             ),
             onSaveClick = {},
             onFuelStopValueChange = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FormTextFieldDropDownMenuBodyPreview() {
+    RefuelTrackerTheme {
+        FormTextFieldDropDownMenuBody(
+            mostRecentItems = emptyList(),
+            mostUsedItems = listOf("First", "Second", "Third"),
+            onItemSelected = {}
         )
     }
 }
