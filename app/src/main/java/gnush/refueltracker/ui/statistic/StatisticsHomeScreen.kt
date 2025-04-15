@@ -29,6 +29,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -44,14 +45,15 @@ import gnush.refueltracker.data.FuelStopAverageValues
 import gnush.refueltracker.data.FuelStopSumValues
 import gnush.refueltracker.ui.Config
 import gnush.refueltracker.ui.RefuelTrackerViewModelProvider
-import gnush.refueltracker.ui.extensions.displaySign
-import gnush.refueltracker.ui.extensions.defaultText
+import gnush.refueltracker.ui.extensions.currencyText
+import gnush.refueltracker.ui.extensions.paddedDisplaySign
 import gnush.refueltracker.ui.extensions.monthOfYearId
+import gnush.refueltracker.ui.extensions.ratioText
 import gnush.refueltracker.ui.extensions.valueChangeColor
+import gnush.refueltracker.ui.extensions.volumeText
 import gnush.refueltracker.ui.navigation.BottomNavigationDestination
 import gnush.refueltracker.ui.theme.RefuelTrackerTheme
 import java.math.BigDecimal
-import java.math.RoundingMode
 
 object StatisticsHomeDestination: BottomNavigationDestination {
     override val route: String = "statistics_home"
@@ -193,6 +195,7 @@ private fun AllTimeAverageFuelStatisticsCard(
             ) {
                 ValueText(
                     value = sums.price,
+                    type = ValueType.Currency,
                     prefix = {
                         Icon(
                             imageVector = Icons.Filled.Functions,
@@ -203,6 +206,7 @@ private fun AllTimeAverageFuelStatisticsCard(
                 )
                 ValueText(
                     value = sums.volume,
+                    type = ValueType.Volume,
                     prefix = {
                         Icon(
                             imageVector = Icons.Filled.Functions,
@@ -223,16 +227,19 @@ private fun AllTimeAverageFuelStatisticsCard(
             ) {
                 ValueText(
                     value = averages.price,
+                    type = ValueType.Currency,
                     prefix = { Text("∅") },
                     suffix = Config.DISPLAY_CURRENCY_SIGN
                 )
                 ValueText(
                     value = averages.volume,
+                    type = ValueType.Volume,
                     prefix = { Text("∅") },
                     suffix = Config.DISPLAY_VOLUME_SIGN
                 )
                 ValueText(
                     value = averages.pricePerVolume,
+                    type = ValueType.Ratio,
                     prefix = { Text("∅") },
                     suffix = "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}"
                 )
@@ -332,18 +339,21 @@ private fun AverageValueColumn(
         heading?.invoke() ?: Text("") // TODO: how to properly align the card (and the elements), do we really need a grid?
         ValueText(
             value = stats.price,
+            type = ValueType.Currency,
             prefix = { Text("∅") },
             suffix = Config.DISPLAY_CURRENCY_SIGN,
             isValueDiff = isValueDiff
         )
         ValueText(
             value = stats.volume,
+            type = ValueType.Volume,
             prefix = { Text("∅") },
             suffix = Config.DISPLAY_VOLUME_SIGN,
             isValueDiff = isValueDiff
         )
         ValueText(
             value = stats.pricePerVolume,
+            type = ValueType.Ratio,
             prefix = { Text("∅") },
             suffix = "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}",
             isValueDiff = isValueDiff
@@ -351,9 +361,16 @@ private fun AverageValueColumn(
     }
 }
 
+enum class ValueType{
+    Volume,
+    Currency,
+    Ratio
+}
+
 @Composable
 private fun ValueText(
     value: BigDecimal,
+    type: ValueType,
     prefix: @Composable () -> Unit,
     suffix: String,
     modifier: Modifier = Modifier,
@@ -368,15 +385,15 @@ private fun ValueText(
     ) {
         prefix()
         Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
-        if (isValueDiff)
-            Text(text = if (value.displaySign.isEmpty())
-                            value.defaultText
-                        else
-                            "${value.displaySign} ${value.abs().defaultText}",
-                 color = value.valueChangeColor
-            )
-        else
-            Text(value.defaultText)
+        val sign = if (isValueDiff) value.paddedDisplaySign else ""
+        Text(
+            text = when(type) {
+                ValueType.Volume -> "$sign${value.abs().volumeText}"
+                ValueType.Currency -> "$sign${value.abs().currencyText}"
+                ValueType.Ratio -> "$sign${value.abs().ratioText}"
+            },
+            color = if (isValueDiff) value.valueChangeColor else Color.Unspecified
+        )
         Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
         Text(suffix)
     }
@@ -387,7 +404,7 @@ private fun ValueText(
 private fun AllTimeFuelStatisticsCardPreview() {
     val ppv = BigDecimal("1.679")
     val vol = BigDecimal("23.87")
-    val price = (ppv*vol).setScale(Config.DECIMAL_PLACES_DEFAULT, RoundingMode.HALF_UP)
+    val price = ppv*vol
 
     RefuelTrackerTheme {
         AllTimeAverageFuelStatisticsCard(

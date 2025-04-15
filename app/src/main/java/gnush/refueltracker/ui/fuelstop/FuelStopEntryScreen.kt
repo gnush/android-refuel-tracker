@@ -1,5 +1,6 @@
 package gnush.refueltracker.ui.fuelstop
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,7 +36,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
@@ -287,8 +290,7 @@ private fun FormTextFieldDropDownMenu(
     menuItems: List<String>,
     onItemSelected: (String) -> Unit,
     modifier: Modifier = Modifier
-) { // TODO: why does it move to the side if value of text field this is embedded to changes?
-    //       replicate with minimal example
+) {
     var expanded: Boolean by remember { mutableStateOf(false) }
     Box(modifier = modifier) {
         FormTextFieldButton(

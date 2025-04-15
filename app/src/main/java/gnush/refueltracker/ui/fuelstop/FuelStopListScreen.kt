@@ -48,8 +48,9 @@ import gnush.refueltracker.R
 import gnush.refueltracker.data.FuelStop
 import gnush.refueltracker.ui.Config
 import gnush.refueltracker.ui.RefuelTrackerViewModelProvider
-import gnush.refueltracker.ui.extensions.defaultText
-import gnush.refueltracker.ui.extensions.specialText
+import gnush.refueltracker.ui.extensions.currencyText
+import gnush.refueltracker.ui.extensions.ratioText
+import gnush.refueltracker.ui.extensions.volumeText
 import gnush.refueltracker.ui.navigation.BottomNavigationDestination
 import gnush.refueltracker.ui.theme.FuelCardShape
 import gnush.refueltracker.ui.theme.RefuelTrackerTheme
@@ -161,12 +162,12 @@ private fun FuelStopListItem(fuelStop: FuelStop, modifier: Modifier = Modifier) 
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(fuelStop.fuelSort)
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalVolume.defaultText} ${Config.DISPLAY_VOLUME_SIGN}")
+                Text("${fuelStop.totalVolume.volumeText} ${Config.DISPLAY_VOLUME_SIGN}")
             }
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text("${fuelStop.pricePerVolume.specialText} ${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}")
+                Text("${fuelStop.pricePerVolume.ratioText} ${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}")
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalPrice.defaultText} ${Config.DISPLAY_CURRENCY_SIGN}")
+                Text("${fuelStop.totalPrice.currencyText} ${Config.DISPLAY_CURRENCY_SIGN}")
             }
         }
     }
