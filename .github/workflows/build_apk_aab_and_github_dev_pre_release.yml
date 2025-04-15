@@ -11,7 +11,6 @@ on:
     branches: [ "master" ]
     types:
       - completed
-  workflow_dispatch:
 
 jobs:
   upload-artifacts:
@@ -21,9 +20,6 @@ jobs:
     steps:
       - name: Set current day in env
         run: echo "today=$(date -u +'%Y-%m-%d')" >> $GITHUB_ENV
-      - name: Fail when CI build was not successful
-        if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-        run: exit 1
       - uses: actions/checkout@v4
       - name: setup jdk 17
         uses: actions/setup-java@v4
