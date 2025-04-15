@@ -58,7 +58,7 @@ class FuelStopEntryViewModel(
      * Updates the [uiState] with the provided values and validates the input values.
      */
     fun updateUiState(fuelStopDetails: FuelStopDetails) {
-        uiState = FuelStopUiState(
+        uiState = uiState.copy(
             details = fuelStopDetails,
             isValid = fuelStopDetails.validate()
         )

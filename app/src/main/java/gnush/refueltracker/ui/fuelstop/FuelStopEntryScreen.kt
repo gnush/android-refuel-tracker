@@ -1,6 +1,5 @@
 package gnush.refueltracker.ui.fuelstop
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -127,7 +126,6 @@ fun FuelStopEntryBody(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FuelStopInputForm(
     fuelStopDetails: FuelStopDetails,
@@ -292,7 +290,6 @@ private fun FormTextFieldDropDownMenu(
 ) { // TODO: why does it move to the side if value of text field this is embedded to changes?
     //       replicate with minimal example
     var expanded: Boolean by remember { mutableStateOf(false) }
-    Log.d("ME", "expanded = $expanded")
     Box(modifier = modifier) {
         FormTextFieldButton(
             onClick = { expanded = !expanded },

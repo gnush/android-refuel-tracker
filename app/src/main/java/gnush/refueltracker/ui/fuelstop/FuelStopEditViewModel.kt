@@ -25,6 +25,7 @@ class FuelStopEditViewModel(
 
     private val fuelStopId: Int = checkNotNull(savedStateHandle[FuelStopEditDestination.FUEL_STOP_ID])
 
+    // TODO: init drop down menu items
     init {
         viewModelScope.launch {
             uiState = fuelStopsRepository.fuelStop(fuelStopId)
@@ -35,7 +36,7 @@ class FuelStopEditViewModel(
     }
 
     fun updateUiState(fuelStopDetails: FuelStopDetails) {
-        uiState = FuelStopUiState(
+        uiState = uiState.copy(
             details = fuelStopDetails,
             isValid = fuelStopDetails.validate()
         )
