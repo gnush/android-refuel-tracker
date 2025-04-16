@@ -50,6 +50,20 @@ class FuelStopEntryViewModel(
         viewModelScope.launch {
             val numberOfDropDownItems = userPreferences.numberOfEntryScreenDropDownElements.first()
             val thousandsSeparatorPlaces = userPreferences.thousandsSeparatorPlaces.first()
+            val formats = NumberFormats(
+                currency = createNumberFormat(
+                    thousandsSeparatorPlaces = thousandsSeparatorPlaces,
+                    decimalPlaces = userPreferences.currencyDecimalPlaces.first()
+                ),
+                volume = createNumberFormat(
+                    thousandsSeparatorPlaces = thousandsSeparatorPlaces,
+                    decimalPlaces = userPreferences.volumeDecimalPlaces.first()
+                ),
+                ratio = createNumberFormat(
+                    thousandsSeparatorPlaces = thousandsSeparatorPlaces,
+                    decimalPlaces = userPreferences.currencyVolumeRatioDecimalPlaces.first()
+                )
+            )
 
             uiState = uiState.copy(
                 details =
@@ -61,7 +75,7 @@ class FuelStopEntryViewModel(
                         fuelStopsRepository.fuelStop(fuelStopId)
                             .filterNotNull()
                             .first()
-                            .toFuelStopDetails(),
+                            .toFuelStopDetails(formats),
                 dropDownItems = DropDownItemsUiState(
                     fuelSortRecentDropDownItems = fuelStopsRepository
                         .mostRecentFuelSorts(numberOfDropDownItems).first(),
@@ -77,20 +91,7 @@ class FuelStopEntryViewModel(
                         currency = userPreferences.defaultCurrencySign.first(),
                         volume = userPreferences.defaultVolumeSign.first()
                     ),
-                    formats = NumberFormats(
-                        currency = createNumberFormat(
-                            thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                            decimalPlaces = userPreferences.currencyDecimalPlaces.first()
-                        ),
-                        volume = createNumberFormat(
-                            thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                            decimalPlaces = userPreferences.volumeDecimalPlaces.first()
-                        ),
-                        ratio = createNumberFormat(
-                            thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                            decimalPlaces = userPreferences.currencyVolumeRatioDecimalPlaces.first()
-                        )
-                    ),
+                    formats = formats,
                     dropDownFilter = userPreferences.defaultEntryScreenDropDownSelection.first()
                 )
             )
