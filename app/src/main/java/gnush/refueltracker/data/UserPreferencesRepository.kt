@@ -1,5 +1,6 @@
 package gnush.refueltracker.data
 
+import android.content.Context
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -8,31 +9,47 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import gnush.refueltracker.ui.DropDownSelection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
+private const val USER_PREFERENCES_NAME = "user_preferences"
+private val Context.datastore: DataStore<Preferences> by preferencesDataStore(
+    name = USER_PREFERENCES_NAME
+)
+
 class UserPreferencesRepository(
     private val datastore: DataStore<Preferences>
 ) {
-    private companion object {
-        const val TAG = "UserPreferencesRepo"
+    companion object {
+        private const val TAG = "UserPreferencesRepo"
 
-        val VOLUME_DECIMAL_PLACES =
+        private val VOLUME_DECIMAL_PLACES =
             intPreferencesKey("volume_decimal_places")
-        val CURRENCY_DECIMAL_PLACES =
+        private val CURRENCY_DECIMAL_PLACES =
             intPreferencesKey("currency_decimal_places")
-        val CURRENCY_VOLUME_RATIO_DECIMAL_PLACES =
+        private val CURRENCY_VOLUME_RATIO_DECIMAL_PLACES =
             intPreferencesKey("currency_volume_ratio_decimal_places")
 
-        val CURRENCY_SIGN = stringPreferencesKey("currency_sign")
-        val VOLUME_SIGN = stringPreferencesKey("volume_sign")
+        private val CURRENCY_SIGN = stringPreferencesKey("currency_sign")
+        private val VOLUME_SIGN = stringPreferencesKey("volume_sign")
 
-        val ENTRY_SCREEN_DROP_DOWN_ELEMENTS =
+        private val ENTRY_SCREEN_DROP_DOWN_ELEMENTS =
             intPreferencesKey("entry_screen_drop_down_elements")
-        val ENTRY_SCREEN_DROP_DOWN_SELECTION =
+        private val ENTRY_SCREEN_DROP_DOWN_SELECTION =
             booleanPreferencesKey("entry_screen_drop_down_selection")
+
+        @Volatile
+        private var Instance: UserPreferencesRepository? = null
+
+        fun getInstance(context: Context): UserPreferencesRepository =
+            Instance ?: synchronized(this) {
+                UserPreferencesRepository(context.datastore).also {
+                    Instance = it
+                }
+            }
     }
 
     val volumeDecimalPlaces: Flow<Int> = readDatastore(VOLUME_DECIMAL_PLACES, 2)

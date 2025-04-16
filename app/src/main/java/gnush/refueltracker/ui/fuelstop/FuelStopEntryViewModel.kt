@@ -10,8 +10,9 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
 import gnush.refueltracker.data.FuelStopsRepository
+import gnush.refueltracker.data.UserPreferencesRepository
 import gnush.refueltracker.ui.Config
-import gnush.refueltracker.ui.DropDownSelection
+import gnush.refueltracker.ui.data.DefaultSigns
 import gnush.refueltracker.ui.data.DropDownItemsUiState
 import gnush.refueltracker.ui.data.FuelStopDetails
 import gnush.refueltracker.ui.data.FuelStopUiState
@@ -20,6 +21,7 @@ import gnush.refueltracker.ui.extensions.validate
 import java.util.Calendar
 
 class FuelStopEntryViewModel(
+    userPreferences: UserPreferencesRepository,
     private val fuelStopsRepository: FuelStopsRepository
 ): ViewModel() {
     var uiState by mutableStateOf(FuelStopUiState(
@@ -44,6 +46,10 @@ class FuelStopEntryViewModel(
                     fuelSortUsedDropDownItems = fuelStopsRepository.mostUsedFuelSorts(Config.DROP_DOWN_LENGTH).first(),
                     stationRecentDropDownItems = fuelStopsRepository.mostRecentFuelStations(Config.DROP_DOWN_LENGTH).first(),
                     stationUsedDropDownItems = fuelStopsRepository.mostUsedFuelStations(Config.DROP_DOWN_LENGTH).first()
+                ),
+                userPreferences = DefaultSigns(
+                    currencySign = userPreferences.defaultCurrencySign.first(),
+                    volumeSign = userPreferences.defaultVolumeSign.first()
                 )
             )
         }

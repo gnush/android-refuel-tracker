@@ -10,9 +10,12 @@ import kotlinx.coroutines.launch
 import gnush.refueltracker.data.FuelStopAverageValues
 import gnush.refueltracker.data.FuelStopSumValues
 import gnush.refueltracker.data.FuelStopsRepository
+import gnush.refueltracker.data.UserPreferencesRepository
 import gnush.refueltracker.ui.calendar.CalendarUiState
+import gnush.refueltracker.ui.data.DefaultSigns
 
 class StatisticsHomeViewModel(
+    userPreferencesRepository: UserPreferencesRepository,
     private val fuelStopsRepository: FuelStopsRepository
 ): ViewModel() {
     var uiState by mutableStateOf(StatisticsHomeUiState())
@@ -20,7 +23,11 @@ class StatisticsHomeViewModel(
 
     init {
         viewModelScope.launch {
-            uiState = uiState.copy(
+            uiState = StatisticsHomeUiState(
+                userPreferences = DefaultSigns(
+                    currencySign = userPreferencesRepository.defaultCurrencySign.first(),
+                    volumeSign = userPreferencesRepository.defaultVolumeSign.first()
+                ),
                 year = uiState.monthCalendar.year,
                 allStopsAvg = fuelStopsRepository
                     .averageFuelStats()
@@ -98,6 +105,7 @@ class StatisticsHomeViewModel(
 }
 
 data class StatisticsHomeUiState(
+    val userPreferences: DefaultSigns = DefaultSigns(),
     val allStopsAvg: FuelStopAverageValues = FuelStopAverageValues(),
     val allStopsSum: FuelStopSumValues = FuelStopSumValues(),
     val currentMonthAvg: FuelStopAverageValues = FuelStopAverageValues(),

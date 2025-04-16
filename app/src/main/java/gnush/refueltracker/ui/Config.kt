@@ -25,8 +25,6 @@ object Config {
     private const val VOLUME_DECIMAL_PLACES = 2
     private const val CURRENCY_DECIMAL_PLACES = 2
     private const val CURRENCY_VOLUME_RATIO_DECIMAL_PLACES = 3
-    const val DISPLAY_CURRENCY_SIGN: String = "€"
-    const val DISPLAY_VOLUME_SIGN: String = "L"
 
     const val DROP_DOWN_LENGTH = 5
     val DROP_DOWN_SELECTION = DropDownSelection.MostUsed

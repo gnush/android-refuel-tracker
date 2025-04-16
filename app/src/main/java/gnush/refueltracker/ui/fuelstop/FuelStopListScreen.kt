@@ -48,6 +48,8 @@ import gnush.refueltracker.R
 import gnush.refueltracker.data.FuelStop
 import gnush.refueltracker.ui.Config
 import gnush.refueltracker.ui.RefuelTrackerViewModelProvider
+import gnush.refueltracker.ui.data.DefaultSigns
+import gnush.refueltracker.ui.data.FuelStopListUiState
 import gnush.refueltracker.ui.extensions.currencyText
 import gnush.refueltracker.ui.extensions.ratioText
 import gnush.refueltracker.ui.extensions.volumeText
@@ -108,6 +110,7 @@ fun FuelStopListScreen(
     ) { innerPadding ->
         FuelStopList(
             fuelStops = uiState.fuelStops,
+            userPreferences = uiState.userPreferences,
             onFuelStopClick = { navigateToFuelStopEdit(it.id) },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
@@ -118,6 +121,7 @@ fun FuelStopListScreen(
 @Composable
 fun FuelStopList(
     fuelStops: List<FuelStop>,
+    userPreferences: DefaultSigns,
     onFuelStopClick: (FuelStop) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
@@ -129,6 +133,7 @@ fun FuelStopList(
         items(fuelStops) {
             FuelStopListItem(
                 fuelStop = it,
+                userPreferences = userPreferences,
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_small))
                     .clickable { onFuelStopClick(it) }
@@ -138,7 +143,11 @@ fun FuelStopList(
 }
 
 @Composable
-private fun FuelStopListItem(fuelStop: FuelStop, modifier: Modifier = Modifier) {
+private fun FuelStopListItem(
+    fuelStop: FuelStop,
+    userPreferences: DefaultSigns,
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(
@@ -162,12 +171,12 @@ private fun FuelStopListItem(fuelStop: FuelStop, modifier: Modifier = Modifier) 
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(fuelStop.fuelSort)
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalVolume.volumeText} ${Config.DISPLAY_VOLUME_SIGN}")
+                Text("${fuelStop.totalVolume.volumeText} ${userPreferences.volumeSign}")
             }
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text("${fuelStop.pricePerVolume.ratioText} ${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}")
+                Text("${fuelStop.pricePerVolume.ratioText} ${userPreferences.currencySign}/${userPreferences.volumeSign}")
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalPrice.currencyText} ${Config.DISPLAY_CURRENCY_SIGN}")
+                Text("${fuelStop.totalPrice.currencyText} ${userPreferences.currencySign}")
             }
         }
     }
@@ -213,6 +222,10 @@ private fun FuelStopListPreview() {
                     totalPrice = stop2V
                 )
             ),
+            userPreferences = DefaultSigns(
+                currencySign = "€",
+                volumeSign = "L"
+            ),
             onFuelStopClick = {}
         )
     }
@@ -226,13 +239,17 @@ private fun FuelStopListNoTimeItemPreview() {
 
     RefuelTrackerTheme {
         FuelStopListItem(
-            FuelStop(
+            fuelStop = FuelStop(
                 station = "Fuel Station",
                 day = LocalDate(2000, 1, 1),
                 fuelSort = "E10",
                 pricePerVolume = pricePerVolume,
                 totalVolume = totalPrice.div(pricePerVolume),
                 totalPrice = totalPrice
+            ),
+            userPreferences = DefaultSigns(
+                currencySign = "€",
+                volumeSign = "L"
             )
         )
     }
@@ -246,7 +263,7 @@ private fun FuelStopListTimeItemPreview() {
 
     RefuelTrackerTheme {
         FuelStopListItem(
-            FuelStop(
+            fuelStop = FuelStop(
                 station = "Fuel Station",
                 day = LocalDate(2011, 11, 30),
                 time = LocalTime(12, 1),
@@ -254,6 +271,10 @@ private fun FuelStopListTimeItemPreview() {
                 pricePerVolume = pricePerVolume,
                 totalVolume = totalPrice/pricePerVolume,
                 totalPrice = totalPrice
+            ),
+            userPreferences = DefaultSigns(
+                currencySign = "€",
+                volumeSign = "L"
             )
         )
     }

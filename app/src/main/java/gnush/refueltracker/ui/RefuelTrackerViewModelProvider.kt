@@ -17,28 +17,33 @@ object RefuelTrackerViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             FuelStopListViewModel(
-                refuelTrackerApplication().container.fuelStopsRepository
+                userPreferencesRepository = refuelTrackerApplication().container.userPreferencesRepository,
+                fuelStopsRepository = refuelTrackerApplication().container.fuelStopsRepository
             )
         }
         initializer {
             FuelStopCalendarViewModel(
-                refuelTrackerApplication().container.fuelStopsRepository
+                userPreferencesRepository = refuelTrackerApplication().container.userPreferencesRepository,
+                fuelStopsRepository = refuelTrackerApplication().container.fuelStopsRepository
             )
         }
         initializer {
             FuelStopEntryViewModel(
-                refuelTrackerApplication().container.fuelStopsRepository
+                userPreferences = refuelTrackerApplication().container.userPreferencesRepository,
+                fuelStopsRepository = refuelTrackerApplication().container.fuelStopsRepository
             )
         }
         initializer {
             FuelStopEditViewModel(
-                createSavedStateHandle(),
-                refuelTrackerApplication().container.fuelStopsRepository
+                savedStateHandle = createSavedStateHandle(),
+                userPreferences = refuelTrackerApplication().container.userPreferencesRepository,
+                fuelStopsRepository = refuelTrackerApplication().container.fuelStopsRepository
             )
         }
         initializer {
             StatisticsHomeViewModel(
-                refuelTrackerApplication().container.fuelStopsRepository
+                userPreferencesRepository = refuelTrackerApplication().container.userPreferencesRepository,
+                fuelStopsRepository = refuelTrackerApplication().container.fuelStopsRepository
             )
         }
         initializer {

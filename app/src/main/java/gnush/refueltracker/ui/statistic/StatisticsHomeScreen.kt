@@ -43,8 +43,8 @@ import gnush.refueltracker.CommonTopAppBar
 import gnush.refueltracker.R
 import gnush.refueltracker.data.FuelStopAverageValues
 import gnush.refueltracker.data.FuelStopSumValues
-import gnush.refueltracker.ui.Config
 import gnush.refueltracker.ui.RefuelTrackerViewModelProvider
+import gnush.refueltracker.ui.data.DefaultSigns
 import gnush.refueltracker.ui.extensions.currencyText
 import gnush.refueltracker.ui.extensions.paddedDisplaySign
 import gnush.refueltracker.ui.extensions.monthOfYearId
@@ -130,7 +130,8 @@ private fun StatisticsBody(
             },
             previousStats = uiState.previousMonthAvg,
             onNavigateLeft = onNavigateLeftMonth,
-            onNavigateRight = onNavigateRightMonth
+            onNavigateRight = onNavigateRightMonth,
+            userPreferences = uiState.userPreferences
         )
         AverageFuelStatisticsCard(
             currentHeading = { Text(uiState.year.toString()) },
@@ -138,12 +139,14 @@ private fun StatisticsBody(
             previousHeading = { Text((uiState.year-1).toString()) },
             previousStats = uiState.previousYearAvg,
             onNavigateLeft = onNavigateLeftYear,
-            onNavigateRight = onNavigateRightYear
+            onNavigateRight = onNavigateRightYear,
+            userPreferences = uiState.userPreferences
         )
         AllTimeAverageFuelStatisticsCard(
             heading = R.string.all_time_average_heading,
             averages = uiState.allStopsAvg,
-            sums = uiState.allStopsSum
+            sums = uiState.allStopsSum,
+            userPreferences = uiState.userPreferences
         )
     }
 }
@@ -165,6 +168,7 @@ private fun AllTimeAverageFuelStatisticsCard(
     @StringRes heading: Int,
     averages: FuelStopAverageValues,
     sums: FuelStopSumValues,
+    userPreferences: DefaultSigns,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -202,7 +206,7 @@ private fun AllTimeAverageFuelStatisticsCard(
                             contentDescription = stringResource(R.string.sum_aggregate_icon_description)
                         )
                     },
-                    suffix = Config.DISPLAY_CURRENCY_SIGN
+                    suffix = userPreferences.currencySign
                 )
                 ValueText(
                     value = sums.volume,
@@ -213,7 +217,7 @@ private fun AllTimeAverageFuelStatisticsCard(
                             contentDescription = stringResource(R.string.sum_aggregate_icon_description)
                         )
                     },
-                    suffix = Config.DISPLAY_VOLUME_SIGN
+                    suffix = userPreferences.volumeSign
                 )
             }
             Row(
@@ -229,19 +233,19 @@ private fun AllTimeAverageFuelStatisticsCard(
                     value = averages.price,
                     type = ValueType.Currency,
                     prefix = { Text("∅") },
-                    suffix = Config.DISPLAY_CURRENCY_SIGN
+                    suffix = userPreferences.currencySign
                 )
                 ValueText(
                     value = averages.volume,
                     type = ValueType.Volume,
                     prefix = { Text("∅") },
-                    suffix = Config.DISPLAY_VOLUME_SIGN
+                    suffix = userPreferences.volumeSign
                 )
                 ValueText(
                     value = averages.pricePerVolume,
                     type = ValueType.Ratio,
                     prefix = { Text("∅") },
-                    suffix = "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}"
+                    suffix = "${userPreferences.currencySign}/${userPreferences.volumeSign}"
                 )
             }
         }
@@ -250,6 +254,7 @@ private fun AllTimeAverageFuelStatisticsCard(
 
 @Composable
 private fun AverageFuelStatisticsCard(
+    userPreferences: DefaultSigns,
     currentHeading: @Composable () -> Unit,
     previousHeading: @Composable () -> Unit,
     currentStats: FuelStopAverageValues,
@@ -290,14 +295,23 @@ private fun AverageFuelStatisticsCard(
                     .align(Alignment.Center),
                 horizontalArrangement = Arrangement.Absolute.SpaceBetween
             ) {
-                AverageValueColumn(heading = previousHeading, stats = previousStats)
+                AverageValueColumn(
+                    heading = previousHeading,
+                    stats = previousStats,
+                    userPreferences = userPreferences
+                )
                 Spacer(Modifier.width(dimensionResource(R.dimen.padding_medium)))
-                AverageValueColumn(heading = currentHeading, stats = currentStats)
+                AverageValueColumn(
+                    heading = currentHeading,
+                    stats = currentStats,
+                    userPreferences = userPreferences
+                )
                 Spacer(Modifier.width(dimensionResource(R.dimen.padding_medium)))
                 AverageValueColumn(
                     stats = currentStats-previousStats,
                     isValueDiff = true,
-                    heading = diffHeading
+                    heading = diffHeading,
+                    userPreferences = userPreferences
                 )
             }
             NavigationButton(
@@ -331,6 +345,7 @@ private fun NavigationButton(
 @Composable
 private fun AverageValueColumn(
     stats: FuelStopAverageValues,
+    userPreferences: DefaultSigns,
     modifier: Modifier = Modifier,
     heading: @Composable (() -> Unit)? = null,
     isValueDiff: Boolean = false
@@ -341,21 +356,21 @@ private fun AverageValueColumn(
             value = stats.price,
             type = ValueType.Currency,
             prefix = { Text("∅") },
-            suffix = Config.DISPLAY_CURRENCY_SIGN,
+            suffix = userPreferences.currencySign,
             isValueDiff = isValueDiff
         )
         ValueText(
             value = stats.volume,
             type = ValueType.Volume,
             prefix = { Text("∅") },
-            suffix = Config.DISPLAY_VOLUME_SIGN,
+            suffix = userPreferences.volumeSign,
             isValueDiff = isValueDiff
         )
         ValueText(
             value = stats.pricePerVolume,
             type = ValueType.Ratio,
             prefix = { Text("∅") },
-            suffix = "${Config.DISPLAY_CURRENCY_SIGN}/${Config.DISPLAY_VOLUME_SIGN}",
+            suffix = "${userPreferences.currencySign}/${userPreferences.volumeSign}",
             isValueDiff = isValueDiff
         )
     }
@@ -410,7 +425,11 @@ private fun AllTimeFuelStatisticsCardPreview() {
         AllTimeAverageFuelStatisticsCard(
             heading = R.string.all_time_average_heading,
             averages = FuelStopAverageValues(ppv, vol, price),
-            sums = FuelStopSumValues(BigDecimal("456.45"), BigDecimal("248.76"))
+            sums = FuelStopSumValues(BigDecimal("456.45"), BigDecimal("248.76")),
+            userPreferences = DefaultSigns(
+                volumeSign = "L",
+                currencySign = "€"
+            )
         )
     }
 }
@@ -434,6 +453,10 @@ private fun FuelStatisticsCardPreview() {
             previousStats = FuelStopAverageValues(ppv2, vol2, price2),
             onNavigateLeft = {},
             onNavigateRight = {},
+            userPreferences = DefaultSigns(
+                volumeSign = "L",
+                currencySign = "€"
+            )
         )
     }
 }

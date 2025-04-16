@@ -8,9 +8,13 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
 import gnush.refueltracker.data.FuelStopsRepository
+import gnush.refueltracker.data.UserPreferencesRepository
+import gnush.refueltracker.ui.data.DefaultSigns
 import gnush.refueltracker.ui.data.FuelStopCalendarUiState
+import kotlinx.coroutines.flow.first
 
 class FuelStopCalendarViewModel(
+    userPreferencesRepository: UserPreferencesRepository,
     private val fuelStopsRepository: FuelStopsRepository
 ): ViewModel() {
     private val _fuelStopsState: MutableStateFlow<FuelStopCalendarUiState> =
@@ -21,7 +25,13 @@ class FuelStopCalendarViewModel(
         viewModelScope.launch {
             fuelStopsRepository.fuelStopsOn(_fuelStopsState.value.calendar.year, _fuelStopsState.value.calendar.month)
                 .collect {
-                    _fuelStopsState.value = _fuelStopsState.value.copy(fuelStops = it)
+                    _fuelStopsState.value = _fuelStopsState.value.copy(
+                        fuelStops = it,
+                        userPreferences = DefaultSigns(
+                            currencySign = userPreferencesRepository.defaultCurrencySign.first(),
+                            volumeSign = userPreferencesRepository.defaultVolumeSign.first()
+                        )
+                    )
                 }
         }
     }

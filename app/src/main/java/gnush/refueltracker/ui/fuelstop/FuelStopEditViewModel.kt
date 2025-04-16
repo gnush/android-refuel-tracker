@@ -10,7 +10,9 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import gnush.refueltracker.data.FuelStopsRepository
+import gnush.refueltracker.data.UserPreferencesRepository
 import gnush.refueltracker.ui.Config
+import gnush.refueltracker.ui.data.DefaultSigns
 import gnush.refueltracker.ui.data.DropDownItemsUiState
 import gnush.refueltracker.ui.data.FuelStopDetails
 import gnush.refueltracker.ui.data.FuelStopUiState
@@ -20,6 +22,7 @@ import gnush.refueltracker.ui.extensions.validate
 
 class FuelStopEditViewModel(
     savedStateHandle: SavedStateHandle,
+    private val userPreferences: UserPreferencesRepository,
     private val fuelStopsRepository: FuelStopsRepository
 ): ViewModel() {
     var uiState by mutableStateOf(FuelStopUiState())
@@ -38,6 +41,10 @@ class FuelStopEditViewModel(
                         fuelSortUsedDropDownItems = fuelStopsRepository.mostUsedFuelSorts(Config.DROP_DOWN_LENGTH).first(),
                         stationRecentDropDownItems = fuelStopsRepository.mostRecentFuelStations(Config.DROP_DOWN_LENGTH).first(),
                         stationUsedDropDownItems = fuelStopsRepository.mostUsedFuelStations(Config.DROP_DOWN_LENGTH).first()
+                    ),
+                    userPreferences = DefaultSigns(
+                        currencySign = userPreferences.defaultCurrencySign.first(),
+                        volumeSign = userPreferences.defaultVolumeSign.first()
                     )
                 )
         }

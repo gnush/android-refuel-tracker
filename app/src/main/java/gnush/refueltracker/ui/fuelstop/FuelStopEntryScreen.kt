@@ -53,6 +53,7 @@ import gnush.refueltracker.ui.DropDownSelection
 import gnush.refueltracker.ui.data.FuelStopDetails
 import gnush.refueltracker.ui.data.FuelStopUiState
 import gnush.refueltracker.ui.RefuelTrackerViewModelProvider
+import gnush.refueltracker.ui.data.DefaultSigns
 import gnush.refueltracker.ui.data.DropDownItemsUiState
 import gnush.refueltracker.ui.dialog.PickDateDialog
 import gnush.refueltracker.ui.dialog.PickTimeDialDialog
@@ -121,6 +122,7 @@ fun FuelStopEntryBody(
             fuelStopDetails = uiState.details,
             onValueChange = onFuelStopValueChange,
             dropDownItems = uiState.dropDownItems,
+            userPreferences = uiState.userPreferences,
             modifier = Modifier.fillMaxWidth(),
         )
         Button(
@@ -139,6 +141,7 @@ private fun FuelStopInputForm(
     fuelStopDetails: FuelStopDetails,
     onValueChange: (FuelStopDetails) -> Unit,
     dropDownItems: DropDownItemsUiState,
+    userPreferences: DefaultSigns,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -223,8 +226,8 @@ private fun FuelStopInputForm(
             hasDecimalKeyboard = true,
             icon = {
                 Row {
-                    Text(Config.DISPLAY_CURRENCY_SIGN)
-                    Text("/${Config.DISPLAY_VOLUME_SIGN}")
+                    Text(userPreferences.currencySign)
+                    Text("/${userPreferences.volumeSign}")
                 }
             }
         )
@@ -233,14 +236,14 @@ private fun FuelStopInputForm(
             onValueChange = { onValueChange(fuelStopDetails.updateBasedOnTotalVolume(it)) },
             labelId = R.string.fuel_stop_total_volume_form_label,
             hasDecimalKeyboard = true,
-            icon = { Text(Config.DISPLAY_VOLUME_SIGN) }
+            icon = { Text(userPreferences.volumeSign) }
         )
         FormTextField(
             value = fuelStopDetails.totalPrice,
             onValueChange = { onValueChange(fuelStopDetails.updateBasedOnTotalPrice(it)) },
             labelId = R.string.fuel_stop_total_paid_form_label,
             hasDecimalKeyboard = true,
-            icon = { Text(Config.DISPLAY_CURRENCY_SIGN) }
+            icon = { Text(userPreferences.currencySign) }
         )
     }
 }
