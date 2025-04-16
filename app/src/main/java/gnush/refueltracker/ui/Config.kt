@@ -25,9 +25,6 @@ object Config {
     private const val VOLUME_DECIMAL_PLACES = 2
     private const val CURRENCY_DECIMAL_PLACES = 2
     private const val CURRENCY_VOLUME_RATIO_DECIMAL_PLACES = 3
-
-    const val DROP_DOWN_LENGTH = 5
-    val DROP_DOWN_SELECTION = DropDownSelection.MostUsed
     //////////////
 
     val VOLUME_FORMAT: NumberFormat = DecimalFormat("#,##0.${(1..VOLUME_DECIMAL_PLACES).toList().map { "0" }.fold(""){ x, xs -> x+xs }}")

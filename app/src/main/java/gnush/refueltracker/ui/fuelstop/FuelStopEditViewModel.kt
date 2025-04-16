@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import gnush.refueltracker.data.FuelStopsRepository
 import gnush.refueltracker.data.UserPreferencesRepository
-import gnush.refueltracker.ui.Config
 import gnush.refueltracker.ui.data.DefaultSigns
 import gnush.refueltracker.ui.data.DropDownItemsUiState
+import gnush.refueltracker.ui.data.EntryUserPreferences
 import gnush.refueltracker.ui.data.FuelStopDetails
 import gnush.refueltracker.ui.data.FuelStopUiState
 import gnush.refueltracker.ui.extensions.toFuelStop
@@ -32,19 +32,28 @@ class FuelStopEditViewModel(
 
     init {
         viewModelScope.launch {
+            val numberOfDropDownItems = userPreferences.numberOfEntryScreenDropDownElements.first()
+
             uiState = fuelStopsRepository.fuelStop(fuelStopId)
                 .filterNotNull()
                 .first()
                 .toFuelStopUiState().copy(
                     dropDownItems = DropDownItemsUiState(
-                        fuelSortRecentDropDownItems = fuelStopsRepository.mostRecentFuelSorts(Config.DROP_DOWN_LENGTH).first(),
-                        fuelSortUsedDropDownItems = fuelStopsRepository.mostUsedFuelSorts(Config.DROP_DOWN_LENGTH).first(),
-                        stationRecentDropDownItems = fuelStopsRepository.mostRecentFuelStations(Config.DROP_DOWN_LENGTH).first(),
-                        stationUsedDropDownItems = fuelStopsRepository.mostUsedFuelStations(Config.DROP_DOWN_LENGTH).first()
+                        fuelSortRecentDropDownItems = fuelStopsRepository
+                            .mostRecentFuelSorts(numberOfDropDownItems).first(),
+                        fuelSortUsedDropDownItems = fuelStopsRepository
+                            .mostUsedFuelSorts(numberOfDropDownItems).first(),
+                        stationRecentDropDownItems = fuelStopsRepository
+                            .mostRecentFuelStations(numberOfDropDownItems).first(),
+                        stationUsedDropDownItems = fuelStopsRepository
+                            .mostUsedFuelStations(numberOfDropDownItems).first()
                     ),
-                    userPreferences = DefaultSigns(
-                        currencySign = userPreferences.defaultCurrencySign.first(),
-                        volumeSign = userPreferences.defaultVolumeSign.first()
+                    userPreferences = EntryUserPreferences(
+                        signs = DefaultSigns(
+                            currency = userPreferences.defaultCurrencySign.first(),
+                            volume = userPreferences.defaultVolumeSign.first()
+                        ),
+                        dropDownFilter = userPreferences.defaultEntryScreenDropDownSelection.first()
                     )
                 )
         }

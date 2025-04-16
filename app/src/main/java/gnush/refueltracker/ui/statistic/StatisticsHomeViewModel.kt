@@ -25,8 +25,8 @@ class StatisticsHomeViewModel(
         viewModelScope.launch {
             uiState = StatisticsHomeUiState(
                 userPreferences = DefaultSigns(
-                    currencySign = userPreferencesRepository.defaultCurrencySign.first(),
-                    volumeSign = userPreferencesRepository.defaultVolumeSign.first()
+                    currency = userPreferencesRepository.defaultCurrencySign.first(),
+                    volume = userPreferencesRepository.defaultVolumeSign.first()
                 ),
                 year = uiState.monthCalendar.year,
                 allStopsAvg = fuelStopsRepository

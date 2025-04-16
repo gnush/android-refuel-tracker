@@ -49,7 +49,6 @@ import gnush.refueltracker.data.FuelStop
 import gnush.refueltracker.ui.Config
 import gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import gnush.refueltracker.ui.data.DefaultSigns
-import gnush.refueltracker.ui.data.FuelStopListUiState
 import gnush.refueltracker.ui.extensions.currencyText
 import gnush.refueltracker.ui.extensions.ratioText
 import gnush.refueltracker.ui.extensions.volumeText
@@ -171,12 +170,12 @@ private fun FuelStopListItem(
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(fuelStop.fuelSort)
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalVolume.volumeText} ${userPreferences.volumeSign}")
+                Text("${fuelStop.totalVolume.volumeText} ${userPreferences.volume}")
             }
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text("${fuelStop.pricePerVolume.ratioText} ${userPreferences.currencySign}/${userPreferences.volumeSign}")
+                Text("${fuelStop.pricePerVolume.ratioText} ${userPreferences.currency}/${userPreferences.volume}")
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalPrice.currencyText} ${userPreferences.currencySign}")
+                Text("${fuelStop.totalPrice.currencyText} ${userPreferences.currency}")
             }
         }
     }
@@ -223,8 +222,8 @@ private fun FuelStopListPreview() {
                 )
             ),
             userPreferences = DefaultSigns(
-                currencySign = "€",
-                volumeSign = "L"
+                currency = "€",
+                volume = "L"
             ),
             onFuelStopClick = {}
         )
@@ -248,8 +247,8 @@ private fun FuelStopListNoTimeItemPreview() {
                 totalPrice = totalPrice
             ),
             userPreferences = DefaultSigns(
-                currencySign = "€",
-                volumeSign = "L"
+                currency = "€",
+                volume = "L"
             )
         )
     }
@@ -273,8 +272,8 @@ private fun FuelStopListTimeItemPreview() {
                 totalPrice = totalPrice
             ),
             userPreferences = DefaultSigns(
-                currencySign = "€",
-                volumeSign = "L"
+                currency = "€",
+                volume = "L"
             )
         )
     }

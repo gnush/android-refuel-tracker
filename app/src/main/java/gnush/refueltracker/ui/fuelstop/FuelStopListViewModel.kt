@@ -26,8 +26,8 @@ class FuelStopListViewModel(
                     _uiState.value = FuelStopListUiState(
                         fuelStops = it,
                         userPreferences = DefaultSigns(
-                            currencySign = userPreferencesRepository.defaultCurrencySign.first(),
-                            volumeSign = userPreferencesRepository.defaultVolumeSign.first()
+                            currency = userPreferencesRepository.defaultCurrencySign.first(),
+                            volume = userPreferencesRepository.defaultVolumeSign.first()
                         )
                     )
                 }

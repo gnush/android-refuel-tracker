@@ -53,8 +53,8 @@ import gnush.refueltracker.ui.DropDownSelection
 import gnush.refueltracker.ui.data.FuelStopDetails
 import gnush.refueltracker.ui.data.FuelStopUiState
 import gnush.refueltracker.ui.RefuelTrackerViewModelProvider
-import gnush.refueltracker.ui.data.DefaultSigns
 import gnush.refueltracker.ui.data.DropDownItemsUiState
+import gnush.refueltracker.ui.data.EntryUserPreferences
 import gnush.refueltracker.ui.dialog.PickDateDialog
 import gnush.refueltracker.ui.dialog.PickTimeDialDialog
 import gnush.refueltracker.ui.extensions.updateBasedOnPricePerVolume
@@ -141,7 +141,7 @@ private fun FuelStopInputForm(
     fuelStopDetails: FuelStopDetails,
     onValueChange: (FuelStopDetails) -> Unit,
     dropDownItems: DropDownItemsUiState,
-    userPreferences: DefaultSigns,
+    userPreferences: EntryUserPreferences,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -203,6 +203,7 @@ private fun FuelStopInputForm(
                 FormTextFieldDropDownMenu(
                     mostRecentItems = dropDownItems.stationRecentDropDownItems,
                     mostUsedItems = dropDownItems.stationUsedDropDownItems,
+                    defaultSelection = userPreferences.dropDownFilter,
                     onItemSelected = { onValueChange(fuelStopDetails.copy(station = it)) },
                 )
             }
@@ -215,6 +216,7 @@ private fun FuelStopInputForm(
                 FormTextFieldDropDownMenu(
                     mostRecentItems = dropDownItems.fuelSortRecentDropDownItems,
                     mostUsedItems = dropDownItems.fuelSortUsedDropDownItems,
+                    defaultSelection = userPreferences.dropDownFilter,
                     onItemSelected = { onValueChange(fuelStopDetails.copy(fuelSort = it)) }
                 )
             }
@@ -226,8 +228,8 @@ private fun FuelStopInputForm(
             hasDecimalKeyboard = true,
             icon = {
                 Row {
-                    Text(userPreferences.currencySign)
-                    Text("/${userPreferences.volumeSign}")
+                    Text(userPreferences.signs.currency)
+                    Text("/${userPreferences.signs.volume}")
                 }
             }
         )
@@ -236,14 +238,14 @@ private fun FuelStopInputForm(
             onValueChange = { onValueChange(fuelStopDetails.updateBasedOnTotalVolume(it)) },
             labelId = R.string.fuel_stop_total_volume_form_label,
             hasDecimalKeyboard = true,
-            icon = { Text(userPreferences.volumeSign) }
+            icon = { Text(userPreferences.signs.volume) }
         )
         FormTextField(
             value = fuelStopDetails.totalPrice,
             onValueChange = { onValueChange(fuelStopDetails.updateBasedOnTotalPrice(it)) },
             labelId = R.string.fuel_stop_total_paid_form_label,
             hasDecimalKeyboard = true,
-            icon = { Text(userPreferences.currencySign) }
+            icon = { Text(userPreferences.signs.currency) }
         )
     }
 }
@@ -298,6 +300,7 @@ private fun FormTextFieldButton(
 private fun FormTextFieldDropDownMenu(
     mostRecentItems: List<String>,
     mostUsedItems: List<String>,
+    defaultSelection: DropDownSelection,
     onItemSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -316,6 +319,7 @@ private fun FormTextFieldDropDownMenu(
             FormTextFieldDropDownMenuBody(
                 mostRecentItems = mostRecentItems,
                 mostUsedItems = mostUsedItems,
+                defaultSelection = defaultSelection,
                 onItemSelected = {
                     expanded = false
                     onItemSelected(it)
@@ -329,10 +333,11 @@ private fun FormTextFieldDropDownMenu(
 private fun FormTextFieldDropDownMenuBody(
     mostRecentItems: List<String>,
     mostUsedItems: List<String>,
+    defaultSelection: DropDownSelection,
     onItemSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selection by remember { mutableStateOf(Config.DROP_DOWN_SELECTION) }
+    var selection by remember { mutableStateOf(defaultSelection) }
 
     Column(modifier) {
         DropDownFilter(
@@ -427,7 +432,8 @@ private fun FormTextFieldDropDownMenuBodyPreview() {
         FormTextFieldDropDownMenuBody(
             mostRecentItems = emptyList(),
             mostUsedItems = listOf("First", "Second", "Third"),
-            onItemSelected = {}
+            onItemSelected = {},
+            defaultSelection = DropDownSelection.MostUsed
         )
     }
 }

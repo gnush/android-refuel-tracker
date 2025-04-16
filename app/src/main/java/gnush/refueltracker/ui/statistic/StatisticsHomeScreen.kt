@@ -206,7 +206,7 @@ private fun AllTimeAverageFuelStatisticsCard(
                             contentDescription = stringResource(R.string.sum_aggregate_icon_description)
                         )
                     },
-                    suffix = userPreferences.currencySign
+                    suffix = userPreferences.currency
                 )
                 ValueText(
                     value = sums.volume,
@@ -217,7 +217,7 @@ private fun AllTimeAverageFuelStatisticsCard(
                             contentDescription = stringResource(R.string.sum_aggregate_icon_description)
                         )
                     },
-                    suffix = userPreferences.volumeSign
+                    suffix = userPreferences.volume
                 )
             }
             Row(
@@ -233,19 +233,19 @@ private fun AllTimeAverageFuelStatisticsCard(
                     value = averages.price,
                     type = ValueType.Currency,
                     prefix = { Text("∅") },
-                    suffix = userPreferences.currencySign
+                    suffix = userPreferences.currency
                 )
                 ValueText(
                     value = averages.volume,
                     type = ValueType.Volume,
                     prefix = { Text("∅") },
-                    suffix = userPreferences.volumeSign
+                    suffix = userPreferences.volume
                 )
                 ValueText(
                     value = averages.pricePerVolume,
                     type = ValueType.Ratio,
                     prefix = { Text("∅") },
-                    suffix = "${userPreferences.currencySign}/${userPreferences.volumeSign}"
+                    suffix = "${userPreferences.currency}/${userPreferences.volume}"
                 )
             }
         }
@@ -356,21 +356,21 @@ private fun AverageValueColumn(
             value = stats.price,
             type = ValueType.Currency,
             prefix = { Text("∅") },
-            suffix = userPreferences.currencySign,
+            suffix = userPreferences.currency,
             isValueDiff = isValueDiff
         )
         ValueText(
             value = stats.volume,
             type = ValueType.Volume,
             prefix = { Text("∅") },
-            suffix = userPreferences.volumeSign,
+            suffix = userPreferences.volume,
             isValueDiff = isValueDiff
         )
         ValueText(
             value = stats.pricePerVolume,
             type = ValueType.Ratio,
             prefix = { Text("∅") },
-            suffix = "${userPreferences.currencySign}/${userPreferences.volumeSign}",
+            suffix = "${userPreferences.currency}/${userPreferences.volume}",
             isValueDiff = isValueDiff
         )
     }
@@ -427,8 +427,8 @@ private fun AllTimeFuelStatisticsCardPreview() {
             averages = FuelStopAverageValues(ppv, vol, price),
             sums = FuelStopSumValues(BigDecimal("456.45"), BigDecimal("248.76")),
             userPreferences = DefaultSigns(
-                volumeSign = "L",
-                currencySign = "€"
+                volume = "L",
+                currency = "€"
             )
         )
     }
@@ -454,8 +454,8 @@ private fun FuelStatisticsCardPreview() {
             onNavigateLeft = {},
             onNavigateRight = {},
             userPreferences = DefaultSigns(
-                volumeSign = "L",
-                currencySign = "€"
+                volume = "L",
+                currency = "€"
             )
         )
     }
