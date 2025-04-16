@@ -113,7 +113,9 @@ class FuelStopEntryViewModel(
      */
     suspend fun saveFuelStop() {
         if (validate(uiState.details))
-            fuelStopsRepository.insert(uiState.details.toFuelStop())
+            fuelStopsRepository.insert(
+                uiState.details.toFuelStop(uiState.userPreferences.formats)
+            )
     }
 
     /**
@@ -121,7 +123,9 @@ class FuelStopEntryViewModel(
      */
     suspend fun updateFuelStop() {
         if (validate(uiState.details))
-            fuelStopsRepository.update(uiState.details.toFuelStop())
+            fuelStopsRepository.update(
+                uiState.details.toFuelStop(uiState.userPreferences.formats)
+            )
     }
 
     private fun validate(details: FuelStopDetails): Boolean =

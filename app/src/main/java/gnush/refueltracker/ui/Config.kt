@@ -20,17 +20,6 @@ object Config {
         hour(); char(':'); minute(); optional { char(':'); second() }
     }
 
-    ///////////////
-    // TODO: remove from config and migrate to preference store
-    private const val VOLUME_DECIMAL_PLACES = 2
-    private const val CURRENCY_DECIMAL_PLACES = 2
-    private const val CURRENCY_VOLUME_RATIO_DECIMAL_PLACES = 3
-
-    val VOLUME_FORMAT: NumberFormat = DecimalFormat("#,##0.${"0".repeat(VOLUME_DECIMAL_PLACES)}")
-    val CURRENCY_FORMAT: NumberFormat = DecimalFormat("#,##0.${"0".repeat(CURRENCY_DECIMAL_PLACES)}")
-    val CURRENCY_VOLUME_RATIO_FORMAT: NumberFormat = DecimalFormat("#,##0.${"0".repeat(CURRENCY_VOLUME_RATIO_DECIMAL_PLACES)}")
-    //////////////
-
     // TODO: use this or provide a predefined set of date formats to pick from?
     var foo = "dd.MM.uuuu"
     var bar = "HH:mm"
