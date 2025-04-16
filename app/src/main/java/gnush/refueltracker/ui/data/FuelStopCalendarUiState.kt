@@ -6,5 +6,6 @@ import gnush.refueltracker.ui.calendar.CalendarUiState
 data class FuelStopCalendarUiState(
     val fuelStops: List<FuelStop> = emptyList(),
     val calendar: CalendarUiState = CalendarUiState(),
-    val userPreferences: DefaultSigns = DefaultSigns()
+    val signs: DefaultSigns = DefaultSigns(),
+    val formats: NumberFormats = NumberFormats()
 )

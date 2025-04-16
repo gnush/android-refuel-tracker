@@ -45,15 +45,15 @@ import gnush.refueltracker.data.FuelStopAverageValues
 import gnush.refueltracker.data.FuelStopSumValues
 import gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import gnush.refueltracker.ui.data.DefaultSigns
-import gnush.refueltracker.ui.extensions.currencyText
+import gnush.refueltracker.ui.data.NumberFormats
+import gnush.refueltracker.ui.extensions.format
 import gnush.refueltracker.ui.extensions.paddedDisplaySign
 import gnush.refueltracker.ui.extensions.monthOfYearId
-import gnush.refueltracker.ui.extensions.ratioText
 import gnush.refueltracker.ui.extensions.valueChangeColor
-import gnush.refueltracker.ui.extensions.volumeText
 import gnush.refueltracker.ui.navigation.BottomNavigationDestination
 import gnush.refueltracker.ui.theme.RefuelTrackerTheme
 import java.math.BigDecimal
+import java.text.NumberFormat
 
 object StatisticsHomeDestination: BottomNavigationDestination {
     override val route: String = "statistics_home"
@@ -131,7 +131,8 @@ private fun StatisticsBody(
             previousStats = uiState.previousMonthAvg,
             onNavigateLeft = onNavigateLeftMonth,
             onNavigateRight = onNavigateRightMonth,
-            userPreferences = uiState.userPreferences
+            signs = uiState.signs,
+            formats = uiState.formats
         )
         AverageFuelStatisticsCard(
             currentHeading = { Text(uiState.year.toString()) },
@@ -140,13 +141,15 @@ private fun StatisticsBody(
             previousStats = uiState.previousYearAvg,
             onNavigateLeft = onNavigateLeftYear,
             onNavigateRight = onNavigateRightYear,
-            userPreferences = uiState.userPreferences
+            signs = uiState.signs,
+            formats = uiState.formats
         )
         AllTimeAverageFuelStatisticsCard(
             heading = R.string.all_time_average_heading,
             averages = uiState.allStopsAvg,
             sums = uiState.allStopsSum,
-            userPreferences = uiState.userPreferences
+            signs = uiState.signs,
+            formats = uiState.formats
         )
     }
 }
@@ -168,7 +171,8 @@ private fun AllTimeAverageFuelStatisticsCard(
     @StringRes heading: Int,
     averages: FuelStopAverageValues,
     sums: FuelStopSumValues,
-    userPreferences: DefaultSigns,
+    signs: DefaultSigns,
+    formats: NumberFormats,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -199,25 +203,25 @@ private fun AllTimeAverageFuelStatisticsCard(
             ) {
                 ValueText(
                     value = sums.price,
-                    type = ValueType.Currency,
+                    format = formats.currency,
                     prefix = {
                         Icon(
                             imageVector = Icons.Filled.Functions,
                             contentDescription = stringResource(R.string.sum_aggregate_icon_description)
                         )
                     },
-                    suffix = userPreferences.currency
+                    suffix = signs.currency
                 )
                 ValueText(
                     value = sums.volume,
-                    type = ValueType.Volume,
+                    format = formats.volume,
                     prefix = {
                         Icon(
                             imageVector = Icons.Filled.Functions,
                             contentDescription = stringResource(R.string.sum_aggregate_icon_description)
                         )
                     },
-                    suffix = userPreferences.volume
+                    suffix = signs.volume
                 )
             }
             Row(
@@ -231,21 +235,21 @@ private fun AllTimeAverageFuelStatisticsCard(
             ) {
                 ValueText(
                     value = averages.price,
-                    type = ValueType.Currency,
+                    format = formats.currency,
                     prefix = { Text("∅") },
-                    suffix = userPreferences.currency
+                    suffix = signs.currency
                 )
                 ValueText(
                     value = averages.volume,
-                    type = ValueType.Volume,
+                    format = formats.volume,
                     prefix = { Text("∅") },
-                    suffix = userPreferences.volume
+                    suffix = signs.volume
                 )
                 ValueText(
                     value = averages.pricePerVolume,
-                    type = ValueType.Ratio,
+                    format = formats.ratio,
                     prefix = { Text("∅") },
-                    suffix = "${userPreferences.currency}/${userPreferences.volume}"
+                    suffix = "${signs.currency}/${signs.volume}"
                 )
             }
         }
@@ -254,7 +258,8 @@ private fun AllTimeAverageFuelStatisticsCard(
 
 @Composable
 private fun AverageFuelStatisticsCard(
-    userPreferences: DefaultSigns,
+    signs: DefaultSigns,
+    formats: NumberFormats,
     currentHeading: @Composable () -> Unit,
     previousHeading: @Composable () -> Unit,
     currentStats: FuelStopAverageValues,
@@ -298,20 +303,23 @@ private fun AverageFuelStatisticsCard(
                 AverageValueColumn(
                     heading = previousHeading,
                     stats = previousStats,
-                    userPreferences = userPreferences
+                    signs = signs,
+                    formats = formats
                 )
                 Spacer(Modifier.width(dimensionResource(R.dimen.padding_medium)))
                 AverageValueColumn(
                     heading = currentHeading,
                     stats = currentStats,
-                    userPreferences = userPreferences
+                    signs = signs,
+                    formats = formats
                 )
                 Spacer(Modifier.width(dimensionResource(R.dimen.padding_medium)))
                 AverageValueColumn(
                     stats = currentStats-previousStats,
                     isValueDiff = true,
                     heading = diffHeading,
-                    userPreferences = userPreferences
+                    signs = signs,
+                    formats = formats
                 )
             }
             NavigationButton(
@@ -345,7 +353,8 @@ private fun NavigationButton(
 @Composable
 private fun AverageValueColumn(
     stats: FuelStopAverageValues,
-    userPreferences: DefaultSigns,
+    signs: DefaultSigns,
+    formats: NumberFormats,
     modifier: Modifier = Modifier,
     heading: @Composable (() -> Unit)? = null,
     isValueDiff: Boolean = false
@@ -354,38 +363,32 @@ private fun AverageValueColumn(
         heading?.invoke() ?: Text("") // TODO: how to properly align the card (and the elements), do we really need a grid?
         ValueText(
             value = stats.price,
-            type = ValueType.Currency,
+            format = formats.currency,
             prefix = { Text("∅") },
-            suffix = userPreferences.currency,
+            suffix = signs.currency,
             isValueDiff = isValueDiff
         )
         ValueText(
             value = stats.volume,
-            type = ValueType.Volume,
+            format = formats.volume,
             prefix = { Text("∅") },
-            suffix = userPreferences.volume,
+            suffix = signs.volume,
             isValueDiff = isValueDiff
         )
         ValueText(
             value = stats.pricePerVolume,
-            type = ValueType.Ratio,
+            format = formats.ratio,
             prefix = { Text("∅") },
-            suffix = "${userPreferences.currency}/${userPreferences.volume}",
+            suffix = "${signs.currency}/${signs.volume}",
             isValueDiff = isValueDiff
         )
     }
 }
 
-enum class ValueType{
-    Volume,
-    Currency,
-    Ratio
-}
-
 @Composable
 private fun ValueText(
     value: BigDecimal,
-    type: ValueType,
+    format: NumberFormat,
     prefix: @Composable () -> Unit,
     suffix: String,
     modifier: Modifier = Modifier,
@@ -402,11 +405,7 @@ private fun ValueText(
         Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
         val sign = if (isValueDiff) value.paddedDisplaySign else ""
         Text(
-            text = when(type) {
-                ValueType.Volume -> "$sign${value.abs().volumeText}"
-                ValueType.Currency -> "$sign${value.abs().currencyText}"
-                ValueType.Ratio -> "$sign${value.abs().ratioText}"
-            },
+            text = "$sign${value.abs().format(format)}",
             color = if (isValueDiff) value.valueChangeColor else Color.Unspecified
         )
         Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
@@ -426,10 +425,11 @@ private fun AllTimeFuelStatisticsCardPreview() {
             heading = R.string.all_time_average_heading,
             averages = FuelStopAverageValues(ppv, vol, price),
             sums = FuelStopSumValues(BigDecimal("456.45"), BigDecimal("248.76")),
-            userPreferences = DefaultSigns(
+            signs = DefaultSigns(
                 volume = "L",
                 currency = "€"
-            )
+            ),
+            formats = NumberFormats()
         )
     }
 }
@@ -453,10 +453,11 @@ private fun FuelStatisticsCardPreview() {
             previousStats = FuelStopAverageValues(ppv2, vol2, price2),
             onNavigateLeft = {},
             onNavigateRight = {},
-            userPreferences = DefaultSigns(
+            signs = DefaultSigns(
                 volume = "L",
                 currency = "€"
-            )
+            ),
+            formats = NumberFormats()
         )
     }
 }

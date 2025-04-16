@@ -30,7 +30,7 @@ import gnush.refueltracker.data.FuelStop
 import gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import gnush.refueltracker.ui.calendar.CalendarUiState
 import gnush.refueltracker.ui.calendar.CalendarView
-import gnush.refueltracker.ui.data.DefaultSigns
+import gnush.refueltracker.ui.data.NumberFormats
 import gnush.refueltracker.ui.navigation.BottomNavigationDestination
 
 object FuelStopCalendarDestination: BottomNavigationDestination {
@@ -93,7 +93,8 @@ fun FuelStopCalendarScreen(
             )
             FuelStopList(
                 fuelStops = uiState.fuelStops,
-                userPreferences = uiState.userPreferences,
+                signs = uiState.signs,
+                formats = uiState.formats,
                 onFuelStopClick = { navigateToFuelStopEdit(it.id) }
             )
         }

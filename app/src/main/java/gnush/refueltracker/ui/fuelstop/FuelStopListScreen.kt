@@ -49,9 +49,8 @@ import gnush.refueltracker.data.FuelStop
 import gnush.refueltracker.ui.Config
 import gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import gnush.refueltracker.ui.data.DefaultSigns
-import gnush.refueltracker.ui.extensions.currencyText
-import gnush.refueltracker.ui.extensions.ratioText
-import gnush.refueltracker.ui.extensions.volumeText
+import gnush.refueltracker.ui.data.NumberFormats
+import gnush.refueltracker.ui.extensions.format
 import gnush.refueltracker.ui.navigation.BottomNavigationDestination
 import gnush.refueltracker.ui.theme.FuelCardShape
 import gnush.refueltracker.ui.theme.RefuelTrackerTheme
@@ -109,7 +108,8 @@ fun FuelStopListScreen(
     ) { innerPadding ->
         FuelStopList(
             fuelStops = uiState.fuelStops,
-            userPreferences = uiState.userPreferences,
+            signs = uiState.signs,
+            formats = uiState.formats,
             onFuelStopClick = { navigateToFuelStopEdit(it.id) },
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
@@ -120,7 +120,8 @@ fun FuelStopListScreen(
 @Composable
 fun FuelStopList(
     fuelStops: List<FuelStop>,
-    userPreferences: DefaultSigns,
+    signs: DefaultSigns,
+    formats: NumberFormats,
     onFuelStopClick: (FuelStop) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
@@ -132,7 +133,8 @@ fun FuelStopList(
         items(fuelStops) {
             FuelStopListItem(
                 fuelStop = it,
-                userPreferences = userPreferences,
+                signs = signs,
+                formats = formats,
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_small))
                     .clickable { onFuelStopClick(it) }
@@ -144,7 +146,8 @@ fun FuelStopList(
 @Composable
 private fun FuelStopListItem(
     fuelStop: FuelStop,
-    userPreferences: DefaultSigns,
+    signs: DefaultSigns,
+    formats: NumberFormats,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -170,12 +173,12 @@ private fun FuelStopListItem(
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(fuelStop.fuelSort)
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalVolume.volumeText} ${userPreferences.volume}")
+                Text("${fuelStop.totalVolume.format(formats.volume)} ${signs.volume}")
             }
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text("${fuelStop.pricePerVolume.ratioText} ${userPreferences.currency}/${userPreferences.volume}")
+                Text("${fuelStop.pricePerVolume.format(formats.ratio)} ${signs.currency}/${signs.volume}")
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalPrice.currencyText} ${userPreferences.currency}")
+                Text("${fuelStop.totalPrice.format(formats.currency)} ${signs.currency}")
             }
         }
     }
@@ -221,10 +224,11 @@ private fun FuelStopListPreview() {
                     totalPrice = stop2V
                 )
             ),
-            userPreferences = DefaultSigns(
+            signs = DefaultSigns(
                 currency = "€",
                 volume = "L"
             ),
+            formats = NumberFormats(),
             onFuelStopClick = {}
         )
     }
@@ -246,10 +250,11 @@ private fun FuelStopListNoTimeItemPreview() {
                 totalVolume = totalPrice.div(pricePerVolume),
                 totalPrice = totalPrice
             ),
-            userPreferences = DefaultSigns(
+            signs = DefaultSigns(
                 currency = "€",
                 volume = "L"
-            )
+            ),
+            formats = NumberFormats(),
         )
     }
 }
@@ -271,10 +276,11 @@ private fun FuelStopListTimeItemPreview() {
                 totalVolume = totalPrice/pricePerVolume,
                 totalPrice = totalPrice
             ),
-            userPreferences = DefaultSigns(
+            signs = DefaultSigns(
                 currency = "€",
                 volume = "L"
-            )
+            ),
+            formats = NumberFormats(),
         )
     }
 }

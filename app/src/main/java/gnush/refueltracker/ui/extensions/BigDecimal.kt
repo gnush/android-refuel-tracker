@@ -3,30 +3,13 @@ package gnush.refueltracker.ui.extensions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import gnush.refueltracker.ui.Config
 import java.math.BigDecimal
 import java.text.NumberFormat
 
 /**
- * Returns a String representation conforming to [Config.VOLUME_FORMAT].
+ * Returns a String representation conforming to the given [NumberFormat]
  */
-val BigDecimal.volumeText: String
-    get() = Config.VOLUME_FORMAT.format(this)
-
-/**
- * Returns a String representation conforming to [Config.CURRENCY_FORMAT].
- */
-val BigDecimal.currencyText: String
-    get() = Config.CURRENCY_FORMAT.format(this)
-
-/**
- * Returns a String representation conforming to [Config.CURRENCY_VOLUME_RATIO_FORMAT].
- */
-val BigDecimal.ratioText: String
-    get() = Config.CURRENCY_VOLUME_RATIO_FORMAT.format(this)
-
-fun BigDecimal.format(format: NumberFormat): String =
-    format.format(this)
+fun BigDecimal.format(format: NumberFormat): String = format.format(this)
 
 /**
  * Returns '- ' when the value is below zero

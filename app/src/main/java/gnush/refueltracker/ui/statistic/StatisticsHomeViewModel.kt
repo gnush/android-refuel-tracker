@@ -12,7 +12,9 @@ import gnush.refueltracker.data.FuelStopSumValues
 import gnush.refueltracker.data.FuelStopsRepository
 import gnush.refueltracker.data.UserPreferencesRepository
 import gnush.refueltracker.ui.calendar.CalendarUiState
+import gnush.refueltracker.ui.createNumberFormat
 import gnush.refueltracker.ui.data.DefaultSigns
+import gnush.refueltracker.ui.data.NumberFormats
 
 class StatisticsHomeViewModel(
     userPreferencesRepository: UserPreferencesRepository,
@@ -23,11 +25,10 @@ class StatisticsHomeViewModel(
 
     init {
         viewModelScope.launch {
+            val thousandsSeparatorPlaces =
+                userPreferencesRepository.thousandsSeparatorPlaces.first()
+
             uiState = StatisticsHomeUiState(
-                userPreferences = DefaultSigns(
-                    currency = userPreferencesRepository.defaultCurrencySign.first(),
-                    volume = userPreferencesRepository.defaultVolumeSign.first()
-                ),
                 year = uiState.monthCalendar.year,
                 allStopsAvg = fuelStopsRepository
                     .averageFuelStats()
@@ -44,7 +45,25 @@ class StatisticsHomeViewModel(
                 previousMonthAvg = fuelStopsRepository
                     .averageFuelStats(uiState.monthCalendar.previousMonth().year, uiState.monthCalendar.previousMonth().month)
                     .first(),
-                allStopsSum = fuelStopsRepository.sumFuelStats().first()
+                allStopsSum = fuelStopsRepository.sumFuelStats().first(),
+                signs = DefaultSigns(
+                    currency = userPreferencesRepository.defaultCurrencySign.first(),
+                    volume = userPreferencesRepository.defaultVolumeSign.first()
+                ),
+                formats = NumberFormats(
+                    currency = createNumberFormat(
+                        thousandsSeparatorPlaces = thousandsSeparatorPlaces,
+                        decimalPlaces = userPreferencesRepository.currencyDecimalPlaces.first()
+                    ),
+                    volume = createNumberFormat(
+                        thousandsSeparatorPlaces = thousandsSeparatorPlaces,
+                        decimalPlaces = userPreferencesRepository.volumeDecimalPlaces.first()
+                    ),
+                    ratio = createNumberFormat(
+                        thousandsSeparatorPlaces = thousandsSeparatorPlaces,
+                        decimalPlaces = userPreferencesRepository.currencyVolumeRatioDecimalPlaces.first()
+                    ),
+                )
             )
         }
     }
@@ -105,7 +124,6 @@ class StatisticsHomeViewModel(
 }
 
 data class StatisticsHomeUiState(
-    val userPreferences: DefaultSigns = DefaultSigns(),
     val allStopsAvg: FuelStopAverageValues = FuelStopAverageValues(),
     val allStopsSum: FuelStopSumValues = FuelStopSumValues(),
     val currentMonthAvg: FuelStopAverageValues = FuelStopAverageValues(),
@@ -113,5 +131,7 @@ data class StatisticsHomeUiState(
     val currentYearAvg: FuelStopAverageValues = FuelStopAverageValues(),
     val previousYearAvg: FuelStopAverageValues = FuelStopAverageValues(),
     val monthCalendar: CalendarUiState = CalendarUiState(),
-    val year: Int = 0
+    val year: Int = 0,
+    val signs: DefaultSigns = DefaultSigns(),
+    val formats: NumberFormats = NumberFormats()
 )

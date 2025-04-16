@@ -9,8 +9,10 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.number
 import gnush.refueltracker.data.FuelStopsRepository
 import gnush.refueltracker.data.UserPreferencesRepository
+import gnush.refueltracker.ui.createNumberFormat
 import gnush.refueltracker.ui.data.DefaultSigns
 import gnush.refueltracker.ui.data.FuelStopCalendarUiState
+import gnush.refueltracker.ui.data.NumberFormats
 import kotlinx.coroutines.flow.first
 
 class FuelStopCalendarViewModel(
@@ -25,11 +27,28 @@ class FuelStopCalendarViewModel(
         viewModelScope.launch {
             fuelStopsRepository.fuelStopsOn(_fuelStopsState.value.calendar.year, _fuelStopsState.value.calendar.month)
                 .collect {
+                    val thousandsSeparatorPlaces =
+                        userPreferencesRepository.thousandsSeparatorPlaces.first()
+
                     _fuelStopsState.value = _fuelStopsState.value.copy(
                         fuelStops = it,
-                        userPreferences = DefaultSigns(
+                        signs = DefaultSigns(
                             currency = userPreferencesRepository.defaultCurrencySign.first(),
                             volume = userPreferencesRepository.defaultVolumeSign.first()
+                        ),
+                        formats = NumberFormats(
+                            currency = createNumberFormat(
+                                thousandsSeparatorPlaces = thousandsSeparatorPlaces,
+                                decimalPlaces = userPreferencesRepository.currencyDecimalPlaces.first()
+                            ),
+                            volume = createNumberFormat(
+                                thousandsSeparatorPlaces = thousandsSeparatorPlaces,
+                                decimalPlaces = userPreferencesRepository.volumeDecimalPlaces.first()
+                            ),
+                            ratio = createNumberFormat(
+                                thousandsSeparatorPlaces = thousandsSeparatorPlaces,
+                                decimalPlaces = userPreferencesRepository.currencyVolumeRatioDecimalPlaces.first()
+                            ),
                         )
                     )
                 }
