@@ -57,9 +57,6 @@ import gnush.refueltracker.ui.data.DropDownItemsUiState
 import gnush.refueltracker.ui.data.EntryUserPreferences
 import gnush.refueltracker.ui.dialog.PickDateDialog
 import gnush.refueltracker.ui.dialog.PickTimeDialDialog
-import gnush.refueltracker.ui.extensions.updateBasedOnPricePerVolume
-import gnush.refueltracker.ui.extensions.updateBasedOnTotalPrice
-import gnush.refueltracker.ui.extensions.updateBasedOnTotalVolume
 import gnush.refueltracker.ui.navigation.NavigationDestination
 import gnush.refueltracker.ui.theme.RefuelTrackerTheme
 
@@ -92,6 +89,9 @@ fun FuelStopEntryScreen(
         FuelStopEntryBody(
             uiState = viewModel.uiState,
             onFuelStopValueChange = viewModel::updateUiState,
+            onPricePerVolumeChange = viewModel::updateBasedOnPricePerVolume,
+            onVolumeChange = viewModel::updateBasedOnTotalVolume,
+            onPriceChange = viewModel::updateBasedOnTotalPrice,
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.saveFuelStop()
@@ -110,6 +110,9 @@ fun FuelStopEntryScreen(
 fun FuelStopEntryBody(
     uiState: FuelStopUiState,
     onFuelStopValueChange: (FuelStopDetails) -> Unit,
+    onPricePerVolumeChange: (String) -> Unit,
+    onVolumeChange: (String) -> Unit,
+    onPriceChange: (String) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -121,6 +124,9 @@ fun FuelStopEntryBody(
         FuelStopInputForm(
             fuelStopDetails = uiState.details,
             onValueChange = onFuelStopValueChange,
+            onPricePerVolumeChange = onPricePerVolumeChange,
+            onVolumeChange = onVolumeChange,
+            onPriceChange = onPriceChange,
             dropDownItems = uiState.dropDownItems,
             userPreferences = uiState.userPreferences,
             modifier = Modifier.fillMaxWidth(),
@@ -140,6 +146,9 @@ fun FuelStopEntryBody(
 private fun FuelStopInputForm(
     fuelStopDetails: FuelStopDetails,
     onValueChange: (FuelStopDetails) -> Unit,
+    onPricePerVolumeChange: (String) -> Unit,
+    onVolumeChange: (String) -> Unit,
+    onPriceChange: (String) -> Unit,
     dropDownItems: DropDownItemsUiState,
     userPreferences: EntryUserPreferences,
     modifier: Modifier = Modifier
@@ -223,7 +232,7 @@ private fun FuelStopInputForm(
         )
         FormTextField(
             value = fuelStopDetails.pricePerVolume,
-            onValueChange = { onValueChange(fuelStopDetails.updateBasedOnPricePerVolume(it)) },
+            onValueChange = onPricePerVolumeChange,
             labelId = R.string.fuel_stop_price_per_volume_form_label,
             hasDecimalKeyboard = true,
             icon = {
@@ -235,14 +244,14 @@ private fun FuelStopInputForm(
         )
         FormTextField(
             value = fuelStopDetails.totalVolume,
-            onValueChange = { onValueChange(fuelStopDetails.updateBasedOnTotalVolume(it)) },
+            onValueChange = onVolumeChange,
             labelId = R.string.fuel_stop_total_volume_form_label,
             hasDecimalKeyboard = true,
             icon = { Text(userPreferences.signs.volume) }
         )
         FormTextField(
             value = fuelStopDetails.totalPrice,
-            onValueChange = { onValueChange(fuelStopDetails.updateBasedOnTotalPrice(it)) },
+            onValueChange = onPriceChange,
             labelId = R.string.fuel_stop_total_paid_form_label,
             hasDecimalKeyboard = true,
             icon = { Text(userPreferences.signs.currency) }
@@ -421,6 +430,9 @@ private fun FuelStopEntryPreview() {
             ),
             onSaveClick = {},
             onFuelStopValueChange = {},
+            onPricePerVolumeChange = {},
+            onVolumeChange = {},
+            onPriceChange = {}
         )
     }
 }

@@ -34,7 +34,7 @@ fun FuelStopEditScreen(
     onSaveClickNavigateTo: () -> Unit,
     modifier: Modifier = Modifier,
     canNavigateUp: Boolean = true,
-    viewModel: FuelStopEditViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
+    viewModel: FuelStopEntryViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -51,6 +51,9 @@ fun FuelStopEditScreen(
         FuelStopEntryBody(
             uiState = viewModel.uiState,
             onFuelStopValueChange = viewModel::updateUiState,
+            onPricePerVolumeChange = viewModel::updateBasedOnPricePerVolume,
+            onVolumeChange = viewModel::updateBasedOnTotalVolume,
+            onPriceChange = viewModel::updateBasedOnTotalPrice,
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.updateFuelStop()

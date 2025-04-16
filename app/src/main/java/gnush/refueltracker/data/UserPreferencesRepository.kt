@@ -26,6 +26,8 @@ class UserPreferencesRepository(
     companion object {
         private const val TAG = "UserPreferencesRepo"
 
+        private val THOUSANDS_SEPARATOR_PLACES =
+            intPreferencesKey("thousands_separator_places")
         private val VOLUME_DECIMAL_PLACES =
             intPreferencesKey("volume_decimal_places")
         private val CURRENCY_DECIMAL_PLACES =
@@ -52,6 +54,8 @@ class UserPreferencesRepository(
             }
     }
 
+    val thousandsSeparatorPlaces: Flow<Int> = readDatastore(THOUSANDS_SEPARATOR_PLACES, 3)
+
     val volumeDecimalPlaces: Flow<Int> = readDatastore(VOLUME_DECIMAL_PLACES, 2)
 
     val currencyDecimalPlaces: Flow<Int> = readDatastore(CURRENCY_DECIMAL_PLACES, 2)
@@ -76,16 +80,20 @@ class UserPreferencesRepository(
             }
         }
 
+    suspend fun saveThousandsSeparatorPlaces(places: Int) = datastore.edit {
+        it[THOUSANDS_SEPARATOR_PLACES] = if (places > 0) places else 0
+    }
+
     suspend fun saveVolumeDecimalPreference(places: Int) = datastore.edit {
-        it[VOLUME_DECIMAL_PLACES] = places
+        it[VOLUME_DECIMAL_PLACES] = if (places > 0) places else 0
     }
 
     suspend fun saveCurrencyDecimalPreference(places: Int) = datastore.edit {
-        it[CURRENCY_DECIMAL_PLACES] = places
+        it[CURRENCY_DECIMAL_PLACES] = if (places > 0) places else 0
     }
 
     suspend fun saveCurrencyVolumeRatioDecimalPreferences(places: Int) = datastore.edit {
-        it[CURRENCY_VOLUME_RATIO_DECIMAL_PLACES] = places
+        it[CURRENCY_VOLUME_RATIO_DECIMAL_PLACES] = if (places > 0) places else 0
     }
 
     suspend fun saveDefaultCurrencyPreference(sign: String) = datastore.edit {
@@ -97,7 +105,7 @@ class UserPreferencesRepository(
     }
 
     suspend fun saveDefaultNumberOfEntryScreenDropDownElements(numElements: Int) = datastore.edit {
-        it[ENTRY_SCREEN_DROP_DOWN_ELEMENTS] = numElements
+        it[ENTRY_SCREEN_DROP_DOWN_ELEMENTS] = if (numElements > 0) numElements else 0
     }
 
     suspend fun saveDefaultEntryScreenDropDownSelection(dropDownSelection: DropDownSelection) = datastore.edit {

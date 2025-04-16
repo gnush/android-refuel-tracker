@@ -25,11 +25,11 @@ object Config {
     private const val VOLUME_DECIMAL_PLACES = 2
     private const val CURRENCY_DECIMAL_PLACES = 2
     private const val CURRENCY_VOLUME_RATIO_DECIMAL_PLACES = 3
-    //////////////
 
-    val VOLUME_FORMAT: NumberFormat = DecimalFormat("#,##0.${(1..VOLUME_DECIMAL_PLACES).toList().map { "0" }.fold(""){ x, xs -> x+xs }}")
-    val CURRENCY_FORMAT: NumberFormat = DecimalFormat("#,##0.${(1..CURRENCY_DECIMAL_PLACES).toList().map { "0" }.fold(""){ x, xs -> x+xs }}")
-    val CURRENCY_VOLUME_RATIO_FORMAT: NumberFormat = DecimalFormat("#,##0.${(1..CURRENCY_VOLUME_RATIO_DECIMAL_PLACES).toList().map { "0" }.fold(""){ x, xs -> x+xs }}")
+    val VOLUME_FORMAT: NumberFormat = DecimalFormat("#,##0.${"0".repeat(VOLUME_DECIMAL_PLACES)}")
+    val CURRENCY_FORMAT: NumberFormat = DecimalFormat("#,##0.${"0".repeat(CURRENCY_DECIMAL_PLACES)}")
+    val CURRENCY_VOLUME_RATIO_FORMAT: NumberFormat = DecimalFormat("#,##0.${"0".repeat(CURRENCY_VOLUME_RATIO_DECIMAL_PLACES)}")
+    //////////////
 
     // TODO: use this or provide a predefined set of date formats to pick from?
     var foo = "dd.MM.uuuu"
@@ -40,6 +40,12 @@ object Config {
     fun baz2(): DateTimeFormat<LocalTime> = LocalTime.Format {
         byUnicodePattern(bar)
     }
+}
+
+fun createNumberFormat(thousandsSeparatorPlaces: Int, decimalPlaces: Int): NumberFormat = when {
+    thousandsSeparatorPlaces > 0 && decimalPlaces > 0 ->
+        DecimalFormat("#,${"#".repeat(thousandsSeparatorPlaces-1)}0.${"0".repeat(decimalPlaces)}")
+    else -> NumberFormat.getInstance()
 }
 
 enum class DropDownSelection {

@@ -1,6 +1,7 @@
 package gnush.refueltracker.ui.data
 
 import gnush.refueltracker.ui.DropDownSelection
+import java.text.NumberFormat
 
 data class FuelStopUiState(
     val details: FuelStopDetails = FuelStopDetails(),
@@ -21,7 +22,14 @@ data class DefaultSigns(
     val volume: String = ""
 )
 
+data class NumberFormats(
+    val currency: NumberFormat = NumberFormat.getInstance(),
+    val volume: NumberFormat = NumberFormat.getInstance(),
+    val ratio: NumberFormat = NumberFormat.getInstance()
+)
+
 data class EntryUserPreferences(
     val signs: DefaultSigns = DefaultSigns(),
+    val formats: NumberFormats = NumberFormats(),
     val dropDownFilter: DropDownSelection = DropDownSelection.MostUsed
 )
