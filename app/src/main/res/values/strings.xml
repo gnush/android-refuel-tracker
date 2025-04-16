@@ -6,6 +6,7 @@
     <string name="fuel_stop_entry_screen">Add Fuel Stop</string>
     <string name="fuel_stop_edit_screen">Edit Fuel Stop</string>
     <string name="fuel_stop_statistics_screen">Statistics</string>
+    <string name="config_screen">Settings</string>
 
     <string name="fuel_stop_station_form_label">Fuel Station</string>
     <string name="fuel_stop_sort_form_label">Fuel sort</string>
@@ -34,6 +35,14 @@
     <string name="entry_screen_drop_down_selection">Filter:</string>
     <string name="entry_screen_drop_down_selection_most_used">#Used</string>
     <string name="entry_screen_drop_down_selection_most_recent">Recent</string>
+
+    <string name="config_currency_sign_label">Currency</string>
+    <string name="config_volume_sign_label">Volume</string>
+    <string name="config_currency_decimal_places_label">Currency</string>
+    <string name="config_volume_decimal_places_label">Volume</string>
+    <string name="config_ratio_decimal_places_label">Currency/Volume</string>
+    <string name="config_num_drop_down_elements_label">#Elements</string>
+    <string name="config_default_drop_down_filter_label">Default filter</string>
 
     <string name="save_button">Save</string>
 

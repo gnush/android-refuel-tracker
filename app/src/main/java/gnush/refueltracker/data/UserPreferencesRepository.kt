@@ -2,6 +2,7 @@ package gnush.refueltracker.data
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.key
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -80,21 +81,25 @@ class UserPreferencesRepository(
             }
         }
 
-    suspend fun saveThousandsSeparatorPlaces(places: Int) = datastore.edit {
-        it[THOUSANDS_SEPARATOR_PLACES] = if (places > 0) places else 0
-    }
+    suspend fun saveThousandsSeparatorPlaces(places: Int) = saveIntIfPositive(
+        key = THOUSANDS_SEPARATOR_PLACES,
+        value = places
+    )
 
-    suspend fun saveVolumeDecimalPreference(places: Int) = datastore.edit {
-        it[VOLUME_DECIMAL_PLACES] = if (places > 0) places else 0
-    }
+    suspend fun saveVolumeDecimalPreference(places: Int) = saveIntIfPositive(
+        key = VOLUME_DECIMAL_PLACES,
+        value = places
+    )
 
-    suspend fun saveCurrencyDecimalPreference(places: Int) = datastore.edit {
-        it[CURRENCY_DECIMAL_PLACES] = if (places > 0) places else 0
-    }
+    suspend fun saveCurrencyDecimalPreference(places: Int) = saveIntIfPositive(
+        key = CURRENCY_DECIMAL_PLACES,
+        value = places
+    )
 
-    suspend fun saveCurrencyVolumeRatioDecimalPreferences(places: Int) = datastore.edit {
-        it[CURRENCY_VOLUME_RATIO_DECIMAL_PLACES] = if (places > 0) places else 0
-    }
+    suspend fun saveCurrencyVolumeRatioDecimalPreferences(places: Int) = saveIntIfPositive(
+        key = CURRENCY_VOLUME_RATIO_DECIMAL_PLACES,
+        value = places
+    )
 
     suspend fun saveDefaultCurrencyPreference(sign: String) = datastore.edit {
         it[CURRENCY_SIGN] = sign
@@ -104,9 +109,10 @@ class UserPreferencesRepository(
         it[VOLUME_SIGN] = sign
     }
 
-    suspend fun saveDefaultNumberOfEntryScreenDropDownElements(numElements: Int) = datastore.edit {
-        it[ENTRY_SCREEN_DROP_DOWN_ELEMENTS] = if (numElements > 0) numElements else 0
-    }
+    suspend fun saveDefaultNumberOfEntryScreenDropDownElements(numElements: Int) = saveIntIfPositive(
+        key = ENTRY_SCREEN_DROP_DOWN_ELEMENTS,
+        value = numElements
+    )
 
     suspend fun saveDefaultEntryScreenDropDownSelection(dropDownSelection: DropDownSelection) = datastore.edit {
         it[ENTRY_SCREEN_DROP_DOWN_SELECTION] = when (dropDownSelection) {
@@ -121,4 +127,11 @@ class UserPreferencesRepository(
             emit(emptyPreferences())
         }
         .map { it[key] ?: default}
+
+    private suspend fun saveIntIfPositive(key: Preferences.Key<Int>, value: Int) {
+        if (value > 0)
+            datastore.edit {
+                it[key] = value
+            }
+    }
 }
