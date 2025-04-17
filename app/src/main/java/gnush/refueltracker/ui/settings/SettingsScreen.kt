@@ -3,15 +3,20 @@ package gnush.refueltracker.ui.settings
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -20,6 +25,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -30,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import gnush.refueltracker.CommonTopAppBar
 import gnush.refueltracker.R
+import gnush.refueltracker.ui.DropDownSelection
 import gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import gnush.refueltracker.ui.navigation.NavigationDestination
 import gnush.refueltracker.ui.theme.RefuelTrackerTheme
@@ -123,8 +132,11 @@ fun SettingsScreen(
                     preference = uiState.numDropDownElements,
                     onValueChange = viewModel::saveNumberOfDropDownElements
                 )
-                // TODO: add binary choice toggle option (left/right each one value) for default filter
-                //       new composable function
+                DefaultDropDownFilterPreference(
+                    label = R.string.settings_default_drop_down_filter_label,
+                    currentSelected = uiState.defaultDropDownFilter,
+                    onItemSelected = viewModel::saveInitialDropDownFilter
+                )
             }
         }
     }
@@ -163,22 +175,9 @@ private fun SettingsCategoryDivider(
 }
 
 @Composable
-private fun DefaultDropDownFilterPreference(
-    modifier: Modifier = Modifier
-) {
-    Row(modifier = modifier) {
-        Text("Most Recent")
-
-        Text("Most Used")
-    }
-}
-
-@Composable
-private fun SwitchPreference(
-    @StringRes label: Int,
-    value: Boolean,
-    onValueChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+private fun CenteredPreferenceRow(
+    modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit
 ) {
     Row(
         modifier = modifier
@@ -190,6 +189,66 @@ private fun SwitchPreference(
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        content()
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DefaultDropDownFilterPreference(
+    @StringRes label: Int,
+    currentSelected: DropDownSelection,
+    onItemSelected: (DropDownSelection) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    CenteredPreferenceRow(modifier) {
+        Text(
+            text = stringResource(label),
+            style = MaterialTheme.typography.labelMedium
+        )
+        Spacer(Modifier.weight(1f))
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
+        ) {
+            TextField(
+                value = stringResource(currentSelected.displayText),
+                onValueChange = {},
+                readOnly = true,
+                singleLine = true,
+                modifier = Modifier
+                    .width(dimensionResource(R.dimen.settings_text_field_width))
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                listOf(DropDownSelection.MostUsed, DropDownSelection.MostRecent).forEach {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(it.displayText)) },
+                        onClick = {
+                            expanded = false
+                            onItemSelected(it)
+                        },
+                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SwitchPreference(
+    @StringRes label: Int,
+    value: Boolean,
+    onValueChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    CenteredPreferenceRow(modifier) {
         Text(
             text = stringResource(label),
             style = MaterialTheme.typography.labelMedium
@@ -216,16 +275,7 @@ private fun SingleInputPreference(
         else
             KeyboardOptions.Default
 
-    Row(
-        modifier = modifier
-            .padding(
-                start = dimensionResource(R.dimen.padding_medium),
-                end = dimensionResource(R.dimen.padding_small),
-                top = dimensionResource(R.dimen.padding_tiny),
-                bottom = dimensionResource(R.dimen.padding_tiny)
-            ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    CenteredPreferenceRow(modifier) {
         Text(
             text = stringResource(label),
             style = MaterialTheme.typography.labelMedium
@@ -237,7 +287,7 @@ private fun SingleInputPreference(
             onValueChange = onValueChange,
             singleLine = true,
             keyboardOptions = keyboardOptions,
-            modifier = Modifier.width(dimensionResource(R.dimen.config_sign_text_field_width))
+            modifier = Modifier.width(dimensionResource(R.dimen.settings_text_field_width))
         )
     }
 }

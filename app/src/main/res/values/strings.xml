@@ -36,6 +36,9 @@
     <string name="entry_screen_drop_down_selection_most_used">#Used</string>
     <string name="entry_screen_drop_down_selection_most_recent">Recent</string>
 
+    <string name="drop_down_selection_most_used_name">Most used</string>
+    <string name="drop_down_selection_most_recent_name">Used recently</string>
+
     <string name="settings_button_icon_description">Open settings</string>
 
     <string name="settings_category_date_formats_title">Date/Time</string>

@@ -125,6 +125,9 @@ class SettingsViewModel(
     }
 
     fun saveInitialDropDownFilter(filter: DropDownSelection) = viewModelScope.launch {
+        _uiState.value = _uiState.value.copy(
+            defaultDropDownFilter = filter
+        )
         userPreferencesRepository.saveDefaultEntryScreenDropDownSelection(filter)
     }
 

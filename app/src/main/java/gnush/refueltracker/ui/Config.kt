@@ -1,5 +1,7 @@
 package gnush.refueltracker.ui
 
+import androidx.annotation.StringRes
+import gnush.refueltracker.R
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format.DateTimeFormat
@@ -39,7 +41,7 @@ fun createNumberFormat(separateLargeNumbers: Boolean, thousandsSeparatorPlaces: 
     else -> NumberFormat.getInstance()
 }
 
-enum class DropDownSelection {
-    MostRecent,
-    MostUsed
+enum class DropDownSelection(@StringRes val displayText: Int) {
+    MostRecent(R.string.drop_down_selection_most_recent_name),
+    MostUsed(R.string.drop_down_selection_most_used_name)
 }
