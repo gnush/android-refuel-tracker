@@ -68,6 +68,7 @@ object StatisticsHomeDestination: BottomNavigationDestination {
 @Composable
 fun StatisticsHomeScreen(
     navigateTo: (String) -> Unit,
+    navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StatisticsHomeViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
@@ -77,7 +78,7 @@ fun StatisticsHomeScreen(
         topBar = {
             CommonTopAppBar(
                 title = stringResource(R.string.fuel_stop_statistics_screen),
-                canNavigateUp = false,
+                onSettingsClick = navigateToSettings,
                 scrollBehavior = scrollBehavior
             )
         },

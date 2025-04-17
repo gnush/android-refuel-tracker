@@ -7,6 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import gnush.refueltracker.ui.config.ConfigDestination
+import gnush.refueltracker.ui.config.ConfigScreen
 import gnush.refueltracker.ui.fuelstop.FuelStopCalendarDestination
 import gnush.refueltracker.ui.fuelstop.FuelStopCalendarScreen
 import gnush.refueltracker.ui.fuelstop.FuelStopEditDestination
@@ -31,6 +33,7 @@ fun AppNavHost(
         composable(route = FuelStopListDestination.route) {
             FuelStopListScreen(
                 navigateTo = navController::navigate,
+                navigateToSettings = { navController.navigate(ConfigDestination.route) },
                 navigateToFuelStopEntry = { navController.navigate(FuelStopEntryDestination.route) },
                 navigateToFuelStopEdit = { navController.navigate(FuelStopEditDestination.routeWithFuelStopId(it)) },
             )
@@ -38,6 +41,7 @@ fun AppNavHost(
         composable(route = FuelStopCalendarDestination.route) {
             FuelStopCalendarScreen(
                 navigateTo = navController::navigate,
+                navigateToSettings = { navController.navigate(ConfigDestination.route) },
                 navigateToFuelStopEntry = { navController.navigate(FuelStopEntryDestination.route) },
                 navigateToFuelStopEdit = { navController.navigate(FuelStopEditDestination.routeWithFuelStopId(it)) },
             )
@@ -45,6 +49,7 @@ fun AppNavHost(
         composable(route = FuelStopEntryDestination.route) {
             FuelStopEntryScreen(
                 onNavigateUp = navController::navigateUp,
+                navigateToSettings = { navController.navigate(ConfigDestination.route) },
                 onSaveClickNavigateTo = navController::popBackStack
             )
         }
@@ -56,12 +61,19 @@ fun AppNavHost(
         ) {
             FuelStopEditScreen(
                 onNavigateUp = navController::navigateUp,
+                navigateToSettings = { navController.navigate(ConfigDestination.route) },
                 onSaveClickNavigateTo = navController::popBackStack
             )
         }
         composable(StatisticsHomeDestination.route) {
             StatisticsHomeScreen(
-                navigateTo = navController::navigate
+                navigateTo = navController::navigate,
+                navigateToSettings = { navController.navigate(ConfigDestination.route) }
+            )
+        }
+        composable(ConfigDestination.route) {
+            ConfigScreen(
+                onNavigateUp = navController::navigateUp
             )
         }
     }

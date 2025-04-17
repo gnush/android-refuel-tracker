@@ -36,6 +36,7 @@
     <string name="entry_screen_drop_down_selection_most_used">#Used</string>
     <string name="entry_screen_drop_down_selection_most_recent">Recent</string>
 
+    <string name="config_button_icon_description">Open settings</string>
     <string name="config_currency_sign_label">Currency</string>
     <string name="config_volume_sign_label">Volume</string>
     <string name="config_currency_decimal_places_label">Currency</string>

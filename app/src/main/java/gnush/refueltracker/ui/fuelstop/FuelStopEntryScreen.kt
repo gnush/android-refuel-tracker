@@ -70,8 +70,8 @@ object FuelStopEntryDestination: NavigationDestination {
 fun FuelStopEntryScreen(
     onNavigateUp: () -> Unit,
     onSaveClickNavigateTo: () -> Unit,
+    navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
-    canNavigateUp: Boolean = true,
     viewModel: FuelStopEntryViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -80,8 +80,8 @@ fun FuelStopEntryScreen(
         topBar = {
             CommonTopAppBar(
                 title = stringResource(FuelStopEntryDestination.titleRes),
-                canNavigateUp = canNavigateUp,
-                onNavigateUp = onNavigateUp
+                onNavigateUp = onNavigateUp,
+                onSettingsClick = navigateToSettings
             )
         },
         modifier = modifier

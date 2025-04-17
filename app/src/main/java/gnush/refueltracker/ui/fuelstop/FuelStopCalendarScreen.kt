@@ -30,7 +30,6 @@ import gnush.refueltracker.data.FuelStop
 import gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import gnush.refueltracker.ui.calendar.CalendarUiState
 import gnush.refueltracker.ui.calendar.CalendarView
-import gnush.refueltracker.ui.data.NumberFormats
 import gnush.refueltracker.ui.navigation.BottomNavigationDestination
 
 object FuelStopCalendarDestination: BottomNavigationDestination {
@@ -48,6 +47,7 @@ fun FuelStopCalendarScreen(
     navigateTo: (String) -> Unit,
     navigateToFuelStopEntry: () -> Unit,
     navigateToFuelStopEdit: (Long) -> Unit,
+    navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FuelStopCalendarViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
@@ -60,7 +60,7 @@ fun FuelStopCalendarScreen(
         topBar = {
             CommonTopAppBar(
                 title = stringResource(FuelStopCalendarDestination.titleRes),
-                canNavigateUp = false,
+                onSettingsClick = navigateToSettings,
                 scrollBehavior = scrollBehavior
             )
         },

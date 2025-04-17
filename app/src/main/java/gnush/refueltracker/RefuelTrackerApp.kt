@@ -26,15 +26,13 @@ fun RefuelTrackerApp(navController: NavHostController = rememberNavController())
     AppNavHost(navController = navController)
 }
 
-// TODO: add cog icon and config navigation to top app bar
-//       add canOpenConfig flag to args, default true (allow to not show the button when already on config screen)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommonTopAppBar(
     title: String,
-    canNavigateUp: Boolean,
     modifier: Modifier = Modifier,
-    onNavigateUp: () -> Unit = {},
+    onNavigateUp: (() -> Unit)? = null,
+    onSettingsClick: (() -> Unit)? = null,
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     CenterAlignedTopAppBar(
@@ -42,7 +40,7 @@ fun CommonTopAppBar(
         modifier = modifier,
         scrollBehavior = scrollBehavior,
         navigationIcon = {
-            if (canNavigateUp) {
+            if (onNavigateUp != null) {
                 IconButton(onClick = onNavigateUp) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -52,13 +50,13 @@ fun CommonTopAppBar(
             }
         },
         actions = {
-            IconButton( // TODO:
-                onClick = {}
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = ""
-                )
+            if (onSettingsClick != null) {
+                IconButton(onClick = onSettingsClick) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = stringResource(R.string.config_button_icon_description)
+                    )
+                }
             }
         }
     )

@@ -71,6 +71,7 @@ fun FuelStopListScreen(
     navigateTo: (String) -> Unit,
     navigateToFuelStopEntry: () -> Unit,
     navigateToFuelStopEdit: (Long) -> Unit,
+    navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FuelStopListViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
@@ -82,7 +83,7 @@ fun FuelStopListScreen(
         topBar = {
             CommonTopAppBar(
                 title = stringResource(FuelStopListDestination.titleRes),
-                canNavigateUp = false,
+                onSettingsClick = navigateToSettings,
                 scrollBehavior = scrollBehavior
             )
         },

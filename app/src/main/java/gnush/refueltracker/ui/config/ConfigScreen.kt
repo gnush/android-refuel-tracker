@@ -50,13 +50,10 @@ fun ConfigScreen(
         topBar = {
             CommonTopAppBar(
                 title = stringResource(ConfigDestination.titleRes),
-                canNavigateUp = true,
                 onNavigateUp = onNavigateUp,
                 scrollBehavior = scrollBehavior
             )
         }
-        // TODO: add the bottom nav bar?
-        //       change currentDestination to be nullable?
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             // TODO: Add Sections
