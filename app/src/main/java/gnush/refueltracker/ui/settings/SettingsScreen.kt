@@ -1,4 +1,4 @@
-package gnush.refueltracker.ui.config
+package gnush.refueltracker.ui.settings
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
@@ -34,13 +34,12 @@ object ConfigDestination: NavigationDestination {
     @StringRes override val titleRes: Int = R.string.config_screen
 }
 
-// TODO: add to nav graph / onClick topBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConfigScreen(
+fun SettingsScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ConfigViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
+    viewModel: SettingsViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val uiState by viewModel.uiState.collectAsState()

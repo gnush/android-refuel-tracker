@@ -1,4 +1,4 @@
-package gnush.refueltracker.ui.config
+package gnush.refueltracker.ui.settings
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.reflect.KSuspendFunction1
 
-class ConfigViewModel(
+class SettingsViewModel(
     private val userPreferencesRepository: UserPreferencesRepository
 ): ViewModel() {
     private var _uiState: MutableStateFlow<ConfigUiState> =

@@ -7,8 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import gnush.refueltracker.ui.config.ConfigDestination
-import gnush.refueltracker.ui.config.ConfigScreen
+import gnush.refueltracker.ui.settings.ConfigDestination
+import gnush.refueltracker.ui.settings.SettingsScreen
 import gnush.refueltracker.ui.fuelstop.FuelStopCalendarDestination
 import gnush.refueltracker.ui.fuelstop.FuelStopCalendarScreen
 import gnush.refueltracker.ui.fuelstop.FuelStopEditDestination
@@ -72,7 +72,7 @@ fun AppNavHost(
             )
         }
         composable(ConfigDestination.route) {
-            ConfigScreen(
+            SettingsScreen(
                 onNavigateUp = navController::navigateUp
             )
         }
