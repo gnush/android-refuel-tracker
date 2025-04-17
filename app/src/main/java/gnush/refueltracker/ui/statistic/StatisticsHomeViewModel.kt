@@ -25,8 +25,12 @@ class StatisticsHomeViewModel(
 
     init {
         viewModelScope.launch {
+            val separateLargeNumbers = userPreferencesRepository.separateThousands.first()
             val thousandsSeparatorPlaces =
-                userPreferencesRepository.thousandsSeparatorPlaces.first()
+                if (separateLargeNumbers)
+                    userPreferencesRepository.thousandsSeparatorPlaces.first()
+                else
+                    -1
 
             uiState = StatisticsHomeUiState(
                 year = uiState.monthCalendar.year,
@@ -52,14 +56,17 @@ class StatisticsHomeViewModel(
                 ),
                 formats = NumberFormats(
                     currency = createNumberFormat(
+                        separateLargeNumbers = separateLargeNumbers,
                         thousandsSeparatorPlaces = thousandsSeparatorPlaces,
                         decimalPlaces = userPreferencesRepository.currencyDecimalPlaces.first()
                     ),
                     volume = createNumberFormat(
+                        separateLargeNumbers = separateLargeNumbers,
                         thousandsSeparatorPlaces = thousandsSeparatorPlaces,
                         decimalPlaces = userPreferencesRepository.volumeDecimalPlaces.first()
                     ),
                     ratio = createNumberFormat(
+                        separateLargeNumbers = separateLargeNumbers,
                         thousandsSeparatorPlaces = thousandsSeparatorPlaces,
                         decimalPlaces = userPreferencesRepository.currencyVolumeRatioDecimalPlaces.first()
                     ),

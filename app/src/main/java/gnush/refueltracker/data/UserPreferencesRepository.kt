@@ -27,6 +27,8 @@ class UserPreferencesRepository(
     companion object {
         private const val TAG = "UserPreferencesRepo"
 
+        private val SEPARATE_THOUSANDS =
+            booleanPreferencesKey("separate_thousands")
         private val THOUSANDS_SEPARATOR_PLACES =
             intPreferencesKey("thousands_separator_places")
         private val VOLUME_DECIMAL_PLACES =
@@ -55,6 +57,8 @@ class UserPreferencesRepository(
             }
     }
 
+    val separateThousands: Flow<Boolean> = readDatastore(SEPARATE_THOUSANDS, false)
+
     val thousandsSeparatorPlaces: Flow<Int> = readDatastore(THOUSANDS_SEPARATOR_PLACES, 3)
 
     val volumeDecimalPlaces: Flow<Int> = readDatastore(VOLUME_DECIMAL_PLACES, 2)
@@ -80,6 +84,10 @@ class UserPreferencesRepository(
                 null -> DropDownSelection.MostUsed
             }
         }
+
+    suspend fun saveSeparateThousands(value: Boolean) = datastore.edit {
+        it[SEPARATE_THOUSANDS] = value
+    }
 
     suspend fun saveThousandsSeparatorPlaces(places: Int) = saveIntIfPositive(
         key = THOUSANDS_SEPARATOR_PLACES,

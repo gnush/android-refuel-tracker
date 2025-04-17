@@ -31,9 +31,11 @@ object Config {
     }
 }
 
-fun createNumberFormat(thousandsSeparatorPlaces: Int, decimalPlaces: Int): NumberFormat = when {
-    thousandsSeparatorPlaces > 0 && decimalPlaces > 0 ->
+fun createNumberFormat(separateLargeNumbers: Boolean, thousandsSeparatorPlaces: Int, decimalPlaces: Int): NumberFormat = when {
+    separateLargeNumbers && thousandsSeparatorPlaces > 0 && decimalPlaces > 0 ->
         DecimalFormat("#,${"#".repeat(thousandsSeparatorPlaces-1)}0.${"0".repeat(decimalPlaces)}")
+    !separateLargeNumbers && decimalPlaces > 0 ->
+        DecimalFormat("0.${"0".repeat(decimalPlaces)}")
     else -> NumberFormat.getInstance()
 }
 

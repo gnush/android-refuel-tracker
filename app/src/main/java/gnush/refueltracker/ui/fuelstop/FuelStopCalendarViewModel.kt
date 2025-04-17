@@ -27,8 +27,12 @@ class FuelStopCalendarViewModel(
         viewModelScope.launch {
             fuelStopsRepository.fuelStopsOn(_fuelStopsState.value.calendar.year, _fuelStopsState.value.calendar.month)
                 .collect {
+                    val separateLargeNumbers = userPreferencesRepository.separateThousands.first()
                     val thousandsSeparatorPlaces =
-                        userPreferencesRepository.thousandsSeparatorPlaces.first()
+                        if (separateLargeNumbers)
+                            userPreferencesRepository.thousandsSeparatorPlaces.first()
+                        else
+                            -1
 
                     _fuelStopsState.value = _fuelStopsState.value.copy(
                         fuelStops = it,
@@ -38,14 +42,17 @@ class FuelStopCalendarViewModel(
                         ),
                         formats = NumberFormats(
                             currency = createNumberFormat(
+                                separateLargeNumbers = separateLargeNumbers,
                                 thousandsSeparatorPlaces = thousandsSeparatorPlaces,
                                 decimalPlaces = userPreferencesRepository.currencyDecimalPlaces.first()
                             ),
                             volume = createNumberFormat(
+                                separateLargeNumbers = separateLargeNumbers,
                                 thousandsSeparatorPlaces = thousandsSeparatorPlaces,
                                 decimalPlaces = userPreferencesRepository.volumeDecimalPlaces.first()
                             ),
                             ratio = createNumberFormat(
+                                separateLargeNumbers = separateLargeNumbers,
                                 thousandsSeparatorPlaces = thousandsSeparatorPlaces,
                                 decimalPlaces = userPreferencesRepository.currencyVolumeRatioDecimalPlaces.first()
                             ),

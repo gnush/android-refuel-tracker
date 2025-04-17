@@ -13,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
@@ -69,12 +70,18 @@ fun SettingsScreen(
 //            )
 //            SettingsCategoryDivider()
             SettingsCategory(title = R.string.settings_category_number_formats_title) {
-                SingleInputPreference(
-                    label = R.string.settings_large_number_separator_places_label,
-                    preference = uiState.thousandsSeparator,
-                    onValueChange = viewModel::saveThousandsSeparator,
-                    hasNumericKeyboard = true
+                SwitchPreference(
+                    label = R.string.settings_use_large_number_separator_label,
+                    value = uiState.separateThousands,
+                    onValueChange = viewModel::saveSeparateLargeNumbers
                 )
+                if (uiState.separateThousands)
+                    SingleInputPreference(
+                        label = R.string.settings_large_number_separator_places_label,
+                        preference = uiState.thousandsSeparator,
+                        onValueChange = viewModel::saveLargeNumbersSeparatorPlaces,
+                        hasNumericKeyboard = true
+                    )
                 SingleInputPreference(
                     label = R.string.settings_currency_decimal_places_label,
                     preference = uiState.currencyDecimalPlaces,
@@ -153,6 +160,46 @@ private fun SettingsCategoryDivider(
                 bottom = dimensionResource(R.dimen.padding_tiny)
             )
     )
+}
+
+@Composable
+private fun DefaultDropDownFilterPreference(
+    modifier: Modifier = Modifier
+) {
+    Row(modifier = modifier) {
+        Text("Most Recent")
+
+        Text("Most Used")
+    }
+}
+
+@Composable
+private fun SwitchPreference(
+    @StringRes label: Int,
+    value: Boolean,
+    onValueChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .padding(
+                start = dimensionResource(R.dimen.padding_medium),
+                end = dimensionResource(R.dimen.padding_small),
+                top = dimensionResource(R.dimen.padding_tiny),
+                bottom = dimensionResource(R.dimen.padding_tiny)
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(label),
+            style = MaterialTheme.typography.labelMedium
+        )
+        Spacer(Modifier.weight(1f))
+        Switch(
+            checked = value,
+            onCheckedChange = onValueChange
+        )
+    }
 }
 
 @Composable

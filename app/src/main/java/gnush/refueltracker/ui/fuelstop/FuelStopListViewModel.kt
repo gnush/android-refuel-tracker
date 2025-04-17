@@ -25,8 +25,12 @@ class FuelStopListViewModel(
         viewModelScope.launch {
             fuelStopsRepository.fuelStopsOrderedNewestFirst()
                 .collect {
+                    val separateLargeNumbers = userPreferencesRepository.separateThousands.first()
                     val thousandsSeparatorPlaces =
-                        userPreferencesRepository.thousandsSeparatorPlaces.first()
+                        if (separateLargeNumbers)
+                            userPreferencesRepository.thousandsSeparatorPlaces.first()
+                        else
+                            -1
 
                     _uiState.value = FuelStopListUiState(
                         fuelStops = it,
@@ -36,14 +40,17 @@ class FuelStopListViewModel(
                         ),
                         formats = NumberFormats(
                             currency = createNumberFormat(
+                                separateLargeNumbers = separateLargeNumbers,
                                 thousandsSeparatorPlaces = thousandsSeparatorPlaces,
                                 decimalPlaces = userPreferencesRepository.currencyDecimalPlaces.first()
                             ),
                             volume = createNumberFormat(
+                                separateLargeNumbers = separateLargeNumbers,
                                 thousandsSeparatorPlaces = thousandsSeparatorPlaces,
                                 decimalPlaces = userPreferencesRepository.volumeDecimalPlaces.first()
                             ),
                             ratio = createNumberFormat(
+                                separateLargeNumbers = separateLargeNumbers,
                                 thousandsSeparatorPlaces = thousandsSeparatorPlaces,
                                 decimalPlaces = userPreferencesRepository.currencyVolumeRatioDecimalPlaces.first()
                             ),
