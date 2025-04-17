@@ -36,14 +36,21 @@
     <string name="entry_screen_drop_down_selection_most_used">#Used</string>
     <string name="entry_screen_drop_down_selection_most_recent">Recent</string>
 
-    <string name="config_button_icon_description">Open settings</string>
-    <string name="config_currency_sign_label">Currency</string>
-    <string name="config_volume_sign_label">Volume</string>
-    <string name="config_currency_decimal_places_label">Currency</string>
-    <string name="config_volume_decimal_places_label">Volume</string>
-    <string name="config_ratio_decimal_places_label">Currency/Volume</string>
-    <string name="config_num_drop_down_elements_label">#Elements</string>
-    <string name="config_default_drop_down_filter_label">Default filter</string>
+    <string name="settings_button_icon_description">Open settings</string>
+
+    <string name="settings_category_date_formats_title">Date/Time</string>
+    <string name="settings_category_number_formats_title">Numbers</string>
+    <string name="settings_category_symbols_title">Symbols</string>
+    <string name="settings_category_drop_down_title">Drop down menu defaults</string>
+
+    <string name="settings_currency_sign_label">Currency</string>
+    <string name="settings_volume_sign_label">Volume</string>
+    <string name="settings_large_number_separator_places_label">Large numbers separate after</string>
+    <string name="settings_currency_decimal_places_label">Currency decimal places</string>
+    <string name="settings_volume_decimal_places_label">Volume decimal places</string>
+    <string name="settings_ratio_decimal_places_label">Currency/Volume decimal places</string>
+    <string name="settings_num_drop_down_elements_label">#Elements</string>
+    <string name="settings_default_drop_down_filter_label">Default filter</string>
 
     <string name="save_button">Save</string>
 

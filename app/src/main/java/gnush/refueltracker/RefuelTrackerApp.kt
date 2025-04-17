@@ -54,7 +54,7 @@ fun CommonTopAppBar(
                 IconButton(onClick = onSettingsClick) {
                     Icon(
                         imageVector = Icons.Default.Settings,
-                        contentDescription = stringResource(R.string.config_button_icon_description)
+                        contentDescription = stringResource(R.string.settings_button_icon_description)
                     )
                 }
             }
