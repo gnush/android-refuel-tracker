@@ -56,6 +56,7 @@ class FuelStopCalendarViewModel(
                                 thousandsSeparatorPlaces = thousandsSeparatorPlaces,
                                 decimalPlaces = userPreferencesRepository.currencyVolumeRatioDecimalPlaces.first()
                             ),
+                            date = userPreferencesRepository.dateFormat.first()
                         )
                     )
                 }
