@@ -46,6 +46,8 @@
     <string name="settings_category_symbols_title">Symbols</string>
     <string name="settings_category_drop_down_title">Drop down menu defaults</string>
 
+    <string name="settings_example_number_display_label">Number preview</string>
+
     <string name="settings_currency_sign_label">Currency</string>
     <string name="settings_volume_sign_label">Volume</string>
     <string name="settings_use_large_number_separator_label">Separate large numbers</string>

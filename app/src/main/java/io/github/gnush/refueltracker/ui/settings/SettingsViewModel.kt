@@ -158,5 +158,5 @@ data class SettingsUiState(
 
 data class Preference(
     val value: String = "",
-    val isValid: Boolean = true
+    val isValid: Boolean = false
 )

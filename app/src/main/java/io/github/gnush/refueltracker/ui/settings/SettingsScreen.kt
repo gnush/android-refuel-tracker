@@ -15,6 +15,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Label
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Scaffold
@@ -40,8 +41,10 @@ import io.github.gnush.refueltracker.CommonTopAppBar
 import io.github.gnush.refueltracker.R
 import io.github.gnush.refueltracker.ui.DropDownSelection
 import io.github.gnush.refueltracker.ui.RefuelTrackerViewModelProvider
+import io.github.gnush.refueltracker.ui.createNumberFormat
 import io.github.gnush.refueltracker.ui.navigation.NavigationDestination
 import io.github.gnush.refueltracker.ui.theme.RefuelTrackerTheme
+import java.text.NumberFormat
 
 object ConfigDestination: NavigationDestination {
     override val route: String = "config"
@@ -69,7 +72,8 @@ fun SettingsScreen(
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
             // TODO: date/time formats encoding: enum/sealed class Predefined values or by pattern
@@ -79,6 +83,12 @@ fun SettingsScreen(
 //            )
 //            SettingsCategoryDivider()
             SettingsCategory(title = R.string.settings_category_number_formats_title) {
+                FormattedNumber(
+                    label = R.string.settings_example_number_display_label,
+                    separateLargeNumbers = uiState.separateThousands,
+                    largeNumberSeparator = uiState.thousandsSeparator,
+                    decimalPlaces = uiState.currencyDecimalPlaces
+                )
                 SwitchPreference(
                     label = R.string.settings_use_large_number_separator_label,
                     value = uiState.separateThousands,
@@ -187,9 +197,34 @@ private fun CenteredPreferenceRow(
                 top = dimensionResource(R.dimen.padding_tiny),
                 bottom = dimensionResource(R.dimen.padding_tiny)
             ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        content()
+        verticalAlignment = Alignment.CenterVertically,
+        content = content
+    )
+}
+
+@Composable
+private fun FormattedNumber(
+    @StringRes label: Int,
+    separateLargeNumbers: Boolean,
+    largeNumberSeparator: Preference,
+    decimalPlaces: Preference,
+    modifier: Modifier = Modifier
+) {
+    CenteredPreferenceRow(modifier = modifier) {
+        Text(
+            text = stringResource(label),
+            style = MaterialTheme.typography.labelMedium
+        )
+        Spacer(Modifier.weight(1f))
+        if (largeNumberSeparator.isValid && decimalPlaces.isValid)
+            Text(
+                text = createNumberFormat(
+                    separateLargeNumbers,
+                    largeNumberSeparator.value.toInt(),
+                    decimalPlaces.value.toInt()
+                ).format(1234.5678),
+                style = MaterialTheme.typography.labelMedium
+            )
     }
 }
 
