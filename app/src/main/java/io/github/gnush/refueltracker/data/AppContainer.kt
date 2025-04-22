@@ -18,7 +18,9 @@ class AppDataContainer(private val context: Context): AppContainer {
         RoomFuelStopsRepository(
             fuelStopDao = RefuelTrackerDatabase.getDatabase(context).fuelStopDao(),
             fuelStationDao = RefuelTrackerDatabase.getDatabase(context).fuelStationDao(),
-            fuelSortDao = RefuelTrackerDatabase.getDatabase(context).fuelSortDao()
+            fuelSortDao = RefuelTrackerDatabase.getDatabase(context).fuelSortDao(),
+            currencyDao = RefuelTrackerDatabase.getDatabase(context).currencyDao(),
+            volumeDao = RefuelTrackerDatabase.getDatabase(context).volumeDao()
         )
     }
 

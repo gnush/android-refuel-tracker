@@ -218,7 +218,9 @@ private fun FuelStopListPreview() {
                     fuelSort = "E10",
                     pricePerVolume = stop1PPV,
                     totalVolume = stop1V.div(stop1PPV),
-                    totalPrice = stop1V
+                    totalPrice = stop1V,
+                    volume = "L",
+                    currency = "€"
                 ),
                 FuelStop(
                     station = "Other Fuel Station",
@@ -227,7 +229,9 @@ private fun FuelStopListPreview() {
                     fuelSort = "E5",
                     pricePerVolume = stop2PPV,
                     totalVolume = stop2V/stop2PPV,
-                    totalPrice = stop2V
+                    totalPrice = stop2V,
+                    volume = "L",
+                    currency = "€"
                 )
             ),
             signs = DefaultSigns(
@@ -254,7 +258,9 @@ private fun FuelStopListNoTimeItemPreview() {
                 fuelSort = "E10",
                 pricePerVolume = pricePerVolume,
                 totalVolume = totalPrice.div(pricePerVolume),
-                totalPrice = totalPrice
+                totalPrice = totalPrice,
+                volume = "L",
+                currency = "€"
             ),
             signs = DefaultSigns(
                 currency = "€",
@@ -280,7 +286,9 @@ private fun FuelStopListTimeItemPreview() {
                 fuelSort = "E5",
                 pricePerVolume = pricePerVolume,
                 totalVolume = totalPrice/pricePerVolume,
-                totalPrice = totalPrice
+                totalPrice = totalPrice,
+                volume = "L",
+                currency = "€"
             ),
             signs = DefaultSigns(
                 currency = "€",

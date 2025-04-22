@@ -20,6 +20,7 @@ interface FuelStopDao {
     @Delete
     suspend fun delete(fuelStop: FuelStopEntity)
 
+    // TODO: change queries returning FuelStopEntity to return FuelStop (joins in the query, instead of later resolving later in der repository)
     /**
      * Retrieves a specific fuel stop
      * @param id The id of the fuel stop to retrieve
@@ -130,8 +131,8 @@ interface FuelStopDao {
     @Query("""select fuel_sort.label
               from fuel_sort
               join fuel_stops
-              on fuelSortId = fuel_sort.id
-              group by fuelSortId
+              on fuel_sort_id = fuel_sort.id
+              group by fuel_sort_id
               order by count(*) desc
               limit 1""")
     fun mostUsedFuelSort(): Flow<String?>
@@ -142,8 +143,8 @@ interface FuelStopDao {
     @Query("""select fuel_sort.label
               from fuel_sort
               join fuel_stops
-              on fuelSortId = fuel_sort.id
-              group by fuelSortId
+              on fuel_sort_id = fuel_sort.id
+              group by fuel_sort_id
               order by count(*) desc
               limit :n""")
     fun mostUsedFuelSorts(n: Int): Flow<List<String>>
@@ -154,8 +155,8 @@ interface FuelStopDao {
     @Query("""select fuel_sort.label
               from fuel_sort
               join fuel_stops
-              on fuelSortId = fuel_sort.id
-              group by fuelSortId
+              on fuel_sort_id = fuel_sort.id
+              group by fuel_sort_id
               order by day desc, time desc
               limit :n""")
     fun mostRecentFuelSorts(n: Int): Flow<List<String>>
@@ -166,8 +167,8 @@ interface FuelStopDao {
     @Query("""select fuel_station.name
               from fuel_station
               join fuel_stops
-              on stationId = fuel_station.id
-              group by stationId
+              on station_id = fuel_station.id
+              group by station_id
               order by count(*) desc
               limit :n""")
     fun mostUsedFuelStations(n: Int): Flow<List<String>>
@@ -178,8 +179,8 @@ interface FuelStopDao {
     @Query("""select fuel_station.name
               from fuel_station
               join fuel_stops
-              on stationId = fuel_station.id
-              group by stationId
+              on station_id = fuel_station.id
+              group by station_id
               order by day desc, time desc
               limit :n""")
     fun mostRecentFuelStations(n: Int): Flow<List<String>>

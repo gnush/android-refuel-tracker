@@ -7,10 +7,12 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
 import java.time.Month
 
-fun FuelStopEntity.toFuelStop(station: String, sort: String): FuelStop = FuelStop(
+fun FuelStopEntity.toFuelStop(station: String, sort: String, currency: String, volume: String): FuelStop = FuelStop(
     id = id,
     station = station,
     fuelSort = sort,
+    currency = currency,
+    volume = volume,
     pricePerVolume = pricePerVolume,
     totalVolume = totalVolume,
     totalPrice = totalPrice,
@@ -18,10 +20,12 @@ fun FuelStopEntity.toFuelStop(station: String, sort: String): FuelStop = FuelSto
     time = time
 )
 
-fun FuelStop.toFuelStopEntity(stationId: Long, sortId: Long): FuelStopEntity = FuelStopEntity(
+fun FuelStop.toFuelStopEntity(stationId: Long, sortId: Long, currencyId: Long, volumeId: Long): FuelStopEntity = FuelStopEntity(
     id = id,
     stationId = stationId,
     fuelSortId = sortId,
+    currencyId = currencyId,
+    volumeId = volumeId,
     pricePerVolume = pricePerVolume,
     totalVolume = totalVolume,
     totalPrice = totalPrice,
@@ -32,7 +36,9 @@ fun FuelStop.toFuelStopEntity(stationId: Long, sortId: Long): FuelStopEntity = F
 class RoomFuelStopsRepository(
     private val fuelStopDao: FuelStopDao,
     private val fuelStationDao: FuelStationDao,
-    private val fuelSortDao: FuelSortDao
+    private val fuelSortDao: FuelSortDao,
+    private val currencyDao: CurrencyDao,
+    private val volumeDao: VolumeDao
 ): FuelStopsRepository {
     private suspend fun getSortIdOrInsert(fuelSort: String): Long =
         fuelSortDao.getIdFrom(fuelSort).first()
@@ -42,24 +48,38 @@ class RoomFuelStopsRepository(
         fuelStationDao.getIdFrom(name).first()
             ?: fuelStationDao.insert(FuelStation(name = name))
 
+    private suspend fun getCurrencyIdOrInsert(symbol: String): Long =
+        currencyDao.getIdFrom(symbol).first()
+            ?: currencyDao.insert(Currency(symbol = symbol))
+
+    private suspend fun getVolumeIdOrInsert(symbol: String): Long =
+        volumeDao.getIdFrom(symbol).first()
+            ?: volumeDao.insert(Volume(symbol = symbol))
+
     override suspend fun insert(fuelStop: FuelStop): Long = fuelStopDao.insert(
         fuelStop.toFuelStopEntity(
             stationId = getStationIdOrInsert(fuelStop.station),
-            sortId    = getSortIdOrInsert(fuelStop.fuelSort)
+            sortId    = getSortIdOrInsert(fuelStop.fuelSort),
+            currencyId = getCurrencyIdOrInsert(symbol = fuelStop.currency),
+            volumeId = getVolumeIdOrInsert(symbol = fuelStop.volume)
         )
     )
 
     override suspend fun update(fuelStop: FuelStop) = fuelStopDao.update(
         fuelStop.toFuelStopEntity(
             stationId = getStationIdOrInsert(fuelStop.station),
-            sortId = getSortIdOrInsert(fuelStop.fuelSort)
+            sortId = getSortIdOrInsert(fuelStop.fuelSort),
+            currencyId = getCurrencyIdOrInsert(symbol = fuelStop.currency),
+            volumeId = getVolumeIdOrInsert(symbol = fuelStop.volume)
         )
     )
 
     override suspend fun delete(fuelStop: FuelStop) = fuelStopDao.delete(
         fuelStop.toFuelStopEntity(
             stationId = getStationIdOrInsert(fuelStop.station),
-            sortId = getSortIdOrInsert(fuelStop.fuelSort)
+            sortId = getSortIdOrInsert(fuelStop.fuelSort),
+            currencyId = getCurrencyIdOrInsert(symbol = fuelStop.currency),
+            volumeId = getVolumeIdOrInsert(symbol = fuelStop.volume)
         )
     )
 
@@ -67,10 +87,12 @@ class RoomFuelStopsRepository(
      * Retrieves all fuel stops ordered by time  in descending order by day/time
      */
     override fun fuelStopsOrderedNewestFirst(): Flow<List<FuelStop>> =
-        fuelStopDao.allFuelStopsOrderedNewestFirst().map { it.map {
-            it.toFuelStop(
-                station = fuelStationDao.getName(it.stationId).first() ?: "",
-                sort = fuelSortDao.getLabel(it.fuelSortId).first() ?: ""
+        fuelStopDao.allFuelStopsOrderedNewestFirst().map { it.map { stop ->
+            stop.toFuelStop(
+                station = fuelStationDao.getName(stop.stationId).first() ?: "",
+                sort = fuelSortDao.getLabel(stop.fuelSortId).first() ?: "",
+                currency = currencyDao.getSymbol(stop.currencyId).first() ?: "",
+                volume = volumeDao.getSymbol(stop.volumeId).first() ?: ""
             )
         } }
 
@@ -81,7 +103,9 @@ class RoomFuelStopsRepository(
     override fun fuelStop(id: Int): Flow<FuelStop?> = fuelStopDao.fuelStop(id).map {
         it.toFuelStop(
             station = fuelStationDao.getName(it.stationId).first() ?: "",
-            sort = fuelSortDao.getLabel(it.fuelSortId).first() ?: ""
+            sort = fuelSortDao.getLabel(it.fuelSortId).first() ?: "",
+            currency = currencyDao.getSymbol(it.currencyId).first() ?: "",
+            volume = volumeDao.getSymbol(it.volumeId).first() ?: ""
         )
     }
 
@@ -89,10 +113,12 @@ class RoomFuelStopsRepository(
      * Retrieves all fuel stops between [from] and [to] (inclusive)  in descending order by day/time
      */
     override fun fuelStopsBetween(from: LocalDate, to: LocalDate): Flow<List<FuelStop>> =
-        fuelStopDao.fuelStopsBetween(from, to).map { l  -> l.map {
-            it.toFuelStop(
-                station = fuelStationDao.getName(it.stationId).first() ?: "",
-                sort = fuelSortDao.getLabel(it.fuelSortId).first() ?: ""
+        fuelStopDao.fuelStopsBetween(from, to).map { it.map { stop ->
+            stop.toFuelStop(
+                station = fuelStationDao.getName(stop.stationId).first() ?: "",
+                sort = fuelSortDao.getLabel(stop.fuelSortId).first() ?: "",
+                currency = currencyDao.getSymbol(stop.currencyId).first() ?: "",
+                volume = volumeDao.getSymbol(stop.volumeId).first() ?: ""
             )
         } }
 
@@ -100,10 +126,12 @@ class RoomFuelStopsRepository(
      * Retrieves all fuel stops with year [year] and month [month] in descending order by day/time
      */
     override fun fuelStopsOn(year: Int, month: Month): Flow<List<FuelStop>> =
-        fuelStopDao.fuelStopsOnMonthOfYear(year*10000 + month.number*100).map { it.map {
-            it.toFuelStop(
-                station = fuelStationDao.getName(it.stationId).first() ?: "",
-                sort = fuelSortDao.getLabel(it.fuelSortId).first() ?: ""
+        fuelStopDao.fuelStopsOnMonthOfYear(year*10000 + month.number*100).map { it.map { stop ->
+            stop.toFuelStop(
+                station = fuelStationDao.getName(stop.stationId).first() ?: "",
+                sort = fuelSortDao.getLabel(stop.fuelSortId).first() ?: "",
+                currency = currencyDao.getSymbol(stop.currencyId).first() ?: "",
+                volume = volumeDao.getSymbol(stop.volumeId).first() ?: ""
             )
         } }
 
@@ -111,10 +139,12 @@ class RoomFuelStopsRepository(
      * Retrieves all fuel stops from [year] in descending order by day/time
      */
     override fun fuelStopsOn(year: Int): Flow<List<FuelStop>> =
-        fuelStopDao.fuelStopsOnYear(year*10000).map { it.map {
-            it.toFuelStop(
-                station = fuelStationDao.getName(it.stationId).first() ?: "",
-                sort = fuelSortDao.getLabel(it.fuelSortId).first() ?: ""
+        fuelStopDao.fuelStopsOnYear(year*10000).map { it.map { stop ->
+            stop.toFuelStop(
+                station = fuelStationDao.getName(stop.stationId).first() ?: "",
+                sort = fuelSortDao.getLabel(stop.fuelSortId).first() ?: "",
+                currency = currencyDao.getSymbol(stop.currencyId).first() ?: "",
+                volume = volumeDao.getSymbol(stop.volumeId).first() ?: ""
             )
         } }
 
