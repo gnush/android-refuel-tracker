@@ -19,6 +19,9 @@ import io.github.gnush.refueltracker.ui.data.ISO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
+import kotlinx.datetime.format.byUnicodePattern
 
 private const val USER_PREFERENCES_NAME = "user_preferences"
 private val Context.datastore: DataStore<Preferences> by preferencesDataStore(
@@ -92,7 +95,7 @@ class UserPreferencesRepository(
             }
         }
 
-    val dateFormatPattern: Flow<String> = readDatastore(DATE_FORMAT_PATTERN, "uuuu-MM-dd")
+    val dateFormatPattern: Flow<String> = readDatastore(DATE_FORMAT_PATTERN, "yyyy-MM-dd")
 
     val dateFormat: Flow<DateFormat> = datastore.data
         .catch {
@@ -103,7 +106,7 @@ class UserPreferencesRepository(
                 0 -> ISO
                 1 -> DIN
                 2 -> ANSI
-                3 -> CustomDateFormat(it[DATE_FORMAT_PATTERN] ?: "uuuu-MM-dd")
+                3 -> CustomDateFormat(it[DATE_FORMAT_PATTERN] ?: "yyyy-MM-dd")
                 else -> ISO
             }
         }
@@ -152,8 +155,14 @@ class UserPreferencesRepository(
         }
     }
 
+    @OptIn(FormatStringsInDatetimeFormats::class)
     suspend fun saveDateFormatPattern(pattern: String) = datastore.edit {
-        it[DATE_FORMAT_PATTERN] = pattern
+        try {
+            LocalDate.Format { byUnicodePattern(pattern) }
+            it[DATE_FORMAT_PATTERN] = pattern
+        } catch (e: Exception) {
+            Log.e(TAG, "error saving $pattern", e)
+        }
     }
 
     suspend fun saveDateFormat(dateFormat: DateFormat) = datastore.edit {

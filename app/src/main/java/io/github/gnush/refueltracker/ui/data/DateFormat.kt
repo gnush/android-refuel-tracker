@@ -2,24 +2,24 @@ package io.github.gnush.refueltracker.ui.data
 
 import androidx.annotation.StringRes
 import io.github.gnush.refueltracker.R
+import io.github.gnush.refueltracker.ui.Displayable
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.DateTimeFormat
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.format.char
 
-sealed interface DateFormat {
+sealed interface DateFormat: Displayable {
     val get: DateTimeFormat<LocalDate>
-    @get:StringRes val formatString: Int
 }
 
 data object ISO: DateFormat {
-    override val formatString: Int = R.string.date_format_iso
+    @StringRes override val displayText: Int = R.string.date_format_iso
     override val get: DateTimeFormat<LocalDate> = LocalDate.Formats.ISO
 }
 
 data object DIN: DateFormat {
-    override val formatString: Int = R.string.date_format_din
+    @StringRes override val displayText: Int = R.string.date_format_din
 
     override val get: DateTimeFormat<LocalDate> = LocalDate.Format {
         dayOfMonth(); char('.'); monthNumber(); char('.'); year()
@@ -27,7 +27,7 @@ data object DIN: DateFormat {
 }
 
 data object ANSI: DateFormat {
-    override val formatString: Int = R.string.date_format_ansi
+    @StringRes override val displayText: Int = R.string.date_format_ansi
 
     override val get: DateTimeFormat<LocalDate> = LocalDate.Format {
         monthNumber(); char('/'); dayOfMonth(); char('/'); year()
@@ -35,7 +35,7 @@ data object ANSI: DateFormat {
 }
 
 class CustomDateFormat(private val pattern: String): DateFormat {
-    override val formatString: Int = R.string.date_format_custom
+    @StringRes override val displayText: Int = R.string.date_format_custom
 
     @OptIn(FormatStringsInDatetimeFormats::class)
     override val get: DateTimeFormat<LocalDate> = LocalDate.Format {

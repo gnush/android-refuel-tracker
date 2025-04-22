@@ -15,7 +15,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Label
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Scaffold
@@ -39,12 +38,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.gnush.refueltracker.CommonTopAppBar
 import io.github.gnush.refueltracker.R
+import io.github.gnush.refueltracker.ui.Displayable
 import io.github.gnush.refueltracker.ui.DropDownSelection
 import io.github.gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import io.github.gnush.refueltracker.ui.createNumberFormat
+import io.github.gnush.refueltracker.ui.data.CustomDateFormat
 import io.github.gnush.refueltracker.ui.navigation.NavigationDestination
 import io.github.gnush.refueltracker.ui.theme.RefuelTrackerTheme
-import java.text.NumberFormat
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeFormat
+import java.util.Calendar
 
 object ConfigDestination: NavigationDestination {
     override val route: String = "config"
@@ -76,12 +80,25 @@ fun SettingsScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            // TODO: date/time formats encoding: enum/sealed class Predefined values or by pattern
-            //       add composable for drop down choice
-//            SettingsCategory(
-//                title = R.string.settings_category_date_formats_title
-//            )
-//            SettingsCategoryDivider()
+            SettingsCategory(title = R.string.settings_category_date_formats_title) {
+                FormattedDate(
+                    label = R.string.settings_example_date_display_label,
+                    format = uiState.dateFormat.get
+                )
+                ReadOnlyDropDownPreference(
+                    label = R.string.settings_date_format_drop_down_label,
+                    currentSelected = uiState.dateFormat,
+                    onItemSelected = viewModel::saveDateFormat,
+                    items = viewModel.dateFormats
+                )
+                if (uiState.dateFormat is CustomDateFormat)
+                    SingleInputPreference(
+                        label = R.string.settings_date_format_pattern_label,
+                        preference = uiState.dateFormatPattern,
+                        onValueChange = viewModel::saveDateFormatPattern
+                    )
+            }
+            SettingsCategoryDivider()
             SettingsCategory(title = R.string.settings_category_number_formats_title) {
                 FormattedNumber(
                     label = R.string.settings_example_number_display_label,
@@ -142,10 +159,11 @@ fun SettingsScreen(
                     preference = uiState.numDropDownElements,
                     onValueChange = viewModel::saveNumberOfDropDownElements
                 )
-                DefaultDropDownFilterPreference(
+                ReadOnlyDropDownPreference(
                     label = R.string.settings_default_drop_down_filter_label,
                     currentSelected = uiState.defaultDropDownFilter,
-                    onItemSelected = viewModel::saveInitialDropDownFilter
+                    onItemSelected = viewModel::saveInitialDropDownFilter,
+                    items = viewModel.entryScreenDropDownFilterItems
                 )
             }
         }
@@ -203,6 +221,29 @@ private fun CenteredPreferenceRow(
 }
 
 @Composable
+private fun FormattedDate(
+    @StringRes label: Int,
+    format: DateTimeFormat<LocalDate>,
+    modifier: Modifier = Modifier
+) {
+    CenteredPreferenceRow(modifier) {
+        Text(
+            text = stringResource(label),
+            style = MaterialTheme.typography.labelMedium
+        )
+        Spacer(Modifier.weight(1f))
+        Text(
+            text = LocalDate(
+                year = Calendar.getInstance().get(Calendar.YEAR),
+                monthNumber = Calendar.getInstance().get(Calendar.MONTH)+1,
+                dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
+            ).format(format),
+            style = MaterialTheme.typography.labelMedium
+        )
+    }
+}
+
+@Composable
 private fun FormattedNumber(
     @StringRes label: Int,
     separateLargeNumbers: Boolean,
@@ -225,6 +266,58 @@ private fun FormattedNumber(
                 ).format(1234.5678),
                 style = MaterialTheme.typography.labelMedium
             )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun <T : Displayable> ReadOnlyDropDownPreference(
+    @StringRes label: Int,
+    currentSelected: T,
+    onItemSelected: (T) -> Unit,
+    items: List<T>,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    CenteredPreferenceRow(modifier) {
+        Text(
+            text = stringResource(label),
+            style = MaterialTheme.typography.labelMedium
+        )
+        Spacer(Modifier.weight(1f))
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
+        ) {
+            TextField(
+                value = stringResource(currentSelected.displayText),
+                onValueChange = {},
+                readOnly = true,
+                singleLine = true,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded)
+                },
+                modifier = Modifier
+                    .width(dimensionResource(R.dimen.settings_text_field_width))
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                items.forEach {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(it.displayText)) },
+                        onClick = {
+                            expanded = false
+                            onItemSelected(it)
+                        },
+                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -341,6 +434,18 @@ private fun StringPreferencePreview() {
 
 @Preview(showBackground = true)
 @Composable
+private fun SwitchPreferencePreview() {
+    RefuelTrackerTheme {
+        SwitchPreference(
+            label = R.string.settings_use_large_number_separator_label,
+            value = true,
+            onValueChange = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
 private fun SettingsCategoryPreview() {
     RefuelTrackerTheme {
         SettingsCategory(
@@ -348,7 +453,7 @@ private fun SettingsCategoryPreview() {
         ) {
             SingleInputPreference(
                 label = R.string.settings_currency_sign_label,
-                preference = Preference(value = "€", isValid = false),
+                preference = Preference(value = "€", isValid = true),
                 onValueChange = {}
             )
             SingleInputPreference(

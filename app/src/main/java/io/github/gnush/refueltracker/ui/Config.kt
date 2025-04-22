@@ -23,7 +23,15 @@ fun createNumberFormat(separateLargeNumbers: Boolean, thousandsSeparatorPlaces: 
     else -> NumberFormat.getInstance()
 }
 
-enum class DropDownSelection(@StringRes val displayText: Int) {
-    MostRecent(R.string.drop_down_selection_most_recent_name),
-    MostUsed(R.string.drop_down_selection_most_used_name)
+enum class DropDownSelection: Displayable {
+    MostRecent {
+        @StringRes override val displayText: Int = R.string.drop_down_selection_most_recent_name
+    },
+    MostUsed {
+        @StringRes override val displayText: Int = R.string.drop_down_selection_most_used_name
+    }
+}
+
+interface Displayable {
+    @get:StringRes val displayText: Int
 }
