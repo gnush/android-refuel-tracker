@@ -20,37 +20,66 @@ interface FuelStopDao {
     @Delete
     suspend fun delete(fuelStop: FuelStopEntity)
 
-    // TODO: change queries returning FuelStopEntity to return FuelStop (joins in the query, instead of later resolving later in der repository)
     /**
      * Retrieves a specific fuel stop
      * @param id The id of the fuel stop to retrieve
      */
-    @Query("select * from fuel_stops where id = :id")
-    fun fuelStop(id: Int): Flow<FuelStopEntity>
+    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, pricePerVolume, totalVolume, totalPrice, day, time
+              from fuel_stops
+              inner join fuel_station on station_id = fuel_station.id
+              inner join fuel_sort on fuel_sort_id = fuel_sort.id
+              inner join currency on currency_id = currency.id
+              inner join volume on volume_id = volume.id
+              where fuel_stops.id = :id""")
+    fun fuelStop(id: Int): Flow<FuelStop?>
 
     /**
      * Retrieves all fuel stops in descending order by day/time
      */
-    @Query("select * from fuel_stops order by day desc, time desc")
-    fun allFuelStopsOrderedNewestFirst(): Flow<List<FuelStopEntity>>
+    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, pricePerVolume, totalVolume, totalPrice, day, time
+              from fuel_stops
+              inner join fuel_station on station_id = fuel_station.id
+              inner join fuel_sort on fuel_sort_id = fuel_sort.id
+              inner join currency on currency_id = currency.id
+              inner join volume on volume_id = volume.id
+              order by day desc, time desc""")
+    fun allFuelStopsOrderedNewestFirst(): Flow<List<FuelStop>>
 
     /**
      * Retrieves all fuel stops between [from] and [to] in descending order by day/time
      */
-    @Query("select * from fuel_stops where day between :from and :to order by day desc, time desc")
-    fun fuelStopsBetween(from: LocalDate, to: LocalDate): Flow<List<FuelStopEntity>>
+    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, pricePerVolume, totalVolume, totalPrice, day, time
+              from fuel_stops
+              inner join fuel_station on station_id = fuel_station.id
+              inner join fuel_sort on fuel_sort_id = fuel_sort.id
+              inner join currency on currency_id = currency.id
+              inner join volume on volume_id = volume.id
+              where day between :from and :to order by day desc, time desc""")
+    fun fuelStopsBetween(from: LocalDate, to: LocalDate): Flow<List<FuelStop>>
 
     /**
      * Retrieves all fuel stops from [monthOfYear] in descending order by day/time
      */
-    @Query("select * from fuel_stops where day between :monthOfYear and :monthOfYear+99 order by day desc, time desc")
-    fun fuelStopsOnMonthOfYear(monthOfYear: Int): Flow<List<FuelStopEntity>>
+    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, pricePerVolume, totalVolume, totalPrice, day, time
+              from fuel_stops
+              inner join fuel_station on station_id = fuel_station.id
+              inner join fuel_sort on fuel_sort_id = fuel_sort.id
+              inner join currency on currency_id = currency.id
+              inner join volume on volume_id = volume.id
+              where day between :monthOfYear and :monthOfYear+99 order by day desc, time desc""")
+    fun fuelStopsOnMonthOfYear(monthOfYear: Int): Flow<List<FuelStop>>
 
     /**
      * Retrieves all fuel stops from [year] in descending order by day/time
      */
-    @Query("select * from fuel_stops where day between :year and :year+9999 order by day desc, time desc")
-    fun fuelStopsOnYear(year: Int): Flow<List<FuelStopEntity>>
+    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, pricePerVolume, totalVolume, totalPrice, day, time
+              from fuel_stops
+              inner join fuel_station on station_id = fuel_station.id
+              inner join fuel_sort on fuel_sort_id = fuel_sort.id
+              inner join currency on currency_id = currency.id
+              inner join volume on volume_id = volume.id
+              where day between :year and :year+9999 order by day desc, time desc""")
+    fun fuelStopsOnYear(year: Int): Flow<List<FuelStop>>
 
     /**
      * Retrieve the average price per volume, volume and price of all fuel stops.

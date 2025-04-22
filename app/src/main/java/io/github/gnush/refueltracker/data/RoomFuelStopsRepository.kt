@@ -2,23 +2,22 @@ package io.github.gnush.refueltracker.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
 import java.time.Month
 
-fun FuelStopEntity.toFuelStop(station: String, sort: String, currency: String, volume: String): FuelStop = FuelStop(
-    id = id,
-    station = station,
-    fuelSort = sort,
-    currency = currency,
-    volume = volume,
-    pricePerVolume = pricePerVolume,
-    totalVolume = totalVolume,
-    totalPrice = totalPrice,
-    day = day,
-    time = time
-)
+//fun FuelStopEntity.toFuelStop(station: String, sort: String, currency: String, volume: String): FuelStop = FuelStop(
+//    id = id,
+//    station = station,
+//    fuelSort = sort,
+//    currency = currency,
+//    volume = volume,
+//    pricePerVolume = pricePerVolume,
+//    totalVolume = totalVolume,
+//    totalPrice = totalPrice,
+//    day = day,
+//    time = time
+//)
 
 fun FuelStop.toFuelStopEntity(stationId: Long, sortId: Long, currencyId: Long, volumeId: Long): FuelStopEntity = FuelStopEntity(
     id = id,
@@ -87,66 +86,66 @@ class RoomFuelStopsRepository(
      * Retrieves all fuel stops ordered by time  in descending order by day/time
      */
     override fun fuelStopsOrderedNewestFirst(): Flow<List<FuelStop>> =
-        fuelStopDao.allFuelStopsOrderedNewestFirst().map { it.map { stop ->
+        fuelStopDao.allFuelStopsOrderedNewestFirst()/*.map { it.map { stop ->
             stop.toFuelStop(
                 station = fuelStationDao.getName(stop.stationId).first() ?: "",
                 sort = fuelSortDao.getLabel(stop.fuelSortId).first() ?: "",
                 currency = currencyDao.getSymbol(stop.currencyId).first() ?: "",
                 volume = volumeDao.getSymbol(stop.volumeId).first() ?: ""
             )
-        } }
+        } }*/
 
     /**
      * Retrieves a specific fuel stop
      * @param id The id of the fuel stop to retrieve
      */
-    override fun fuelStop(id: Int): Flow<FuelStop?> = fuelStopDao.fuelStop(id).map {
+    override fun fuelStop(id: Int): Flow<FuelStop?> = fuelStopDao.fuelStop(id)/*.map {
         it.toFuelStop(
             station = fuelStationDao.getName(it.stationId).first() ?: "",
             sort = fuelSortDao.getLabel(it.fuelSortId).first() ?: "",
             currency = currencyDao.getSymbol(it.currencyId).first() ?: "",
             volume = volumeDao.getSymbol(it.volumeId).first() ?: ""
         )
-    }
+    }*/
 
     /**
      * Retrieves all fuel stops between [from] and [to] (inclusive)  in descending order by day/time
      */
     override fun fuelStopsBetween(from: LocalDate, to: LocalDate): Flow<List<FuelStop>> =
-        fuelStopDao.fuelStopsBetween(from, to).map { it.map { stop ->
+        fuelStopDao.fuelStopsBetween(from, to)/*.map { it.map { stop ->
             stop.toFuelStop(
                 station = fuelStationDao.getName(stop.stationId).first() ?: "",
                 sort = fuelSortDao.getLabel(stop.fuelSortId).first() ?: "",
                 currency = currencyDao.getSymbol(stop.currencyId).first() ?: "",
                 volume = volumeDao.getSymbol(stop.volumeId).first() ?: ""
             )
-        } }
+        } }*/
 
     /**
      * Retrieves all fuel stops with year [year] and month [month] in descending order by day/time
      */
     override fun fuelStopsOn(year: Int, month: Month): Flow<List<FuelStop>> =
-        fuelStopDao.fuelStopsOnMonthOfYear(year*10000 + month.number*100).map { it.map { stop ->
+        fuelStopDao.fuelStopsOnMonthOfYear(year*10000 + month.number*100)/*.map { it.map { stop ->
             stop.toFuelStop(
                 station = fuelStationDao.getName(stop.stationId).first() ?: "",
                 sort = fuelSortDao.getLabel(stop.fuelSortId).first() ?: "",
                 currency = currencyDao.getSymbol(stop.currencyId).first() ?: "",
                 volume = volumeDao.getSymbol(stop.volumeId).first() ?: ""
             )
-        } }
+        } }*/
 
     /**
      * Retrieves all fuel stops from [year] in descending order by day/time
      */
     override fun fuelStopsOn(year: Int): Flow<List<FuelStop>> =
-        fuelStopDao.fuelStopsOnYear(year*10000).map { it.map { stop ->
+        fuelStopDao.fuelStopsOnYear(year*10000)/*.map { it.map { stop ->
             stop.toFuelStop(
                 station = fuelStationDao.getName(stop.stationId).first() ?: "",
                 sort = fuelSortDao.getLabel(stop.fuelSortId).first() ?: "",
                 currency = currencyDao.getSymbol(stop.currencyId).first() ?: "",
                 volume = volumeDao.getSymbol(stop.volumeId).first() ?: ""
             )
-        } }
+        } }*/
 
     /**
      * Retrieve the average price per volume, volume and price of all fuel stops.

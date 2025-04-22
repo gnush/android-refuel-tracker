@@ -39,7 +39,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.gnush.refueltracker.CommonTopAppBar
 import io.github.gnush.refueltracker.R
 import io.github.gnush.refueltracker.ui.Displayable
-import io.github.gnush.refueltracker.ui.DropDownSelection
 import io.github.gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import io.github.gnush.refueltracker.ui.createNumberFormat
 import io.github.gnush.refueltracker.ui.data.CustomDateFormat
@@ -307,54 +306,6 @@ private fun <T : Displayable> ReadOnlyDropDownPreference(
                 onDismissRequest = { expanded = false }
             ) {
                 items.forEach {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(it.displayText)) },
-                        onClick = {
-                            expanded = false
-                            onItemSelected(it)
-                        },
-                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                    )
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DefaultDropDownFilterPreference(
-    @StringRes label: Int,
-    currentSelected: DropDownSelection,
-    onItemSelected: (DropDownSelection) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    CenteredPreferenceRow(modifier) {
-        Text(
-            text = stringResource(label),
-            style = MaterialTheme.typography.labelMedium
-        )
-        Spacer(Modifier.weight(1f))
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = it }
-        ) {
-            TextField(
-                value = stringResource(currentSelected.displayText),
-                onValueChange = {},
-                readOnly = true,
-                singleLine = true,
-                modifier = Modifier
-                    .width(dimensionResource(R.dimen.settings_text_field_width))
-                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-            )
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                listOf(DropDownSelection.MostUsed, DropDownSelection.MostRecent).forEach {
                     DropdownMenuItem(
                         text = { Text(stringResource(it.displayText)) },
                         onClick = {
