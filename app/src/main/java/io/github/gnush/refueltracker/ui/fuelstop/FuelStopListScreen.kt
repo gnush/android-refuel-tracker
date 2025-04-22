@@ -50,7 +50,7 @@ import io.github.gnush.refueltracker.data.FuelStop
 import io.github.gnush.refueltracker.ui.Config
 import io.github.gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import io.github.gnush.refueltracker.ui.data.DefaultSigns
-import io.github.gnush.refueltracker.ui.data.NumberFormats
+import io.github.gnush.refueltracker.ui.data.UserFormats
 import io.github.gnush.refueltracker.ui.extensions.format
 import io.github.gnush.refueltracker.ui.navigation.BottomNavigationDestination
 import io.github.gnush.refueltracker.ui.theme.FuelCardShape
@@ -127,7 +127,7 @@ fun FuelStopListScreen(
 fun FuelStopList(
     fuelStops: List<FuelStop>,
     signs: DefaultSigns,
-    formats: NumberFormats,
+    formats: UserFormats,
     onFuelStopClick: (FuelStop) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
@@ -153,7 +153,7 @@ fun FuelStopList(
 private fun FuelStopListItem(
     fuelStop: FuelStop,
     signs: DefaultSigns,
-    formats: NumberFormats,
+    formats: UserFormats,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -173,7 +173,7 @@ private fun FuelStopListItem(
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(fuelStop.station)
                 Spacer(Modifier.weight(1f))
-                FuelStopDateTime(fuelStop.day, fuelStop.time)
+                FuelStopDateTime(fuelStop.day, fuelStop.time, formats)
             }
             Spacer(Modifier.height(dimensionResource(R.dimen.padding_small)))
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -191,11 +191,11 @@ private fun FuelStopListItem(
 }
 
 @Composable
-private fun FuelStopDateTime(day: LocalDate, time: LocalTime?) {
+private fun FuelStopDateTime(day: LocalDate, time: LocalTime?, formats: UserFormats) {
     Column (
         horizontalAlignment = Alignment.End
     ) {
-        Text(day.format(Config.DATE_FORMAT))
+        Text(day.format(formats.date.get))
         if (time != null)
             Text(time.format(Config.TIME_FORMAT))
     }
@@ -238,7 +238,7 @@ private fun FuelStopListPreview() {
                 currency = "€",
                 volume = "L"
             ),
-            formats = NumberFormats(),
+            formats = UserFormats(),
             onFuelStopClick = {}
         )
     }
@@ -266,7 +266,7 @@ private fun FuelStopListNoTimeItemPreview() {
                 currency = "€",
                 volume = "L"
             ),
-            formats = NumberFormats(),
+            formats = UserFormats(),
         )
     }
 }
@@ -294,7 +294,7 @@ private fun FuelStopListTimeItemPreview() {
                 currency = "€",
                 volume = "L"
             ),
-            formats = NumberFormats(),
+            formats = UserFormats(),
         )
     }
 }

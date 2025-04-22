@@ -14,7 +14,7 @@ import io.github.gnush.refueltracker.data.UserPreferencesRepository
 import io.github.gnush.refueltracker.ui.calendar.CalendarUiState
 import io.github.gnush.refueltracker.ui.createNumberFormat
 import io.github.gnush.refueltracker.ui.data.DefaultSigns
-import io.github.gnush.refueltracker.ui.data.NumberFormats
+import io.github.gnush.refueltracker.ui.data.UserFormats
 
 class StatisticsHomeViewModel(
     userPreferencesRepository: UserPreferencesRepository,
@@ -54,7 +54,7 @@ class StatisticsHomeViewModel(
                     currency = userPreferencesRepository.defaultCurrencySign.first(),
                     volume = userPreferencesRepository.defaultVolumeSign.first()
                 ),
-                formats = NumberFormats(
+                formats = UserFormats(
                     currency = createNumberFormat(
                         separateLargeNumbers = separateLargeNumbers,
                         thousandsSeparatorPlaces = thousandsSeparatorPlaces,
@@ -140,5 +140,5 @@ data class StatisticsHomeUiState(
     val monthCalendar: CalendarUiState = CalendarUiState(),
     val year: Int = 0,
     val signs: DefaultSigns = DefaultSigns(),
-    val formats: NumberFormats = NumberFormats()
+    val formats: UserFormats = UserFormats()
 )

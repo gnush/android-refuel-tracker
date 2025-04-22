@@ -8,7 +8,7 @@ import io.github.gnush.refueltracker.data.UserPreferencesRepository
 import io.github.gnush.refueltracker.ui.createNumberFormat
 import io.github.gnush.refueltracker.ui.data.DefaultSigns
 import io.github.gnush.refueltracker.ui.data.FuelStopListUiState
-import io.github.gnush.refueltracker.ui.data.NumberFormats
+import io.github.gnush.refueltracker.ui.data.UserFormats
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -38,7 +38,7 @@ class FuelStopListViewModel(
                             currency = userPreferencesRepository.defaultCurrencySign.first(),
                             volume = userPreferencesRepository.defaultVolumeSign.first()
                         ),
-                        formats = NumberFormats(
+                        formats = UserFormats(
                             currency = createNumberFormat(
                                 separateLargeNumbers = separateLargeNumbers,
                                 thousandsSeparatorPlaces = thousandsSeparatorPlaces,
@@ -54,6 +54,7 @@ class FuelStopListViewModel(
                                 thousandsSeparatorPlaces = thousandsSeparatorPlaces,
                                 decimalPlaces = userPreferencesRepository.currencyVolumeRatioDecimalPlaces.first()
                             ),
+                            date = userPreferencesRepository.dateFormat.first()
                         )
                     )
                 }

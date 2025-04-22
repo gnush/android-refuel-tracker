@@ -2,7 +2,6 @@ package io.github.gnush.refueltracker.data
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.key
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -12,6 +11,11 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import io.github.gnush.refueltracker.ui.DropDownSelection
+import io.github.gnush.refueltracker.ui.data.ANSI
+import io.github.gnush.refueltracker.ui.data.CustomDateFormat
+import io.github.gnush.refueltracker.ui.data.DIN
+import io.github.gnush.refueltracker.ui.data.DateFormat
+import io.github.gnush.refueltracker.ui.data.ISO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -45,6 +49,9 @@ class UserPreferencesRepository(
             intPreferencesKey("entry_screen_drop_down_elements")
         private val ENTRY_SCREEN_DROP_DOWN_SELECTION =
             booleanPreferencesKey("entry_screen_drop_down_selection")
+
+        private val DATE_FORMAT = intPreferencesKey("date_format")
+        private val DATE_FORMAT_PATTERN = stringPreferencesKey("date_format_pattern")
 
         @Volatile
         private var Instance: UserPreferencesRepository? = null
@@ -82,6 +89,22 @@ class UserPreferencesRepository(
                 false -> DropDownSelection.MostRecent
                 true -> DropDownSelection.MostUsed
                 null -> DropDownSelection.MostUsed
+            }
+        }
+
+    val dateFormatPattern: Flow<String> = readDatastore(DATE_FORMAT_PATTERN, "uuuu-MM-dd")
+
+    val dateFormat: Flow<DateFormat> = datastore.data
+        .catch {
+            Log.e(TAG, "error reading $DATE_FORMAT", it)
+            emit(emptyPreferences())
+        }.map {
+            when(it[DATE_FORMAT]) {
+                0 -> ISO
+                1 -> DIN
+                2 -> ANSI
+                3 -> CustomDateFormat(it[DATE_FORMAT_PATTERN] ?: "uuuu-MM-dd")
+                else -> ISO
             }
         }
 
@@ -126,6 +149,19 @@ class UserPreferencesRepository(
         it[ENTRY_SCREEN_DROP_DOWN_SELECTION] = when (dropDownSelection) {
             DropDownSelection.MostRecent -> false
             DropDownSelection.MostUsed -> true
+        }
+    }
+
+    suspend fun saveDateFormatPattern(pattern: String) = datastore.edit {
+        it[DATE_FORMAT_PATTERN] = pattern
+    }
+
+    suspend fun saveDateFormat(dateFormat: DateFormat) = datastore.edit {
+        it[DATE_FORMAT] = when (dateFormat) {
+            ISO -> 0
+            DIN -> 1
+            ANSI -> 2
+            is CustomDateFormat -> 3
         }
     }
 

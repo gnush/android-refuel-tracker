@@ -7,5 +7,5 @@ data class FuelStopCalendarUiState(
     val fuelStops: List<FuelStop> = emptyList(),
     val calendar: CalendarUiState = CalendarUiState(),
     val signs: DefaultSigns = DefaultSigns(),
-    val formats: NumberFormats = NumberFormats()
+    val formats: UserFormats = UserFormats()
 )

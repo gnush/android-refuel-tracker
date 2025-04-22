@@ -20,7 +20,7 @@ import io.github.gnush.refueltracker.ui.data.DropDownItemsUiState
 import io.github.gnush.refueltracker.ui.data.EntryUserPreferences
 import io.github.gnush.refueltracker.ui.data.FuelStopDetails
 import io.github.gnush.refueltracker.ui.data.FuelStopUiState
-import io.github.gnush.refueltracker.ui.data.NumberFormats
+import io.github.gnush.refueltracker.ui.data.UserFormats
 import io.github.gnush.refueltracker.ui.extensions.format
 import io.github.gnush.refueltracker.ui.extensions.toFuelStop
 import io.github.gnush.refueltracker.ui.extensions.toFuelStopDetails
@@ -33,15 +33,7 @@ class FuelStopEntryViewModel(
     userPreferences: UserPreferencesRepository,
     private val fuelStopsRepository: FuelStopsRepository
 ): ViewModel() {
-    var uiState by mutableStateOf(FuelStopUiState(
-        details = FuelStopDetails(
-            day = LocalDate(
-                year = Calendar.getInstance().get(Calendar.YEAR),
-                monthNumber = Calendar.getInstance().get(Calendar.MONTH)+1,
-                dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
-            ).format(Config.DATE_FORMAT)
-        )
-    ))
+    var uiState by mutableStateOf(FuelStopUiState())
         private set
 
     private val fuelStopId: Int? = savedStateHandle[FuelStopEditDestination.FUEL_STOP_ID]
@@ -56,7 +48,7 @@ class FuelStopEntryViewModel(
                 else
                     -1
 
-            val formats = NumberFormats(
+            val formats = UserFormats(
                 currency = createNumberFormat(
                     separateLargeNumbers = separateLargeNumbers,
                     thousandsSeparatorPlaces = thousandsSeparatorPlaces,
@@ -71,14 +63,20 @@ class FuelStopEntryViewModel(
                     separateLargeNumbers = separateLargeNumbers,
                     thousandsSeparatorPlaces = thousandsSeparatorPlaces,
                     decimalPlaces = userPreferences.currencyVolumeRatioDecimalPlaces.first()
-                )
+                ),
+                date = userPreferences.dateFormat.first()
             )
 
             uiState = uiState.copy(
                 details =
                     if (fuelStopId == null)
                         uiState.details.copy(
-                            fuelSort = fuelStopsRepository.mostUsedFuelSort().first() ?: ""
+                            fuelSort = fuelStopsRepository.mostUsedFuelSort().first() ?: "",
+                            day = LocalDate(
+                                year = Calendar.getInstance().get(Calendar.YEAR),
+                                monthNumber = Calendar.getInstance().get(Calendar.MONTH)+1,
+                                dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
+                            ).format(formats.date.get)
                         )
                     else
                         fuelStopsRepository.fuelStop(fuelStopId)
@@ -140,7 +138,7 @@ class FuelStopEntryViewModel(
     private fun validate(details: FuelStopDetails): Boolean =
         details.station.isNotBlank()
         && details.fuelSort.isNotBlank()
-        && Config.DATE_FORMAT.parseOrNull(details.day) != null
+        && uiState.userPreferences.formats.date.get.parseOrNull(details.day) != null
         && (if (details.time == null) true
         else Config.TIME_FORMAT.parseOrNull(details.time) != null)
         && try {

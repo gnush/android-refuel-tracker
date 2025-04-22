@@ -39,6 +39,11 @@
     <string name="drop_down_selection_most_used_name">Most used</string>
     <string name="drop_down_selection_most_recent_name">Used recently</string>
 
+    <string name="date_format_iso">yyyy-MM-dd</string>
+    <string name="date_format_din">dd.MM.yyyy</string>
+    <string name="date_format_ansi">MM/dd/yyyy</string>
+    <string name="date_format_custom">Custom</string>
+    
     <string name="settings_button_icon_description">Open settings</string>
 
     <string name="settings_category_date_formats_title">Date/Time</string>

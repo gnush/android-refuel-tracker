@@ -45,7 +45,7 @@ import io.github.gnush.refueltracker.data.FuelStopAverageValues
 import io.github.gnush.refueltracker.data.FuelStopSumValues
 import io.github.gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import io.github.gnush.refueltracker.ui.data.DefaultSigns
-import io.github.gnush.refueltracker.ui.data.NumberFormats
+import io.github.gnush.refueltracker.ui.data.UserFormats
 import io.github.gnush.refueltracker.ui.extensions.format
 import io.github.gnush.refueltracker.ui.extensions.paddedDisplaySign
 import io.github.gnush.refueltracker.ui.extensions.monthOfYearId
@@ -173,7 +173,7 @@ private fun AllTimeAverageFuelStatisticsCard(
     averages: FuelStopAverageValues,
     sums: FuelStopSumValues,
     signs: DefaultSigns,
-    formats: NumberFormats,
+    formats: UserFormats,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -260,7 +260,7 @@ private fun AllTimeAverageFuelStatisticsCard(
 @Composable
 private fun AverageFuelStatisticsCard(
     signs: DefaultSigns,
-    formats: NumberFormats,
+    formats: UserFormats,
     currentHeading: @Composable () -> Unit,
     previousHeading: @Composable () -> Unit,
     currentStats: FuelStopAverageValues,
@@ -355,7 +355,7 @@ private fun NavigationButton(
 private fun AverageValueColumn(
     stats: FuelStopAverageValues,
     signs: DefaultSigns,
-    formats: NumberFormats,
+    formats: UserFormats,
     modifier: Modifier = Modifier,
     heading: @Composable (() -> Unit)? = null,
     isValueDiff: Boolean = false
@@ -430,7 +430,7 @@ private fun AllTimeFuelStatisticsCardPreview() {
                 volume = "L",
                 currency = "€"
             ),
-            formats = NumberFormats()
+            formats = UserFormats()
         )
     }
 }
@@ -458,7 +458,7 @@ private fun FuelStatisticsCardPreview() {
                 volume = "L",
                 currency = "€"
             ),
-            formats = NumberFormats()
+            formats = UserFormats()
         )
     }
 }

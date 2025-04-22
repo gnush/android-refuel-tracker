@@ -22,14 +22,15 @@ data class DefaultSigns(
     val volume: String = ""
 )
 
-data class NumberFormats(
+data class UserFormats(
     val currency: NumberFormat = NumberFormat.getInstance(),
     val volume: NumberFormat = NumberFormat.getInstance(),
-    val ratio: NumberFormat = NumberFormat.getInstance()
+    val ratio: NumberFormat = NumberFormat.getInstance(),
+    val date: DateFormat = ISO
 )
 
 data class EntryUserPreferences(
     val signs: DefaultSigns = DefaultSigns(),
-    val formats: NumberFormats = NumberFormats(),
+    val formats: UserFormats = UserFormats(),
     val dropDownFilter: DropDownSelection = DropDownSelection.MostUsed
 )

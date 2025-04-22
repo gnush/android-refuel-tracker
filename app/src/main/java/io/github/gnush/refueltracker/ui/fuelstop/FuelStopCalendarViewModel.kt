@@ -12,7 +12,7 @@ import io.github.gnush.refueltracker.data.UserPreferencesRepository
 import io.github.gnush.refueltracker.ui.createNumberFormat
 import io.github.gnush.refueltracker.ui.data.DefaultSigns
 import io.github.gnush.refueltracker.ui.data.FuelStopCalendarUiState
-import io.github.gnush.refueltracker.ui.data.NumberFormats
+import io.github.gnush.refueltracker.ui.data.UserFormats
 import kotlinx.coroutines.flow.first
 
 class FuelStopCalendarViewModel(
@@ -40,7 +40,7 @@ class FuelStopCalendarViewModel(
                             currency = userPreferencesRepository.defaultCurrencySign.first(),
                             volume = userPreferencesRepository.defaultVolumeSign.first()
                         ),
-                        formats = NumberFormats(
+                        formats = UserFormats(
                             currency = createNumberFormat(
                                 separateLargeNumbers = separateLargeNumbers,
                                 thousandsSeparatorPlaces = thousandsSeparatorPlaces,
