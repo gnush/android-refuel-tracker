@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "gnush.refueltracker"
+    namespace = "io.github.gnush.refueltracker"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "gnush.refueltracker"
+        applicationId = "io.github.gnush.refueltracker"
         minSdk = 21
         targetSdk = 35
         versionCode = 1
