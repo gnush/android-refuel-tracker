@@ -15,7 +15,7 @@ class CalendarViewModel: ViewModel() {
     var uiState by mutableStateOf(CalendarUiState())
 
     fun updateDisplayMonth(monthNumber: Int) {
-        if (monthNumber > 0 && monthNumber <= 12)
+        if (monthNumber in 1..12)
             uiState = CalendarUiState(
                 month = Month(monthNumber),
                 year = uiState.year
