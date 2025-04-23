@@ -23,6 +23,14 @@ fun createNumberFormat(separateLargeNumbers: Boolean, thousandsSeparatorPlaces: 
     else -> NumberFormat.getInstance()
 }
 
+fun createNumberFormat(separateLargeNumbers: Boolean, thousandsSeparatorPlaces: Int): NumberFormat = when {
+    separateLargeNumbers && thousandsSeparatorPlaces > 0 ->
+        DecimalFormat("#,${"#".repeat(thousandsSeparatorPlaces-1)}0")
+    !separateLargeNumbers ->
+        DecimalFormat("0")
+    else -> NumberFormat.getInstance()
+}
+
 enum class DropDownSelection: Displayable {
     MostRecent {
         @StringRes override val displayText: Int = R.string.drop_down_selection_most_recent_name

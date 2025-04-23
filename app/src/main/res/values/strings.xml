@@ -50,6 +50,7 @@
     <string name="settings_category_number_formats_title">Numbers</string>
     <string name="settings_category_symbols_title">Symbols</string>
     <string name="settings_category_drop_down_title">Drop down menu</string>
+    <string name="settings_sub_category_decimal_places_headline">Decimal places</string>
 
     <string name="settings_example_number_display_label">Number preview</string>
     <string name="settings_example_date_display_label">Date preview</string>
@@ -58,11 +59,11 @@
     <string name="settings_date_format_pattern_label">Pattern</string>
     <string name="settings_currency_sign_label">Currency</string>
     <string name="settings_volume_sign_label">Volume</string>
-    <string name="settings_use_large_number_separator_label">Separate large numbers</string>
-    <string name="settings_large_number_separator_places_label">Large numbers separate after</string>
-    <string name="settings_currency_decimal_places_label">Currency decimal places</string>
-    <string name="settings_volume_decimal_places_label">Volume decimal places</string>
-    <string name="settings_ratio_decimal_places_label">Currency/Volume decimal places</string>
+    <string name="settings_use_large_number_separator_label">Separate large numbers?</string>
+    <string name="settings_large_number_separator_places_label">after …</string>
+    <string name="settings_currency_decimal_places_label">Currency</string>
+    <string name="settings_volume_decimal_places_label">Volume</string>
+    <string name="settings_ratio_decimal_places_label">Currency/Volume</string>
     <string name="settings_num_drop_down_elements_label">#Elements</string>
     <string name="settings_default_drop_down_filter_label">Default filter</string>
 

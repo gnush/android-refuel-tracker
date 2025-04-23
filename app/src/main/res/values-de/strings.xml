@@ -37,22 +37,25 @@
     <string name="date_format_din">tt.mm.jjjj</string>
     <string name="date_format_ansi">mm/tt/jjjj</string>
     <string name="date_format_custom">Benutzerdefiniert</string>
+
     <string name="settings_button_icon_description">Öffne Einstellungen</string>
     <string name="settings_category_date_formats_title">Datum/Zeit</string>
     <string name="settings_category_number_formats_title">Zahlen</string>
     <string name="settings_category_symbols_title">Symbole</string>
     <string name="settings_category_drop_down_title">Drop-down Menü</string>
+    <string name="settings_sub_category_decimal_places_headline">Dezimalstellen</string>
+
     <string name="settings_example_number_display_label">Zahlenvorschau</string>
     <string name="settings_example_date_display_label">Datumsvorschau</string>
     <string name="settings_date_format_drop_down_label">Datumsformat</string>
     <string name="settings_date_format_pattern_label">Schema</string>
     <string name="settings_currency_sign_label">Währung</string>
     <string name="settings_volume_sign_label">Volumen</string>
-    <string name="settings_use_large_number_separator_label">Trenne große Zahlen</string>
-    <string name="settings_large_number_separator_places_label">Großen Zahlen trennen nach</string>
-    <string name="settings_currency_decimal_places_label">Währungsdezimalstellen</string>
-    <string name="settings_volume_decimal_places_label">Volumendezimalstellen</string>
-    <string name="settings_ratio_decimal_places_label">Währung/Volumendezimalstellen</string>
+    <string name="settings_use_large_number_separator_label">Große Zahlen trennen?</string>
+    <string name="settings_large_number_separator_places_label">nach …</string>
+    <string name="settings_currency_decimal_places_label">Währung</string>
+    <string name="settings_volume_decimal_places_label">Volumen</string>
+    <string name="settings_ratio_decimal_places_label">Währung/Volumen</string>
     <string name="settings_num_drop_down_elements_label">#Elemente</string>
     <string name="settings_default_drop_down_filter_label">Standardfilter</string>
     <string name="save_button">Speichern</string>

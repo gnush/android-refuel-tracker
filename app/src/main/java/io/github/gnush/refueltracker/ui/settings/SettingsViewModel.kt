@@ -32,8 +32,8 @@ class SettingsViewModel(
     init {
         viewModelScope.launch {
             _uiState.value = SettingsUiState(
-                separateThousands = userPreferencesRepository.separateThousands.first(),
-                thousandsSeparator = Preference(
+                separateLargeNumbers = userPreferencesRepository.separateThousands.first(),
+                largeNumberSeparator = Preference(
                     value = userPreferencesRepository.thousandsSeparatorPlaces.first().toString(),
                     isValid = true
                 ),
@@ -66,13 +66,13 @@ class SettingsViewModel(
     }
 
     fun saveSeparateLargeNumbers(value: Boolean) = viewModelScope.launch {
-        _uiState.value = _uiState.value.copy(separateThousands = value)
+        _uiState.value = _uiState.value.copy(separateLargeNumbers = value)
         userPreferencesRepository.saveSeparateThousands(value)
     }
 
     fun saveLargeNumbersSeparatorPlaces(n: String) {
         _uiState.value = _uiState.value.copy(
-            thousandsSeparator = Preference(
+            largeNumberSeparator = Preference(
                 value = n,
                 isValid = saveStringAsIntPreference(
                     value = n,
@@ -194,8 +194,8 @@ class SettingsViewModel(
 }
 
 data class SettingsUiState(
-    val separateThousands: Boolean = false,
-    val thousandsSeparator: Preference = Preference(),
+    val separateLargeNumbers: Boolean = false,
+    val largeNumberSeparator: Preference = Preference(),
     val volumeDecimalPlaces: Preference = Preference(),
     val currencyDecimalPlaces: Preference = Preference(),
     val ratioDecimalPlaces: Preference = Preference(),
