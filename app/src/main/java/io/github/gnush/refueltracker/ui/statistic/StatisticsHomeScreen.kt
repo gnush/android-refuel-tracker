@@ -402,8 +402,10 @@ private fun ValueText(
         ),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        prefix()
-        Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
+        if (!isValueDiff) {
+            prefix()
+            Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
+        }
         val sign = if (isValueDiff) value.paddedDisplaySign else ""
         Text(
             text = "$sign${value.abs().format(format)}",
