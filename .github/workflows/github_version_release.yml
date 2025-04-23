@@ -4,6 +4,7 @@ env:
   module: app
   buildpath: build/outputs
   basename: refuel-tracker
+  sdk-tools: $ANDROID_SDK_ROOT/build-tools/36.0.0/
 
 on:
   push:
@@ -27,12 +28,31 @@ jobs:
         run: chmod +x gradlew
       - name: Build release apk
         run: ./gradlew ${{ env.module }}:assembleRelease
-      - name: Rename apk
-        run: mv ${{ env.module }}/${{ env.buildpath }}/apk/release/*.apk ${{ env.module }}/${{ env.buildpath }}/apk/release/${{ env.basename }}-${{ github.ref_name }}.apk
+      - name: zipalign apk
+        run: >-
+          ${{ env.sdk-tools }}/zipalign
+          -f
+          -p
+          4
+          ${{ env.module }}/${{ env.buildpath }}/apk/release/*.apk
+          ${{ env.module }}/${{ env.buildpath }}/apk/release/${{ env.basename }}-${{ github.ref_name }}.apk
+      - name: init keystore
+        run: 'echo "$KEYSTORE" | openssl base64 -d -out keystore.jks'
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+      - name: sign apk
+        run: >-
+          ${{ env.sdk-tools }}/apksigner
+          sign
+          --ks keystore.jks
+          --ks-pass pass:${{ secrets.KEYSTORE_PASS }}
+          --ks-key-alias ${{ secrets.KEY_ALIAS }}
+          --key-pass pass:${{ secrets.KEY_PASS }}
+          ${{ env.module }}/${{ env.buildpath }}/apk/release/${{ env.basename }}-${{ github.ref_name }}.apk
       - name: Github Release
         uses: softprops/action-gh-release@v2.2.1
         if: github.ref_type == 'tag'
         with:
           files: |
-            ${{ env.module }}/${{ env.buildpath }}/apk/release/*.apk
+            ${{ env.module }}/${{ env.buildpath }}/apk/release/${{ env.basename }}-${{ github.ref_name }}.apk
           token: ${{ secrets.RELEASE }}
