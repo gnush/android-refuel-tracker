@@ -54,7 +54,9 @@ jobs:
           ${{ env.module }}/${{ env.buildpath }}/apk/release/*.apk
           ${{ env.module }}/${{ env.buildpath }}/apk/release/${{ env.basename }}-${{ env.today }}.apk
       - name: init keystore
-        run: echo ${{ secrets.KEYSTORE }} | openssl base64 -d -out keystore.jks
+        run: 'echo "$KEYSTORE" | openssl base64 -d -out keystore.jks'
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
       - name: sign apk
         run: >-
           ${{ env.sdk-tools }}/apksigner
