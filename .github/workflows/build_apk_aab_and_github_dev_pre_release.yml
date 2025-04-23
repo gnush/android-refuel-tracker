@@ -4,7 +4,7 @@ env:
   module: app
   buildpath: build/outputs
   basename: refuel-tracker
-  sdk-tools: $ANDROID_SDK_ROOT/build-tools/36.0.0/
+  sdk-tools: $ANDROID_SDK_ROOT/build-tools/36.0.0
 
 on:
   workflow_run:
@@ -45,14 +45,25 @@ jobs:
       #  with:
       #    name: ${{ env.basename }}-${{ env.today }}-aab
       #    path: ${{ env.module }}/${{ env.buildpath }}/bundle/release/
-      - name: Rename apk
-        run: mv ${{ env.module }}/${{ env.buildpath }}/apk/release/*.apk ${{ env.module }}/${{ env.buildpath }}/apk/release/${{ env.basename }}-${{ env.today }}.apk
       - name: zipalign apk
-        run: ${{ env.sdk-tools }}/zipalign -f 4 ${{ env.module }}/${{ env.buildpath }}/apk/release/${{ env.basename }}-${{ env.today }}.apk
+        run: >-
+          ${{ env.sdk-tools }}/zipalign
+          -f
+          -p
+          4
+          ${{ env.module }}/${{ env.buildpath }}/apk/release/*.apk
+          ${{ env.module }}/${{ env.buildpath }}/apk/release/${{ env.basename }}-${{ env.today }}.apk
       - name: init keystore
         run: echo ${{ secrets.KEYSTORE }} | openssl base64 -d -out keystore.jks
       - name: sign apk
-        run: ${{ env.sdk-tools }}/apksigner sign --ks keystore.jks --ks-pass pass:${{ secrets.KEYSTORE_PASS }} --ks-key-alias ${{ secrets.KEY_ALIAS }} --key-pass pass:${{ secrets.KEY_PASS }} ${{ env.module }}/${{ env.buildpath }}/apk/release/${{ env.basename }}-${{ env.today }}.apk
+        run: >-
+          ${{ env.sdk-tools }}/apksigner
+          sign
+          --ks keystore.jks
+          --ks-pass pass:${{ secrets.KEYSTORE_PASS }}
+          --ks-key-alias ${{ secrets.KEY_ALIAS }}
+          --key-pass pass:${{ secrets.KEY_PASS }}
+          ${{ env.module }}/${{ env.buildpath }}/apk/release/${{ env.basename }}-${{ env.today }}.apk
       - name: Release dev build # TODO: look into used workflow and see if we can eliminate the warning
         uses: marvinpinto/action-automatic-releases@v1.2.1
         # if: github.ref_type == 'branch' # not needed anymore, this is triggered from a previous workflow run now
@@ -62,4 +73,4 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            ${{ env.module }}/${{ env.buildpath }}/apk/release/*.apk
+            ${{ env.module }}/${{ env.buildpath }}/apk/release/${{ env.basename }}-${{ env.today }}.apk
