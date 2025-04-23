@@ -17,11 +17,11 @@
     <string name="fuel_stop_total_paid_form_label">Total price paid</string>
 
     <string name="nav_back_button_description">Back</string>
-    <string name="nav_bar_list_button_description">Navigate to fuel stops list</string>
+    <string name="nav_bar_list_button_description">Open fuel stops list</string>
     <string name="nav_bar_list_button_label">All</string>
-    <string name="nav_bar_cal_button_description">Navigate to fuel stops calendar</string>
+    <string name="nav_bar_cal_button_description">Open fuel stops calendar</string>
     <string name="nav_bar_cal_button_label">Calendar</string>
-    <string name="nav_bar_stat_button_description">Navigate to statistics screen</string>
+    <string name="nav_bar_stat_button_description">Open statistics screen</string>
     <string name="nav_bar_stat_button_label">Statistics</string>
     <string name="calendar_previous_button_description">Navigate to previous month</string>
     <string name="calendar_next_button_description">Navigate to next month</string>
@@ -49,7 +49,7 @@
     <string name="settings_category_date_formats_title">Date/Time</string>
     <string name="settings_category_number_formats_title">Numbers</string>
     <string name="settings_category_symbols_title">Symbols</string>
-    <string name="settings_category_drop_down_title">Drop down menu defaults</string>
+    <string name="settings_category_drop_down_title">Drop down menu</string>
 
     <string name="settings_example_number_display_label">Number preview</string>
     <string name="settings_example_date_display_label">Date preview</string>
