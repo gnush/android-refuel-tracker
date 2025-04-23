@@ -23,7 +23,7 @@ val DayOfWeek.abbreviationId: Int
     }
 
 /**
- * The [StringRes] associated with this [Month] instance.
+ * The [StringRes] representing the name associated with this [Month] instance.
  */
 val Month.monthOfYearId: Int
     @StringRes get() = when(number) {
@@ -40,6 +40,26 @@ val Month.monthOfYearId: Int
         11 -> R.string.month_11
         12 -> R.string.month_12
         else -> R.string.month_1
+    }
+
+/**
+ * The [StringRes] representing the abbreviated name associated with this [Month] instance.
+ */
+val Month.monthOfYearAbbreviationId: Int
+    @StringRes get() = when(number) {
+        1 -> R.string.month_abbreviation_1
+        2 -> R.string.month_abbreviation_2
+        3 -> R.string.month_abbreviation_3
+        4 -> R.string.month_abbreviation_4
+        5 -> R.string.month_abbreviation_5
+        6 -> R.string.month_abbreviation_6
+        7 -> R.string.month_abbreviation_7
+        8 -> R.string.month_abbreviation_8
+        9 -> R.string.month_abbreviation_9
+        10 -> R.string.month_abbreviation_10
+        11 -> R.string.month_abbreviation_11
+        12 -> R.string.month_abbreviation_12
+        else -> R.string.month_abbreviation_1
     }
 
 /**

@@ -103,4 +103,17 @@
     <string name="month_10">October</string>
     <string name="month_11">November</string>
     <string name="month_12">December</string>
+
+    <string name="month_abbreviation_1" >Jan</string>
+    <string name="month_abbreviation_2" >Feb</string>
+    <string name="month_abbreviation_3" >Mar</string>
+    <string name="month_abbreviation_4" >Apr</string>
+    <string name="month_abbreviation_5" >May</string>
+    <string name="month_abbreviation_6" >Jun</string>
+    <string name="month_abbreviation_7" >Jul</string>
+    <string name="month_abbreviation_8" >Aug</string>
+    <string name="month_abbreviation_9" >Sep</string>
+    <string name="month_abbreviation_10">Oct</string>
+    <string name="month_abbreviation_11">Nov</string>
+    <string name="month_abbreviation_12">Dec</string>
 </resources>

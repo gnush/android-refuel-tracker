@@ -47,8 +47,8 @@ import io.github.gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import io.github.gnush.refueltracker.ui.data.DefaultSigns
 import io.github.gnush.refueltracker.ui.data.UserFormats
 import io.github.gnush.refueltracker.ui.extensions.format
+import io.github.gnush.refueltracker.ui.extensions.monthOfYearAbbreviationId
 import io.github.gnush.refueltracker.ui.extensions.paddedDisplaySign
-import io.github.gnush.refueltracker.ui.extensions.monthOfYearId
 import io.github.gnush.refueltracker.ui.extensions.valueChangeColor
 import io.github.gnush.refueltracker.ui.navigation.BottomNavigationDestination
 import io.github.gnush.refueltracker.ui.theme.RefuelTrackerTheme
@@ -117,7 +117,7 @@ private fun StatisticsBody(
         AverageFuelStatisticsCard(
             currentHeading = {
                 AverageStatisticsMonthHeading(
-                    uiState.monthCalendar.month.monthOfYearId,
+                    uiState.monthCalendar.month.monthOfYearAbbreviationId,
                     uiState.monthCalendar.year
                 )
             },
@@ -125,7 +125,7 @@ private fun StatisticsBody(
             previousHeading = {
                 val previousCalendar = uiState.monthCalendar.previousMonth()
                 AverageStatisticsMonthHeading(
-                    previousCalendar.month.monthOfYearId,
+                    previousCalendar.month.monthOfYearAbbreviationId,
                     previousCalendar.year
                 )
             },
