@@ -53,7 +53,7 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.DateTimeFormat
 import java.util.Calendar
 
-object ConfigDestination: NavigationDestination {
+object SettingsDestination: NavigationDestination {
     override val route: String = "config"
     @StringRes override val titleRes: Int = R.string.config_screen
 }
@@ -72,7 +72,7 @@ fun SettingsScreen(
         modifier = modifier,
         topBar = {
             CommonTopAppBar(
-                title = stringResource(ConfigDestination.titleRes),
+                title = stringResource(SettingsDestination.titleRes),
                 onNavigateUp = onNavigateUp,
                 scrollBehavior = scrollBehavior
             )
