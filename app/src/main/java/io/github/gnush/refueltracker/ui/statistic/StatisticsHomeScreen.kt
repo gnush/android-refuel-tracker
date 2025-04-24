@@ -104,7 +104,7 @@ fun StatisticsHomeScreen(
 }
 
 @Composable
-private fun StatisticsBody(
+fun StatisticsBody(
     modifier: Modifier = Modifier,
     onNavigateLeftMonth: () -> Unit,
     onNavigateRightMonth: () -> Unit,
