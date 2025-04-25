@@ -1,5 +1,6 @@
 package io.github.gnush.refueltracker.ui.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -7,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import io.github.gnush.refueltracker.ui.settings.SettingsDestination
 import io.github.gnush.refueltracker.ui.settings.SettingsScreen
 import io.github.gnush.refueltracker.ui.fuelstop.FuelStopCalendarDestination
@@ -17,6 +19,10 @@ import io.github.gnush.refueltracker.ui.fuelstop.FuelStopEntryScreen
 import io.github.gnush.refueltracker.ui.fuelstop.FuelStopEntryDestination
 import io.github.gnush.refueltracker.ui.fuelstop.FuelStopListDestination
 import io.github.gnush.refueltracker.ui.fuelstop.FuelStopListScreen
+import io.github.gnush.refueltracker.ui.settings.AboutDestination
+import io.github.gnush.refueltracker.ui.settings.AboutScreen
+import io.github.gnush.refueltracker.ui.settings.LibrariesDestination
+import io.github.gnush.refueltracker.ui.settings.LibrariesScreen
 import io.github.gnush.refueltracker.ui.statistic.StatisticsHomeDestination
 import io.github.gnush.refueltracker.ui.statistic.StatisticsHomeScreen
 
@@ -34,6 +40,7 @@ fun AppNavHost(
             FuelStopListScreen(
                 navigateTo = navController::navigate,
                 navigateToSettings = { navController.navigate(SettingsDestination.route) },
+                navigateToAbout = { navController.navigate(AboutDestination.route) },
                 navigateToFuelStopEntry = { navController.navigate(FuelStopEntryDestination.route) },
                 navigateToFuelStopEdit = { navController.navigate(FuelStopEditDestination.routeWithFuelStopId(it)) },
             )
@@ -42,6 +49,7 @@ fun AppNavHost(
             FuelStopCalendarScreen(
                 navigateTo = navController::navigate,
                 navigateToSettings = { navController.navigate(SettingsDestination.route) },
+                navigateToAbout = { navController.navigate(AboutDestination.route) },
                 navigateToFuelStopEntry = { navController.navigate(FuelStopEntryDestination.route) },
                 navigateToFuelStopEdit = { navController.navigate(FuelStopEditDestination.routeWithFuelStopId(it)) },
             )
@@ -50,6 +58,7 @@ fun AppNavHost(
             FuelStopEntryScreen(
                 onNavigateUp = navController::navigateUp,
                 navigateToSettings = { navController.navigate(SettingsDestination.route) },
+                navigateToAbout = { navController.navigate(AboutDestination.route) },
                 onSaveClickNavigateTo = navController::popBackStack
             )
         }
@@ -62,17 +71,30 @@ fun AppNavHost(
             FuelStopEditScreen(
                 onNavigateUp = navController::navigateUp,
                 navigateToSettings = { navController.navigate(SettingsDestination.route) },
+                navigateToAbout = { navController.navigate(AboutDestination.route) },
                 onSaveClickNavigateTo = navController::popBackStack
             )
         }
         composable(StatisticsHomeDestination.route) {
             StatisticsHomeScreen(
                 navigateTo = navController::navigate,
-                navigateToSettings = { navController.navigate(SettingsDestination.route) }
+                navigateToSettings = { navController.navigate(SettingsDestination.route) },
+                navigateToAbout = { navController.navigate(AboutDestination.route) },
             )
         }
         composable(SettingsDestination.route) {
             SettingsScreen(
+                onNavigateUp = navController::navigateUp
+            )
+        }
+        composable(AboutDestination.route) {
+            AboutScreen(
+                onNavigateUp = navController::navigateUp,
+                navigateToLibraries = { navController.navigate(LibrariesDestination.route) }
+            )
+        }
+        composable(LibrariesDestination.route) {
+            LibrariesScreen(
                 onNavigateUp = navController::navigateUp
             )
         }

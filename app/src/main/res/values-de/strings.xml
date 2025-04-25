@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RefuelTracker</string>
+    <string name="app_icon_description">RefuelTracker App-Icon</string>
+    <string name="about_app_description">Behalte die Übersicht über deine Tankkosten</string>
+    <string name="about_app_version_label">Version</string>
+    <string name="about_app_license_label">Lizenz</string>
+    <string name="about_app_author_label">Autor</string>
+    <string name="about_app_source_code_label">Quellcode</string>
+    <string name="about_libs_label">Bibliotheken</string>
+    <string name="about_libs_aim">Open Source Lizenzen</string>
+    <string name="about_info_icon_description">Icon Information</string>
+    <string name="about_page_icon_description">Icon Seite</string>
+    <string name="about_person_icon_description">Icon Person</string>
+    <string name="about_code_icon_description">Icon Quellcode Markierung</string>
+    <string name="about_book_icon_description">Icon Buch</string>
+
     <string name="fuel_stop_list_screen">Alle</string>
     <string name="fuel_stop_calendar_screen">Monatlich</string>
     <string name="fuel_stop_entry_screen">Tankstopp Hinzufügen</string>
     <string name="fuel_stop_edit_screen">Tankstopp Bearbeiten</string>
     <string name="fuel_stop_statistics_screen">Statistiken</string>
-    <string name="config_screen">Einstellungen</string>
+    <string name="settings_screen">Einstellungen</string>
+    <string name="about_screen">Über</string>
+    <string name="libs_screen">Bibliotheken</string>
+
     <string name="fuel_stop_station_form_label">Tankstelle</string>
     <string name="fuel_stop_sort_form_label">Sorte</string>
     <string name="fuel_stop_day_form_label">Tag des Tankstopps</string>
@@ -38,7 +55,10 @@
     <string name="date_format_ansi">mm/tt/jjjj</string>
     <string name="date_format_custom">Benutzerdefiniert</string>
 
+    <string name="menu_button_icon_description">Mehr aktionen</string>
     <string name="settings_button_icon_description">Öffne Einstellungen</string>
+    <string name="about_button_icon_description">Öffne Über</string>
+
     <string name="settings_category_date_formats_title">Datum/Zeit</string>
     <string name="settings_category_number_formats_title">Zahlen</string>
     <string name="settings_category_symbols_title">Symbole</string>

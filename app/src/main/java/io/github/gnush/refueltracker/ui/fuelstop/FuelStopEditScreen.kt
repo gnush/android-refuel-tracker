@@ -33,6 +33,7 @@ fun FuelStopEditScreen(
     onNavigateUp: () -> Unit,
     onSaveClickNavigateTo: () -> Unit,
     navigateToSettings: () -> Unit,
+    navigateToAbout: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FuelStopEntryViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
@@ -44,6 +45,7 @@ fun FuelStopEditScreen(
                 title = stringResource(FuelStopEditDestination.titleRes),
                 onNavigateUp = onNavigateUp,
                 onSettingsClick = navigateToSettings,
+                onAboutClick = navigateToAbout
             )
         },
         modifier = modifier
@@ -75,7 +77,8 @@ private fun FuelStopEditScreenPreview() {
         FuelStopEditScreen(
             onNavigateUp = {},
             onSaveClickNavigateTo = {},
-            navigateToSettings = {}
+            navigateToSettings = {},
+            navigateToAbout = {}
         )
     }
 }

@@ -48,6 +48,7 @@ fun FuelStopCalendarScreen(
     navigateToFuelStopEntry: () -> Unit,
     navigateToFuelStopEdit: (Long) -> Unit,
     navigateToSettings: () -> Unit,
+    navigateToAbout: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FuelStopCalendarViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
@@ -61,6 +62,7 @@ fun FuelStopCalendarScreen(
             CommonTopAppBar(
                 title = stringResource(FuelStopCalendarDestination.titleRes),
                 onSettingsClick = navigateToSettings,
+                onAboutClick = navigateToAbout,
                 scrollBehavior = scrollBehavior
             )
         },

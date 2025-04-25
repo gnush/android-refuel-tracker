@@ -55,7 +55,7 @@ import java.util.Calendar
 
 object SettingsDestination: NavigationDestination {
     override val route: String = "config"
-    @StringRes override val titleRes: Int = R.string.config_screen
+    @StringRes override val titleRes: Int = R.string.settings_screen
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

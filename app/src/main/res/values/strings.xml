@@ -1,12 +1,30 @@
 <resources>
     <string name="app_name">RefuelTracker</string>
+    <string name="app_icon_description">RefuelTracker app icon</string>
+    <string name="about_app_description">Keep track of your fuel expenses</string>
+    <string name="about_app_version_label">Version</string>
+    <string name="about_app_license_label">License</string>
+    <string name="about_app_license_name" translatable="false"> GPL-3.0-or-later</string>
+    <string name="about_app_author_label">Author</string>
+    <string name="about_app_author_name" translatable="false">Gnush</string>
+    <string name="about_app_source_code_label">Source Code</string>
+    <string name="about_app_source_code_location" translatable="false">https://github.com/gnush/android-refuel-tracker</string>
+    <string name="about_libs_label">Libraries</string>
+    <string name="about_libs_aim">Open Source Licenses</string>
+    <string name="about_info_icon_description">Information Icon</string>
+    <string name="about_page_icon_description">Page Icon</string>
+    <string name="about_person_icon_description">Person Icon</string>
+    <string name="about_code_icon_description">Code Tag Icon</string>
+    <string name="about_book_icon_description">Book Icon</string>
 
     <string name="fuel_stop_list_screen">All stops</string>
     <string name="fuel_stop_calendar_screen">Fuel stops by month</string>
     <string name="fuel_stop_entry_screen">Add Fuel Stop</string>
     <string name="fuel_stop_edit_screen">Edit Fuel Stop</string>
     <string name="fuel_stop_statistics_screen">Statistics</string>
-    <string name="config_screen">Settings</string>
+    <string name="settings_screen">Settings</string>
+    <string name="about_screen">About</string>
+    <string name="libs_screen">Libraries</string>
 
     <string name="fuel_stop_station_form_label">Fuel Station</string>
     <string name="fuel_stop_sort_form_label">Fuel sort</string>
@@ -43,8 +61,10 @@
     <string name="date_format_din">dd.MM.yyyy</string>
     <string name="date_format_ansi">MM/dd/yyyy</string>
     <string name="date_format_custom">Custom</string>
-    
-    <string name="settings_button_icon_description">Open settings</string>
+
+    <string name="menu_button_icon_description">Open more actions</string>
+    <string name="settings_button_icon_description">Open settings screen</string>
+    <string name="about_button_icon_description">Open about screen</string>
 
     <string name="settings_category_date_formats_title">Date/Time</string>
     <string name="settings_category_number_formats_title">Numbers</string>
