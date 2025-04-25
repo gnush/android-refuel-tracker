@@ -36,7 +36,7 @@ class FuelStopEntryViewModel(
     var uiState by mutableStateOf(FuelStopUiState())
         private set
 
-    private val fuelStopId: Int? = savedStateHandle[FuelStopEditDestination.FUEL_STOP_ID]
+    private val fuelStopId: Long? = savedStateHandle[FuelStopEditDestination.FUEL_STOP_ID]
 
     init {
         viewModelScope.launch {

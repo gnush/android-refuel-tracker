@@ -99,7 +99,7 @@ class RoomFuelStopsRepository(
      * Retrieves a specific fuel stop
      * @param id The id of the fuel stop to retrieve
      */
-    override fun fuelStop(id: Int): Flow<FuelStop?> = fuelStopDao.fuelStop(id)/*.map {
+    override fun fuelStop(id: Long): Flow<FuelStop?> = fuelStopDao.fuelStop(id)/*.map {
         it.toFuelStop(
             station = fuelStationDao.getName(it.stationId).first() ?: "",
             sort = fuelSortDao.getLabel(it.fuelSortId).first() ?: "",

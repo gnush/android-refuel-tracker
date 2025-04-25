@@ -1,10 +1,11 @@
-package io.github.gnush.refueltracker
+package io.github.gnush.refueltracker.ui
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onParent
+import io.github.gnush.refueltracker.R
+import io.github.gnush.refueltracker.onNodeWithStringId
 import io.github.gnush.refueltracker.ui.calendar.CalendarUiState
 import io.github.gnush.refueltracker.ui.extensions.monthOfYearAbbreviationId
 import io.github.gnush.refueltracker.ui.statistic.StatisticsBody

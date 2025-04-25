@@ -24,19 +24,19 @@ interface FuelStopDao {
      * Retrieves a specific fuel stop
      * @param id The id of the fuel stop to retrieve
      */
-    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, pricePerVolume, totalVolume, totalPrice, day, time
+    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, price_per_volume as pricePerVolume, total_volume as totalVolume, total_price as totalPrice, day, time
               from fuel_stops
               inner join fuel_station on station_id = fuel_station.id
               inner join fuel_sort on fuel_sort_id = fuel_sort.id
               inner join currency on currency_id = currency.id
               inner join volume on volume_id = volume.id
               where fuel_stops.id = :id""")
-    fun fuelStop(id: Int): Flow<FuelStop?>
+    fun fuelStop(id: Long): Flow<FuelStop?>
 
     /**
      * Retrieves all fuel stops in descending order by day/time
      */
-    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, pricePerVolume, totalVolume, totalPrice, day, time
+    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, price_per_volume as pricePerVolume, total_volume as totalVolume, total_price as totalPrice, day, time
               from fuel_stops
               inner join fuel_station on station_id = fuel_station.id
               inner join fuel_sort on fuel_sort_id = fuel_sort.id
@@ -48,7 +48,7 @@ interface FuelStopDao {
     /**
      * Retrieves all fuel stops between [from] and [to] in descending order by day/time
      */
-    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, pricePerVolume, totalVolume, totalPrice, day, time
+    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, price_per_volume as pricePerVolume, total_volume as totalVolume, total_price as totalPrice, day, time
               from fuel_stops
               inner join fuel_station on station_id = fuel_station.id
               inner join fuel_sort on fuel_sort_id = fuel_sort.id
@@ -60,7 +60,7 @@ interface FuelStopDao {
     /**
      * Retrieves all fuel stops from [monthOfYear] in descending order by day/time
      */
-    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, pricePerVolume, totalVolume, totalPrice, day, time
+    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, price_per_volume as pricePerVolume, total_volume as totalVolume, total_price as totalPrice, day, time
               from fuel_stops
               inner join fuel_station on station_id = fuel_station.id
               inner join fuel_sort on fuel_sort_id = fuel_sort.id
@@ -72,7 +72,7 @@ interface FuelStopDao {
     /**
      * Retrieves all fuel stops from [year] in descending order by day/time
      */
-    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, pricePerVolume, totalVolume, totalPrice, day, time
+    @Query("""select fuel_stops.id, fuel_station.name as station, fuel_sort.label as fuelSort, currency.symbol as currency, volume.symbol as volume, price_per_volume as pricePerVolume, total_volume as totalVolume, total_price as totalPrice, day, time
               from fuel_stops
               inner join fuel_station on station_id = fuel_station.id
               inner join fuel_sort on fuel_sort_id = fuel_sort.id
@@ -84,9 +84,9 @@ interface FuelStopDao {
     /**
      * Retrieve the average price per volume, volume and price of all fuel stops.
      */
-    @Query("""select avg(pricePerVolume) as pricePerVolume,
-                     avg(totalPrice) as price,
-                     avg(totalVolume) as volume
+    @Query("""select avg(price_per_volume) as pricePerVolume,
+                     avg(total_price) as price,
+                     avg(total_volume) as volume
               from fuel_stops""")
     fun averageFuelStats(): Flow<FuelStopAverageValues>
 
@@ -96,9 +96,9 @@ interface FuelStopDao {
      * @param from First day of the range (inclusive)
      * @param to Last day of the range (inclusive)
      */
-    @Query("""select avg(pricePerVolume) as pricePerVolume,
-                     avg(totalPrice) as price,
-                     avg(totalVolume) as volume
+    @Query("""select avg(price_per_volume) as pricePerVolume,
+                     avg(total_price) as price,
+                     avg(total_volume) as volume
               from fuel_stops
               where day between :from and :to""")
     fun averageFuelStats(from: LocalDate, to: LocalDate): Flow<FuelStopAverageValues>
@@ -112,9 +112,9 @@ interface FuelStopDao {
      * @param from First day of the range (inclusive)
      * @param to Last day of the range (inclusive)
      */
-    @Query("""select avg(pricePerVolume) as pricePerVolume, 
-                     avg(totalPrice) as price, 
-                     avg(totalVolume) as volume
+    @Query("""select avg(price_per_volume) as pricePerVolume, 
+                     avg(total_price) as price, 
+                     avg(total_volume) as volume
               from fuel_stops 
               where day between :from and :to""")
     fun averageFuelStats(from: Int, to: Int): Flow<FuelStopAverageValues>
@@ -122,8 +122,8 @@ interface FuelStopDao {
     /**
      * Retrieve the sum of the volume and price of all fuel stops.
      */
-    @Query("""select sum(totalPrice) as price,
-                     sum(totalVolume) as volume
+    @Query("""select sum(total_price) as price,
+                     sum(total_volume) as volume
               from fuel_stops""")
     fun sumFuelStats(): Flow<FuelStopSumValues>
 
@@ -133,8 +133,8 @@ interface FuelStopDao {
      * @param from First day of the range (inclusive)
      * @param to Last day of the range (inclusive)
      */
-    @Query("""select sum(totalPrice) as price,
-                     sum(totalVolume) as volume
+    @Query("""select sum(total_price) as price,
+                     sum(total_volume) as volume
               from fuel_stops
               where day between :from and :to""")
     fun sumFuelStats(from: LocalDate, to: LocalDate): Flow<FuelStopSumValues>
@@ -148,8 +148,8 @@ interface FuelStopDao {
      * @param from First day of the range (inclusive)
      * @param to Last day of the range (inclusive)
      */
-    @Query("""select sum(totalPrice) as price,
-                     sum(totalVolume) as volume
+    @Query("""select sum(total_price) as price,
+                     sum(total_volume) as volume
               from fuel_stops
               where day between :from and :to""")
     fun sumFuelStats(from: Int, to: Int): Flow<FuelStopSumValues>

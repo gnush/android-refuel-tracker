@@ -13,7 +13,7 @@ interface FuelStopsRepository {
      * Retrieves a specific fuel stop
      * @param id The id of the fuel stop to retrieve
      */
-    fun fuelStop(id: Int): Flow<FuelStop?>
+    fun fuelStop(id: Long): Flow<FuelStop?>
 
     /**
      * Retrieves all fuel stops ordered by time in descending order by day/time

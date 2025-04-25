@@ -43,9 +43,9 @@ data class FuelStopEntity(
     @ColumnInfo(index = true, name = "fuel_sort_id") val fuelSortId: Long = 0L,
     @ColumnInfo(index = true, name = "currency_id") val currencyId: Long = 0L,
     @ColumnInfo(index = true, name = "volume_id") val volumeId: Long = 0L,
-    val pricePerVolume: BigDecimal,
-    val totalVolume: BigDecimal,
-    val totalPrice: BigDecimal,
+    @ColumnInfo(name = "price_per_volume") val pricePerVolume: BigDecimal,
+    @ColumnInfo(name = "total_volume") val totalVolume: BigDecimal,
+    @ColumnInfo(name = "total_price") val totalPrice: BigDecimal,
     val day: LocalDate,
     val time: LocalTime? = null,
 )

@@ -1,4 +1,4 @@
-package io.github.gnush.refueltracker
+package io.github.gnush.refueltracker.ui
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertHasClickAction
