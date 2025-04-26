@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -124,22 +125,24 @@ private fun SettingsScreenBody(
             .verticalScroll(rememberScrollState())
     ) {
         SettingsCategory(title = R.string.settings_category_date_formats_title) {
-            FormattedDate(
-                label = R.string.settings_example_date_display_label,
-                format = uiState.dateFormat.get
-            )
-            ReadOnlyDropDownPreference(
+            DateFormatDropDownPreference(
                 label = R.string.settings_date_format_drop_down_label,
                 currentSelected = uiState.dateFormat,
                 onItemSelected = onDateFormatSelected,
                 items = dateFormats
             )
-            if (uiState.dateFormat is CustomDateFormat)
+            if (uiState.dateFormat is CustomDateFormat) {
+                Spacer(Modifier.height(dimensionResource(R.dimen.padding_small)))
+                FormattedDate(
+                    label = R.string.settings_example_date_display_label,
+                    format = uiState.dateFormat.get
+                )
                 SingleInputPreference(
                     label = R.string.settings_date_format_pattern_label,
                     preference = uiState.dateFormatPattern,
                     onValueChange = onDateFormatPatternChange
                 )
+            }
         }
         SettingsCategoryDivider()
         SettingsCategory(title = R.string.settings_category_number_formats_title) {
@@ -163,6 +166,7 @@ private fun SettingsScreenBody(
                 groupLargeNumbers = uiState.groupLargeNumbers,
                 decimalPlaces = uiState.currencyDecimalPlaces
             )
+            Spacer(Modifier.height(dimensionResource(R.dimen.padding_small)))
             SingleInputPreference(
                 label = R.string.settings_volume_decimal_places_label,
                 preference = uiState.volumeDecimalPlaces,
@@ -173,6 +177,7 @@ private fun SettingsScreenBody(
                 groupLargeNumbers = uiState.groupLargeNumbers,
                 decimalPlaces = uiState.volumeDecimalPlaces
             )
+            Spacer(Modifier.height(dimensionResource(R.dimen.padding_small)))
             SingleInputPreference(
                 label = R.string.settings_ratio_decimal_places_label,
                 preference = uiState.ratioDecimalPlaces,
@@ -236,7 +241,10 @@ private fun SettingsCategory(
     content: @Composable ColumnScope.() -> Unit = {}
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(
+            top = dimensionResource(R.dimen.padding_medium),
+            bottom = dimensionResource(R.dimen.padding_small)
+        ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -255,7 +263,10 @@ private fun SettingsSubcategoryHeader(
     Text(
         text = stringResource(headline),
         style = MaterialTheme.typography.headlineSmall,
-        modifier = modifier
+        modifier = modifier.padding(
+            top = dimensionResource(R.dimen.padding_small),
+            bottom = dimensionResource(R.dimen.padding_tiny)
+        )
     )
 }
 
@@ -350,6 +361,76 @@ private fun FormattedNumber(
                 ).format(0.0000000),
                 style = MaterialTheme.typography.labelMedium
             )
+        }
+    }
+}
+
+// TODO: explore if we can (re)merge both drop down functions
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DateFormatDropDownPreference(
+    @StringRes label: Int,
+    currentSelected: DateFormat,
+    onItemSelected: (DateFormat) -> Unit,
+    items: List<DateFormat>,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val calendar = Calendar.getInstance()
+    val today = LocalDate(
+        year = calendar.get(Calendar.YEAR),
+        monthNumber = calendar.get(Calendar.MONTH)+1,
+        dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH),
+    )
+
+    CenteredPreferenceRow(modifier) {
+        Text(
+            text = stringResource(label),
+            style = MaterialTheme.typography.labelMedium
+        )
+        Spacer(Modifier.weight(1f))
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
+        ) {
+            TextField(
+                // This is the difference to the other drop down function
+                value =
+                    if (currentSelected is CustomDateFormat)
+                        stringResource(currentSelected.displayText)
+                    else
+                        currentSelected.get.format(today),
+                onValueChange = {},
+                readOnly = true,
+                singleLine = true,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded)
+                },
+                modifier = Modifier
+                    .width(dimensionResource(R.dimen.settings_text_field_width))
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                items.forEach {
+                    DropdownMenuItem(
+                        text = {
+                            // This is the difference to the other drop down function
+                            if (it is CustomDateFormat )
+                                Text(stringResource(it.displayText))
+                            else
+                                Text(it.get.format(today))
+                        },
+                        onClick = {
+                            expanded = false
+                            onItemSelected(it)
+                        },
+                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                    )
+                }
+            }
         }
     }
 }
