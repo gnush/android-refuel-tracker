@@ -31,6 +31,7 @@ import io.github.gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import io.github.gnush.refueltracker.ui.calendar.CalendarUiState
 import io.github.gnush.refueltracker.ui.calendar.CalendarView
 import io.github.gnush.refueltracker.ui.navigation.BottomNavigationDestination
+import kotlinx.datetime.Month
 
 object FuelStopCalendarDestination: BottomNavigationDestination {
     override val route: String = "fuel_stop_calendar_home"
@@ -91,7 +92,8 @@ fun FuelStopCalendarScreen(
                 uiState = uiState.calendar,
                 fuelStopDates = uiState.fuelStops.map(FuelStop::day),
                 onPreviousClick = viewModel::displayPreviousMonth,
-                onNextClick = viewModel::displayNextMonth
+                onNextClick = viewModel::displayNextMonth,
+                onMonthSelected = viewModel::updateCalendarView
             )
             FuelStopList(
                 fuelStops = uiState.fuelStops,
@@ -109,6 +111,7 @@ fun FuelStopCalendar(
     fuelStopDates: List<LocalDate>,
     onPreviousClick: () -> Unit,
     onNextClick: () -> Unit,
+    onMonthSelected: (Int, Month) -> Unit,
     modifier: Modifier = Modifier
 ) {
     CalendarView(
@@ -118,6 +121,7 @@ fun FuelStopCalendar(
         canNavigateMonth = true,
         onNextMonthClick = onNextClick,
         onPreviousMonthClick = onPreviousClick,
+        onMonthSelected = onMonthSelected,
         startFromSunday = false,
         modifier = modifier
     )

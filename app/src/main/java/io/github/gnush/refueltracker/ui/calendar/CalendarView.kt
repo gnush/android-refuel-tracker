@@ -1,34 +1,33 @@
 package io.github.gnush.refueltracker.ui.calendar
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,10 +36,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.datetime.DayOfWeek
@@ -49,17 +50,14 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.isoDayNumber
 import io.github.gnush.refueltracker.R
 import io.github.gnush.refueltracker.ui.RefuelTrackerViewModelProvider
+import io.github.gnush.refueltracker.ui.dialog.ConfirmDismissDialog
 import io.github.gnush.refueltracker.ui.extensions.abbreviationId
 import io.github.gnush.refueltracker.ui.extensions.monthOfYearId
 import io.github.gnush.refueltracker.ui.theme.RefuelTrackerTheme
-import kotlin.math.roundToInt
 
 // TODO:
-//  - add year navigation
-//  - make Month and Year in calendar header clickable with a drop down list (or else)
-//    month select: navigate directly to the selected month of the same year
-//    year select: navigate directly to the selected year selecting the same month
-//    alternatively: just one click to open a date picker dialog
+//  - remove calendar view model (double data storage)?
+//    at least remove the navigation functions (should be only filled through caller)
 @Composable
 fun CalendarView(
     modifier: Modifier = Modifier,
@@ -70,6 +68,7 @@ fun CalendarView(
     canNavigateMonth: Boolean = false,
     onNextMonthClick: () -> Unit = {},
     onPreviousMonthClick: () -> Unit = {},
+    onMonthSelected: (Int, Month) -> Unit = { _, _ -> },
     hasClickableCells: Boolean = false,
     onCellClick: (LocalDate) -> Unit = {},
     viewModel: CalendarViewModel = viewModel( factory = RefuelTrackerViewModelProvider.Factory )
@@ -93,6 +92,10 @@ fun CalendarView(
             onPreviousMonthClick = {
                 viewModel.setPreviousMonth()
                 onPreviousMonthClick()
+            },
+            onMonthSelected = { year, month ->
+                viewModel.updateDisplayMonth(year, month)
+                onMonthSelected(year, month)
             }
         )
         CalendarGrid(
@@ -117,8 +120,12 @@ private fun CalendarHeader(
     canNavigateMonth: Boolean,
     onNextMonthClick: () -> Unit,
     onPreviousMonthClick: () -> Unit,
+    onMonthSelected: (Int, Month) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showMonthPicker by remember { mutableStateOf(false) }
+    var selectedMonth by remember { mutableStateOf(uiState.month) }
+    var selectedYear by remember { mutableIntStateOf(uiState.year) }
 //    var offset by remember { mutableFloatStateOf(0f) }
 //
 //    //  - only react when gesture released / not clicked anymore
@@ -155,13 +162,18 @@ private fun CalendarHeader(
                 )
             }
         }
-        val monthNameId = uiState.month.monthOfYearId
-        Text(
-            text = "${stringResource(monthNameId)} ${uiState.year}",
-            style = typography.headlineMedium,
-            color = colorScheme.onPrimaryContainer,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .align(Alignment.Center)
+                .clip(MaterialTheme.shapes.medium)
+                .clickable { showMonthPicker = !showMonthPicker }
+        ) {
+            Text(
+                text = "${stringResource(uiState.month.monthOfYearId)} ${uiState.year}",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+//                modifier = Modifier
 //                .offset {
 //                    IntOffset(
 //                        x = offset.roundToInt(),
@@ -174,7 +186,98 @@ private fun CalendarHeader(
 //                    },
 //                    orientation = Orientation.Horizontal
 //                )
+            )
+            Icon(
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = stringResource(R.string.drop_down_button_description),
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+            )
+        }
+
+        if (showMonthPicker) {
+            ConfirmDismissDialog(
+                onConfirm = {
+                    showMonthPicker = false
+                    onMonthSelected(selectedYear, selectedMonth)
+                },
+                onDismiss = { showMonthPicker = false }
+            ) {
+                MonthPicker(
+                    onMonthChange = { selectedMonth = it },
+                    onYearChange = { selectedYear = it }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MonthPicker(
+    onMonthChange: (Month) -> Unit,
+    onYearChange: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var monthText by remember { mutableStateOf("") }
+    var monthTextValid by remember { mutableStateOf(false) }
+    var yearText by remember { mutableStateOf("") }
+    var yearTextValid by remember { mutableStateOf(false) }
+
+    Column {
+        Text(
+            text = stringResource(R.string.jump_to_month_dialog_headline),
+            style = MaterialTheme.typography.headlineSmall
         )
+        Row(
+            modifier.padding(8.dp)
+        ) {
+            OutlinedTextField(
+                value = monthText,
+                label = { Text(stringResource(R.string.month)) },
+                onValueChange = {
+                    monthText = it
+
+                    monthTextValid = try {
+                        onMonthChange(Month(it.toInt()))
+                        true
+                    } catch (_: Exception) {
+                        false
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
+                singleLine = true,
+                isError = !monthTextValid,
+                modifier = Modifier
+                    .weight(0.5f)
+                    .padding(8.dp)
+            )
+            OutlinedTextField(
+                value = yearText,
+                label = { Text(stringResource(R.string.year)) },
+                onValueChange = {
+                    yearText = it
+
+                    yearTextValid = try {
+                        onYearChange(it.toInt())
+                        true
+                    } catch (_: Exception) {
+                        false
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.NumberPassword,
+                    imeAction = ImeAction.Done
+                ),
+                singleLine = true,
+                readOnly = false,
+                isError = !yearTextValid,
+                modifier = Modifier
+                    .weight(0.5f)
+                    .padding(8.dp)
+            )
+        }
     }
 }
 
@@ -288,7 +391,7 @@ private fun CalendarWeekHeader(weekday: DayOfWeek, modifier: Modifier = Modifier
     ) {
         Text(
             text = stringResource(weekday.abbreviationId),
-            color = colorScheme.onPrimaryContainer,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
@@ -313,7 +416,7 @@ private fun CalendarDayCell(
             .padding(2.dp)
             .background(
                 shape = RoundedCornerShape(CornerSize(8.dp)),
-                color = colorScheme.secondaryContainer,
+                color = MaterialTheme.colorScheme.secondaryContainer,
             )
             .clip(RoundedCornerShape(CornerSize(8.dp)))
     ) {
@@ -325,13 +428,13 @@ private fun CalendarDayCell(
                     .padding(8.dp)
                     .background(
                         shape = CircleShape,
-                        color = colorScheme.tertiaryContainer.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f)
                     )
             )
         }
         Text(
             text = text,
-            color = colorScheme.onSecondaryContainer,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
             modifier = Modifier.align(Alignment.Center)
         )
     }

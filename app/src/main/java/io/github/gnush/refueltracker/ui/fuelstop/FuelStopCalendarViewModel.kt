@@ -67,9 +67,6 @@ class FuelStopCalendarViewModel(
         else
             updateCalendarView(Month(_fuelStopsState.value.calendar.month.number+1))
 
-    fun displayPreviousYear() = updateCalendarView(_fuelStopsState.value.calendar.year-1)
-    fun displayNextYear() = updateCalendarView(_fuelStopsState.value.calendar.year+1)
-
     private fun updateCalendarView(month: Month) {
         _fuelStopsState.value = _fuelStopsState.value.copy(
             calendar = _fuelStopsState.value.calendar.copy(month = month)
@@ -84,7 +81,7 @@ class FuelStopCalendarViewModel(
         updateFuelStops()
     }
 
-    private fun updateCalendarView(year: Int, month: Month) {
+    fun updateCalendarView(year: Int, month: Month) {
         _fuelStopsState.value = _fuelStopsState.value.copy(
             calendar = _fuelStopsState.value.calendar.copy(year = year, month = month)
         )

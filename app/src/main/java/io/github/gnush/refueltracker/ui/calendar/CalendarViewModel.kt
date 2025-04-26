@@ -14,11 +14,11 @@ import java.util.GregorianCalendar
 class CalendarViewModel: ViewModel() {
     var uiState by mutableStateOf(CalendarUiState())
 
-    fun updateDisplayMonth(monthNumber: Int) {
-        if (monthNumber in 1..12)
+    fun updateDisplayMonth(year: Int, month: Month) {
+        if (month.number in 1..12)
             uiState = CalendarUiState(
-                month = Month(monthNumber),
-                year = uiState.year
+                month = month,
+                year = year
             )
     }
 
@@ -44,17 +44,13 @@ class CalendarViewModel: ViewModel() {
         )
     }
 
-    fun updateUiState(uiState: CalendarUiState) {
-        this.uiState = uiState
-    }
-
     fun firstWeekDayOfMonth(): DayOfWeek = LocalDate(
         year = uiState.year,
         monthNumber = uiState.month.number,
         dayOfMonth = 1
     ).dayOfWeek
 
-    fun isLeapYear(): Boolean =
+    private fun isLeapYear(): Boolean =
         (GregorianCalendar.getInstance() as GregorianCalendar)
             .isLeapYear(uiState.year)
 

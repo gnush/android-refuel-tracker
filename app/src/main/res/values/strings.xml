@@ -90,6 +90,10 @@
     <string name="settings_use_phone_keyboard_label">Use Phone keyboard for decimal inputs</string>
 
     <string name="save_button">Save</string>
+    <string name="confirm_button">OK</string>
+    <string name="dismiss_button">Dismiss</string>
+
+    <string name="jump_to_month_dialog_headline">Jump to…</string>
 
     <string name="current_month_heading">Current month</string>
     <string name="previous_month_heading">Previous month</string>
@@ -113,6 +117,9 @@
     <string name="day_of_week_abbreviation_5">Fri</string>
     <string name="day_of_week_abbreviation_6">Sat</string>
     <string name="day_of_week_abbreviation_7">Sun</string>
+
+    <string name="month">Month</string>
+    <string name="year">Year</string>
 
     <string name="month_1" >January</string>
     <string name="month_2" >February</string>

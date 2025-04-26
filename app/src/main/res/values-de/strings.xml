@@ -82,12 +82,21 @@
     <string name="settings_use_phone_keyboard_label">Nutze Telefon-Tastatur für Dezimaleingaben</string>
 
     <string name="save_button">Speichern</string>
+    <string name="confirm_button">OK</string>
+    <string name="dismiss_button">Verwerfen</string>
+
+    <string name="jump_to_month_dialog_headline">Springe zu…</string>
+
     <string name="current_month_heading">Aktueller Monat</string>
     <string name="previous_month_heading">Voriger Monat</string>
     <string name="current_year_heading">Aktuelles Jahr</string>
     <string name="previous_year_heading">Voriges Jahr</string>
     <string name="diff_average_heading">Unterschied</string>
     <string name="all_time_average_heading">Allzeit Werte</string>
+
+    <string name="month">Monat</string>
+    <string name="year">Jahr</string>
+
     <string name="day_of_week_1">Montag</string>
     <string name="day_of_week_2">Dienstag</string>
     <string name="day_of_week_3">Mittwoch</string>
@@ -95,6 +104,7 @@
     <string name="day_of_week_5">Freitag</string>
     <string name="day_of_week_6">Samstag</string>
     <string name="day_of_week_7">Sonntag</string>
+
     <string name="day_of_week_abbreviation_1">Mo</string>
     <string name="day_of_week_abbreviation_2">Di</string>
     <string name="day_of_week_abbreviation_3">Mi</string>
@@ -102,6 +112,7 @@
     <string name="day_of_week_abbreviation_5">Fr</string>
     <string name="day_of_week_abbreviation_6">Sa</string>
     <string name="day_of_week_abbreviation_7">So</string>
+
     <string name="month_1">Januar</string>
     <string name="month_2">Februar</string>
     <string name="month_3">März</string>
@@ -114,6 +125,7 @@
     <string name="month_10">Oktober</string>
     <string name="month_11">November</string>
     <string name="month_12">Dezember</string>
+
     <string name="month_abbreviation_1">Jan</string>
     <string name="month_abbreviation_2">Feb</string>
     <string name="month_abbreviation_3">Mär</string>

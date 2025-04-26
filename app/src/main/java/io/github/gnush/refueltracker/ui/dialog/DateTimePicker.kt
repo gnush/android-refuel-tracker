@@ -10,6 +10,8 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import io.github.gnush.refueltracker.R
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
 import io.github.gnush.refueltracker.ui.Config
@@ -65,26 +67,4 @@ fun PickTimeDialDialog(
     ) {
         TimePicker(state = timePickerState)
     }
-}
-
-@Composable
-private fun ConfirmDismissDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Dismiss")
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text("OK")
-            }
-        },
-        text = { content() }
-    )
 }
