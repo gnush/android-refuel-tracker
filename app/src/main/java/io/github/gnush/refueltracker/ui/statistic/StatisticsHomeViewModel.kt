@@ -25,12 +25,7 @@ class StatisticsHomeViewModel(
 
     init {
         viewModelScope.launch {
-            val separateLargeNumbers = userPreferencesRepository.separateThousands.first()
-            val thousandsSeparatorPlaces =
-                if (separateLargeNumbers)
-                    userPreferencesRepository.thousandsSeparatorPlaces.first()
-                else
-                    -1
+            val groupLargeNumbers = userPreferencesRepository.groupLargeNumbers.first()
 
             uiState = StatisticsHomeUiState(
                 year = uiState.monthCalendar.year,
@@ -56,19 +51,16 @@ class StatisticsHomeViewModel(
                 ),
                 formats = UserFormats(
                     currency = createNumberFormat(
-                        separateLargeNumbers = separateLargeNumbers,
-                        thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                        decimalPlaces = userPreferencesRepository.currencyDecimalPlaces.first()
+                        groupLargeNumbers = groupLargeNumbers,
+                        fractionDigits = userPreferencesRepository.currencyDecimalPlaces.first()
                     ),
                     volume = createNumberFormat(
-                        separateLargeNumbers = separateLargeNumbers,
-                        thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                        decimalPlaces = userPreferencesRepository.volumeDecimalPlaces.first()
+                        groupLargeNumbers = groupLargeNumbers,
+                        fractionDigits = userPreferencesRepository.volumeDecimalPlaces.first()
                     ),
                     ratio = createNumberFormat(
-                        separateLargeNumbers = separateLargeNumbers,
-                        thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                        decimalPlaces = userPreferencesRepository.currencyVolumeRatioDecimalPlaces.first()
+                        groupLargeNumbers = groupLargeNumbers,
+                        fractionDigits = userPreferencesRepository.currencyVolumeRatioDecimalPlaces.first()
                     ),
                 )
             )

@@ -41,28 +41,20 @@ class FuelStopEntryViewModel(
     init {
         viewModelScope.launch {
             val numberOfDropDownItems = userPreferences.numberOfEntryScreenDropDownElements.first()
-            val separateLargeNumbers = userPreferences.separateThousands.first()
-            val thousandsSeparatorPlaces =
-                if (separateLargeNumbers)
-                    userPreferences.thousandsSeparatorPlaces.first()
-                else
-                    -1
+            val separateLargeNumbers = userPreferences.groupLargeNumbers.first()
 
             val formats = UserFormats(
                 currency = createNumberFormat(
-                    separateLargeNumbers = separateLargeNumbers,
-                    thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                    decimalPlaces = userPreferences.currencyDecimalPlaces.first()
+                    groupLargeNumbers = separateLargeNumbers,
+                    fractionDigits = userPreferences.currencyDecimalPlaces.first()
                 ),
                 volume = createNumberFormat(
-                    separateLargeNumbers = separateLargeNumbers,
-                    thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                    decimalPlaces = userPreferences.volumeDecimalPlaces.first()
+                    groupLargeNumbers = separateLargeNumbers,
+                    fractionDigits = userPreferences.volumeDecimalPlaces.first()
                 ),
                 ratio = createNumberFormat(
-                    separateLargeNumbers = separateLargeNumbers,
-                    thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                    decimalPlaces = userPreferences.currencyVolumeRatioDecimalPlaces.first()
+                    groupLargeNumbers = separateLargeNumbers,
+                    fractionDigits = userPreferences.currencyVolumeRatioDecimalPlaces.first()
                 ),
                 date = userPreferences.dateFormat.first()
             )

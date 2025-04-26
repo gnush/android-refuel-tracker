@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -166,14 +165,6 @@ private fun FuelStopInputForm(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
         modifier = modifier
     ) {
-        val f = NumberFormat.getInstance()
-        val d = DecimalFormat.getInstance()
-        val ds = DecimalFormatSymbols.getInstance()
-
-        // TODO: use this ↓ to construct decimal formats instead of the pattern construction approach
-        userPreferences.formats.currency.minimumIntegerDigits = 3
-        Log.d("ME", userPreferences.formats.currency.format(1.2345))
-
         var showTimeDialog by remember { mutableStateOf(false) }
         var showDateDialog by remember { mutableStateOf(false) }
 

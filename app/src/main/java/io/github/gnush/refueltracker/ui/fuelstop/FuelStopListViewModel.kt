@@ -25,12 +25,7 @@ class FuelStopListViewModel(
         viewModelScope.launch {
             fuelStopsRepository.fuelStopsOrderedNewestFirst()
                 .collect {
-                    val separateLargeNumbers = userPreferencesRepository.separateThousands.first()
-                    val thousandsSeparatorPlaces =
-                        if (separateLargeNumbers)
-                            userPreferencesRepository.thousandsSeparatorPlaces.first()
-                        else
-                            -1
+                    val separateLargeNumbers = userPreferencesRepository.groupLargeNumbers.first()
 
                     _uiState.value = FuelStopListUiState(
                         fuelStops = it,
@@ -40,19 +35,16 @@ class FuelStopListViewModel(
                         ),
                         formats = UserFormats(
                             currency = createNumberFormat(
-                                separateLargeNumbers = separateLargeNumbers,
-                                thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                                decimalPlaces = userPreferencesRepository.currencyDecimalPlaces.first()
+                                groupLargeNumbers = separateLargeNumbers,
+                                fractionDigits = userPreferencesRepository.currencyDecimalPlaces.first()
                             ),
                             volume = createNumberFormat(
-                                separateLargeNumbers = separateLargeNumbers,
-                                thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                                decimalPlaces = userPreferencesRepository.volumeDecimalPlaces.first()
+                                groupLargeNumbers = separateLargeNumbers,
+                                fractionDigits = userPreferencesRepository.volumeDecimalPlaces.first()
                             ),
                             ratio = createNumberFormat(
-                                separateLargeNumbers = separateLargeNumbers,
-                                thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                                decimalPlaces = userPreferencesRepository.currencyVolumeRatioDecimalPlaces.first()
+                                groupLargeNumbers = separateLargeNumbers,
+                                fractionDigits = userPreferencesRepository.currencyVolumeRatioDecimalPlaces.first()
                             ),
                             date = userPreferencesRepository.dateFormat.first()
                         )

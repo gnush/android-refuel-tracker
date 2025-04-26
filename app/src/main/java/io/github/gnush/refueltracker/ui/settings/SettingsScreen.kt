@@ -85,7 +85,6 @@ fun SettingsScreen(
             onDateFormatSelected = viewModel::saveDateFormat,
             onDateFormatPatternChange = viewModel::saveDateFormatPattern,
             onSeparateLargeNumbersToggle = viewModel::saveSeparateLargeNumbers,
-            onLargeNumbersSeparatorPlacesChange = viewModel::saveLargeNumbersSeparatorPlaces,
             onCurrencyDecimalPlacesChange = viewModel::saveCurrencyDecimalPlaces,
             onVolumeDecimalPlacesChange = viewModel::saveVolumeDecimalPlaces,
             onCurrencyVolumeRatioDecimalPlacesChange = viewModel::saveRatioDecimalPlaces,
@@ -106,7 +105,6 @@ private fun SettingsScreenBody(
     onDateFormatSelected: (DateFormat) -> Unit,
     onDateFormatPatternChange: (String) -> Unit,
     onSeparateLargeNumbersToggle: (Boolean) -> Unit,
-    onLargeNumbersSeparatorPlacesChange: (String) -> Unit,
     onCurrencyDecimalPlacesChange: (String) -> Unit,
     onVolumeDecimalPlacesChange: (String) -> Unit,
     onCurrencyVolumeRatioDecimalPlacesChange: (String) -> Unit,
@@ -147,21 +145,13 @@ private fun SettingsScreenBody(
         SettingsCategory(title = R.string.settings_category_number_formats_title) {
             FormattedNumber(
                 label = R.string.settings_example_number_display_label,
-                separateLargeNumbers = uiState.separateLargeNumbers,
-                largeNumberSeparator = uiState.largeNumberSeparator
+                groupLargeNumbers = uiState.groupLargeNumbers,
             )
             SwitchPreference(
                 label = R.string.settings_use_large_number_separator_label,
-                value = uiState.separateLargeNumbers,
+                value = uiState.groupLargeNumbers,
                 onValueChange = onSeparateLargeNumbersToggle
             )
-            if (uiState.separateLargeNumbers)
-                SingleInputPreference(
-                    label = R.string.settings_large_number_separator_places_label,
-                    preference = uiState.largeNumberSeparator,
-                    onValueChange = onLargeNumbersSeparatorPlacesChange,
-                    hasNumericKeyboard = true
-                )
             SettingsSubcategoryHeader(R.string.settings_sub_category_decimal_places_headline)
             SingleInputPreference(
                 label = R.string.settings_currency_decimal_places_label,
@@ -171,8 +161,7 @@ private fun SettingsScreenBody(
             )
             FormattedNumber(
                 label = R.string.settings_example_number_display_label,
-                separateLargeNumbers = uiState.separateLargeNumbers,
-                largeNumberSeparator = uiState.largeNumberSeparator,
+                groupLargeNumbers = uiState.groupLargeNumbers,
                 decimalPlaces = uiState.currencyDecimalPlaces
             )
             SingleInputPreference(
@@ -183,8 +172,7 @@ private fun SettingsScreenBody(
             )
             FormattedNumber(
                 label = R.string.settings_example_number_display_label,
-                separateLargeNumbers = uiState.separateLargeNumbers,
-                largeNumberSeparator = uiState.largeNumberSeparator,
+                groupLargeNumbers = uiState.groupLargeNumbers,
                 decimalPlaces = uiState.volumeDecimalPlaces
             )
             SingleInputPreference(
@@ -195,8 +183,7 @@ private fun SettingsScreenBody(
             )
             FormattedNumber(
                 label = R.string.settings_example_number_display_label,
-                separateLargeNumbers = uiState.separateLargeNumbers,
-                largeNumberSeparator = uiState.largeNumberSeparator,
+                groupLargeNumbers = uiState.groupLargeNumbers,
                 decimalPlaces = uiState.ratioDecimalPlaces
             )
         }
@@ -333,8 +320,7 @@ private fun FormattedDate(
 @Composable
 private fun FormattedNumber(
     @StringRes label: Int,
-    separateLargeNumbers: Boolean,
-    largeNumberSeparator: Preference,
+    groupLargeNumbers: Boolean,
     modifier: Modifier = Modifier,
     decimalPlaces: Preference? = null
 ) {
@@ -344,26 +330,15 @@ private fun FormattedNumber(
             style = MaterialTheme.typography.labelMedium
         )
         Spacer(Modifier.weight(1f))
-        if (largeNumberSeparator.isValid && decimalPlaces == null) {
-            val separateAfter = try {
-                largeNumberSeparator.value.toInt()
-            } catch (_: NumberFormatException) {
-                0
-            }
-
+        if (decimalPlaces == null) {
             Text(
                 text = createNumberFormat(
-                    separateLargeNumbers,
-                    separateAfter
+                    groupLargeNumbers = groupLargeNumbers,
+                    fractionDigits = 0
                 ).format(1234567),
                 style = MaterialTheme.typography.labelMedium
             )
-        } else if (largeNumberSeparator.isValid && decimalPlaces != null && decimalPlaces.isValid) {
-            val separateAfter = try {
-                largeNumberSeparator.value.toInt()
-            } catch (_: NumberFormatException) {
-                0
-            }
+        } else if (decimalPlaces.isValid) {
             val decimalPlacesValue = try {
                 decimalPlaces.value.toInt()
             } catch (_: NumberFormatException) {
@@ -372,9 +347,8 @@ private fun FormattedNumber(
 
             Text(
                 text = createNumberFormat(
-                    separateLargeNumbers,
-                    separateAfter,
-                    decimalPlacesValue
+                    groupLargeNumbers = groupLargeNumbers,
+                    fractionDigits = decimalPlacesValue
                 ).format(0.0000000),
                 style = MaterialTheme.typography.labelMedium
             )
@@ -539,7 +513,6 @@ private fun SettingsScreenPreview() {
             onDateFormatSelected = {},
             onDateFormatPatternChange = {},
             onSeparateLargeNumbersToggle = {},
-            onLargeNumbersSeparatorPlacesChange = {},
             onCurrencyDecimalPlacesChange = {},
             onVolumeDecimalPlacesChange = {},
             onCurrencyVolumeRatioDecimalPlacesChange = {},

@@ -1,12 +1,12 @@
 package io.github.gnush.refueltracker.ui
 
+import androidx.annotation.IntRange
 import androidx.annotation.StringRes
 import io.github.gnush.refueltracker.R
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format.DateTimeFormat
 import kotlinx.datetime.format.char
 import kotlinx.datetime.format.optional
-import java.text.DecimalFormat
 import java.text.NumberFormat
 
 object Config {
@@ -15,20 +15,13 @@ object Config {
     }
 }
 
-fun createNumberFormat(separateLargeNumbers: Boolean, thousandsSeparatorPlaces: Int, decimalPlaces: Int): NumberFormat = when {
-    separateLargeNumbers && thousandsSeparatorPlaces > 0 && decimalPlaces > 0 ->
-        DecimalFormat("#,${"#".repeat(thousandsSeparatorPlaces-1)}0.${"0".repeat(decimalPlaces)}")
-    !separateLargeNumbers && decimalPlaces > 0 ->
-        DecimalFormat("0.${"0".repeat(decimalPlaces)}")
-    else -> NumberFormat.getInstance()
-}
+fun createNumberFormat(groupLargeNumbers: Boolean, @IntRange(from = 0) fractionDigits: Int): NumberFormat {
+    val format = NumberFormat.getInstance()
 
-fun createNumberFormat(separateLargeNumbers: Boolean, thousandsSeparatorPlaces: Int): NumberFormat = when {
-    separateLargeNumbers && thousandsSeparatorPlaces > 0 ->
-        DecimalFormat("#,${"#".repeat(thousandsSeparatorPlaces-1)}0")
-    !separateLargeNumbers ->
-        DecimalFormat("0")
-    else -> NumberFormat.getInstance()
+    format.isGroupingUsed = groupLargeNumbers
+    format.minimumFractionDigits = fractionDigits
+
+    return format
 }
 
 enum class DropDownSelection: Displayable {

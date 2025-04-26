@@ -27,12 +27,7 @@ class FuelStopCalendarViewModel(
         viewModelScope.launch {
             fuelStopsRepository.fuelStopsOn(_fuelStopsState.value.calendar.year, _fuelStopsState.value.calendar.month)
                 .collect {
-                    val separateLargeNumbers = userPreferencesRepository.separateThousands.first()
-                    val thousandsSeparatorPlaces =
-                        if (separateLargeNumbers)
-                            userPreferencesRepository.thousandsSeparatorPlaces.first()
-                        else
-                            -1
+                    val separateLargeNumbers = userPreferencesRepository.groupLargeNumbers.first()
 
                     _fuelStopsState.value = _fuelStopsState.value.copy(
                         fuelStops = it,
@@ -42,19 +37,16 @@ class FuelStopCalendarViewModel(
                         ),
                         formats = UserFormats(
                             currency = createNumberFormat(
-                                separateLargeNumbers = separateLargeNumbers,
-                                thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                                decimalPlaces = userPreferencesRepository.currencyDecimalPlaces.first()
+                                groupLargeNumbers = separateLargeNumbers,
+                                fractionDigits = userPreferencesRepository.currencyDecimalPlaces.first()
                             ),
                             volume = createNumberFormat(
-                                separateLargeNumbers = separateLargeNumbers,
-                                thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                                decimalPlaces = userPreferencesRepository.volumeDecimalPlaces.first()
+                                groupLargeNumbers = separateLargeNumbers,
+                                fractionDigits = userPreferencesRepository.volumeDecimalPlaces.first()
                             ),
                             ratio = createNumberFormat(
-                                separateLargeNumbers = separateLargeNumbers,
-                                thousandsSeparatorPlaces = thousandsSeparatorPlaces,
-                                decimalPlaces = userPreferencesRepository.currencyVolumeRatioDecimalPlaces.first()
+                                groupLargeNumbers = separateLargeNumbers,
+                                fractionDigits = userPreferencesRepository.currencyVolumeRatioDecimalPlaces.first()
                             ),
                             date = userPreferencesRepository.dateFormat.first()
                         )

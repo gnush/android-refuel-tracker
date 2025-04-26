@@ -32,11 +32,7 @@ class SettingsViewModel(
     init {
         viewModelScope.launch {
             _uiState.value = SettingsUiState(
-                separateLargeNumbers = userPreferencesRepository.separateThousands.first(),
-                largeNumberSeparator = Preference(
-                    value = userPreferencesRepository.thousandsSeparatorPlaces.first().toString(),
-                    isValid = true
-                ),
+                groupLargeNumbers = userPreferencesRepository.groupLargeNumbers.first(),
                 currencyDecimalPlaces = Preference(
                     value = userPreferencesRepository.currencyDecimalPlaces.first().toString(),
                     isValid = true
@@ -67,20 +63,8 @@ class SettingsViewModel(
     }
 
     fun saveSeparateLargeNumbers(value: Boolean) = viewModelScope.launch {
-        _uiState.value = _uiState.value.copy(separateLargeNumbers = value)
-        userPreferencesRepository.saveSeparateThousands(value)
-    }
-
-    fun saveLargeNumbersSeparatorPlaces(n: String) {
-        _uiState.value = _uiState.value.copy(
-            largeNumberSeparator = Preference(
-                value = n,
-                isValid = saveStringAsIntPreference(
-                    value = n,
-                    savePreference = userPreferencesRepository::saveThousandsSeparatorPlaces
-                )
-            )
-        )
+        _uiState.value = _uiState.value.copy(groupLargeNumbers = value)
+        userPreferencesRepository.saveGroupLargeNumbers(value)
     }
 
     fun saveVolumeDecimalPlaces(n: String) {
@@ -202,8 +186,7 @@ class SettingsViewModel(
 }
 
 data class SettingsUiState(
-    val separateLargeNumbers: Boolean = false,
-    val largeNumberSeparator: Preference = Preference(),
+    val groupLargeNumbers: Boolean = false,
     val volumeDecimalPlaces: Preference = Preference(),
     val currencyDecimalPlaces: Preference = Preference(),
     val ratioDecimalPlaces: Preference = Preference(),

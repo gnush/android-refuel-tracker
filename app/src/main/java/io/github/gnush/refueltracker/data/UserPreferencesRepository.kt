@@ -34,10 +34,8 @@ class UserPreferencesRepository(
     companion object {
         private const val TAG = "UserPreferencesRepo"
 
-        private val SEPARATE_THOUSANDS =
-            booleanPreferencesKey("separate_thousands")
-        private val THOUSANDS_SEPARATOR_PLACES =
-            intPreferencesKey("thousands_separator_places")
+        private val GROUP_LARGE_NUMBERS =
+            booleanPreferencesKey("group_large_numbers")
         private val VOLUME_DECIMAL_PLACES =
             intPreferencesKey("volume_decimal_places")
         private val CURRENCY_DECIMAL_PLACES =
@@ -72,9 +70,7 @@ class UserPreferencesRepository(
 
     val usePhoneKeyboardForDecimalInput: Flow<Boolean> = readDatastore(USE_PHONE_KEYBOARD_FOR_DECIMAL_INPUT, true)
 
-    val separateThousands: Flow<Boolean> = readDatastore(SEPARATE_THOUSANDS, false)
-
-    val thousandsSeparatorPlaces: Flow<Int> = readDatastore(THOUSANDS_SEPARATOR_PLACES, 3)
+    val groupLargeNumbers: Flow<Boolean> = readDatastore(GROUP_LARGE_NUMBERS, false)
 
     val volumeDecimalPlaces: Flow<Int> = readDatastore(VOLUME_DECIMAL_PLACES, 2)
 
@@ -121,12 +117,7 @@ class UserPreferencesRepository(
         value = value
     )
 
-    suspend fun saveSeparateThousands(value: Boolean) = save(SEPARATE_THOUSANDS, value)
-
-    suspend fun saveThousandsSeparatorPlaces(places: Int) = saveIntIfPositive(
-        key = THOUSANDS_SEPARATOR_PLACES,
-        value = places
-    )
+    suspend fun saveGroupLargeNumbers(value: Boolean) = save(GROUP_LARGE_NUMBERS, value)
 
     suspend fun saveVolumeDecimalPreference(places: Int) = saveIntIfPositive(
         key = VOLUME_DECIMAL_PLACES,
