@@ -36,7 +36,7 @@ class FuelStopEntryViewModel(
     var uiState by mutableStateOf(FuelStopUiState())
         private set
 
-    private val fuelStopId: Long? = savedStateHandle[FuelStopEditDestination.FUEL_STOP_ID]
+    private val fuelStopId: Int? = savedStateHandle[FuelStopEditDestination.FUEL_STOP_ID]
 
     init {
         viewModelScope.launch {
@@ -71,7 +71,7 @@ class FuelStopEntryViewModel(
                             ).format(formats.date.get)
                         )
                     else
-                        fuelStopsRepository.fuelStop(fuelStopId)
+                        fuelStopsRepository.fuelStop(fuelStopId.toLong())
                             .filterNotNull()
                             .first()
                             .toFuelStopDetails(formats),
@@ -126,6 +126,13 @@ class FuelStopEntryViewModel(
             fuelStopsRepository.update(
                 uiState.details.toFuelStop(uiState.userPreferences.formats, uiState.userPreferences.signs)
             )
+    }
+
+    /**
+     * Removes the Database entry of the current [FuelStopDetails]
+     */
+    fun removeFuelStop() = viewModelScope.launch {
+        fuelStopsRepository.deleteFuelStop(uiState.details.id)
     }
 
     private fun validate(details: FuelStopDetails): Boolean =

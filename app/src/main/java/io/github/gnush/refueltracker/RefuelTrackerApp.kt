@@ -1,5 +1,6 @@
 package io.github.gnush.refueltracker
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -24,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
@@ -45,6 +47,7 @@ fun CommonTopAppBar(
     onNavigateUp: (() -> Unit)? = null,
     onSettingsClick: (() -> Unit)? = null,
     onAboutClick: (() -> Unit)? = null,
+    extraActions: List<TopAppBarAction> = emptyList(),
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     CenterAlignedTopAppBar(
@@ -65,7 +68,8 @@ fun CommonTopAppBar(
             if (onSettingsClick != null || onAboutClick != null)
                 CommonTopAppBarActions(
                     onSettingsClick = onSettingsClick,
-                    onAboutClick = onAboutClick
+                    onAboutClick = onAboutClick,
+                    extraActions = extraActions
                 )
         }
     )
@@ -103,11 +107,19 @@ fun CommonBottomAppBar(
     )
 }
 
+data class TopAppBarAction(
+    @StringRes val text: Int,
+    val onClick: () -> Unit,
+    val icon: ImageVector,
+    @StringRes val iconDescription: Int
+)
+
 @Composable
 fun CommonTopAppBarActions(
     modifier: Modifier = Modifier,
     onSettingsClick: (() -> Unit)? = null,
-    onAboutClick: (() -> Unit)? = null
+    onAboutClick: (() -> Unit)? = null,
+    extraActions: List<TopAppBarAction> = emptyList()
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box(
@@ -125,6 +137,18 @@ fun CommonTopAppBarActions(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
+            extraActions.forEach {
+                DropdownMenuItem(
+                    text = { Text(stringResource(it.text)) },
+                    onClick = it.onClick,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = it.icon,
+                            contentDescription = stringResource(it.iconDescription)
+                        )
+                    }
+                )
+            }
             if (onSettingsClick != null)
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.settings_screen)) },

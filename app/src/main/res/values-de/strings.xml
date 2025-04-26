@@ -14,6 +14,7 @@
     <string name="about_person_icon_description">Icon Person</string>
     <string name="about_code_icon_description">Icon Quellcode Markierung</string>
     <string name="about_book_icon_description">Icon Buch</string>
+    <string name="remove_icon_description">Icon Minus in Kreis</string>
 
     <string name="fuel_stop_list_screen">Alle</string>
     <string name="fuel_stop_calendar_screen">Monatlich</string>
@@ -82,6 +83,7 @@
     <string name="settings_use_phone_keyboard_label">Nutze Telefon-Tastatur für Dezimaleingaben</string>
 
     <string name="save_button">Speichern</string>
+    <string name="remove_button">Löschen</string>
     <string name="confirm_button">OK</string>
     <string name="dismiss_button">Verwerfen</string>
 

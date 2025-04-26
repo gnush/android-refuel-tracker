@@ -10,6 +10,12 @@ interface FuelStopsRepository {
     suspend fun delete(fuelStop: FuelStop)
 
     /**
+     * Deletes the [FuelStopEntity] associated with the given [id]
+     * @param id The primary key of the [FuelStopEntity] to delete
+     */
+    suspend fun deleteFuelStop(id: Long)
+
+    /**
      * Retrieves a specific fuel stop
      * @param id The id of the fuel stop to retrieve
      */

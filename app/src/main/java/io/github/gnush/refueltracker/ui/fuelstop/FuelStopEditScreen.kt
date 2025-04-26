@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -15,6 +17,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import io.github.gnush.refueltracker.CommonTopAppBar
 import io.github.gnush.refueltracker.R
+import io.github.gnush.refueltracker.TopAppBarAction
 import io.github.gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import io.github.gnush.refueltracker.ui.navigation.NavigationDestination
 import io.github.gnush.refueltracker.ui.theme.RefuelTrackerTheme
@@ -37,6 +40,7 @@ fun FuelStopEditScreen(
     modifier: Modifier = Modifier,
     viewModel: FuelStopEntryViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
+    // TODO: move database coroutine interaction to view model
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
@@ -45,7 +49,18 @@ fun FuelStopEditScreen(
                 title = stringResource(FuelStopEditDestination.titleRes),
                 onNavigateUp = onNavigateUp,
                 onSettingsClick = navigateToSettings,
-                onAboutClick = navigateToAbout
+                onAboutClick = navigateToAbout,
+                extraActions = listOf(
+                    TopAppBarAction(
+                        text = R.string.remove_button,
+                        onClick = {
+                            viewModel.removeFuelStop()
+                            onSaveClickNavigateTo()
+                        },
+                        icon = Icons.Default.RemoveCircleOutline,
+                        iconDescription = R.string.remove_icon_description
+                    )
+                )
             )
         },
         modifier = modifier

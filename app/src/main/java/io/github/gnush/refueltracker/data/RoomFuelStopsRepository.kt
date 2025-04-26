@@ -83,6 +83,12 @@ class RoomFuelStopsRepository(
     )
 
     /**
+     * Deletes the [FuelStopEntity] associated with the given [id]
+     * @param id The primary key of the [FuelStopEntity] to delete
+     */
+    override suspend fun deleteFuelStop(id: Long) = fuelStopDao.delete(id)
+
+    /**
      * Retrieves all fuel stops ordered by time  in descending order by day/time
      */
     override fun fuelStopsOrderedNewestFirst(): Flow<List<FuelStop>> =

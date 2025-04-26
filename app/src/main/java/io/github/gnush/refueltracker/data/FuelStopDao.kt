@@ -21,6 +21,13 @@ interface FuelStopDao {
     suspend fun delete(fuelStop: FuelStopEntity)
 
     /**
+     * Deletes the [FuelStopEntity] associated with the given [id]
+     * @param id The primary key of the [FuelStopEntity] to delete
+     */
+    @Query("delete from fuel_stops where id=:id")
+    suspend fun delete(id: Long)
+
+    /**
      * Retrieves a specific fuel stop
      * @param id The id of the fuel stop to retrieve
      */

@@ -16,6 +16,7 @@
     <string name="about_person_icon_description">Person Icon</string>
     <string name="about_code_icon_description">Code Tag Icon</string>
     <string name="about_book_icon_description">Book Icon</string>
+    <string name="remove_icon_description">Circled Minus Icon</string>
 
     <string name="fuel_stop_list_screen">All stops</string>
     <string name="fuel_stop_calendar_screen">Fuel stops by month</string>
@@ -90,6 +91,7 @@
     <string name="settings_use_phone_keyboard_label">Use Phone keyboard for decimal inputs</string>
 
     <string name="save_button">Save</string>
+    <string name="remove_button">Delete</string>
     <string name="confirm_button">OK</string>
     <string name="dismiss_button">Dismiss</string>
 
