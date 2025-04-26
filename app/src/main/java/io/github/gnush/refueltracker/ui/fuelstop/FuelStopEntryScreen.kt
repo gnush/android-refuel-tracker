@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -43,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -272,6 +274,7 @@ private fun FuelStopInputForm(
             labelId = R.string.fuel_stop_total_paid_form_label,
             hasDecimalKeyboard = true,
             usePhoneInsteadOfDecimalKeyboard = userPreferences.usePhoneKeyboardForDecimalInputs,
+            isLastField = true,
             icon = { Text(userPreferences.signs.currency) }
         )
     }
@@ -287,6 +290,7 @@ private fun FormTextField(
     hasNumberKeyboard: Boolean = false,
     usePhoneInsteadOfDecimalKeyboard: Boolean = false,
     isIconLeading: Boolean = false,
+    isLastField: Boolean = false,
     icon: @Composable (() -> Unit)? = null
 ) {
     val colors = OutlinedTextFieldDefaults.colors(
@@ -301,6 +305,9 @@ private fun FormTextField(
         else
             KeyboardType.Decimal
 
+    val imeAction = if (isLastField) ImeAction.Done
+                    else ImeAction.Next
+
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -308,9 +315,9 @@ private fun FormTextField(
         colors = colors,
         singleLine = true,
         keyboardOptions = when {
-            hasDecimalKeyboard -> KeyboardOptions(keyboardType = decimalKeyboard)
-            hasNumberKeyboard -> KeyboardOptions(keyboardType = KeyboardType.Number)
-            else -> KeyboardOptions.Default
+            hasDecimalKeyboard -> KeyboardOptions(keyboardType = decimalKeyboard, imeAction = imeAction)
+            hasNumberKeyboard -> KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = imeAction)
+            else -> KeyboardOptions(imeAction = imeAction)
         },
         leadingIcon = if (isIconLeading) icon else null,
         trailingIcon = if (!isIconLeading) icon else null,
