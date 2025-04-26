@@ -60,7 +60,8 @@ class SettingsViewModel(
                 dateFormatPattern = Preference(
                     value = userPreferencesRepository.dateFormatPattern.first(),
                     isValid = true
-                )
+                ),
+                usePhoneKeyboardForDecimalInput = userPreferencesRepository.usePhoneKeyboardForDecimalInput.first()
             )
         }
     }
@@ -154,6 +155,13 @@ class SettingsViewModel(
         userPreferencesRepository.saveDateFormat(format)
     }
 
+    fun saveUsePhoneKeyboardForDecimalInput(value: Boolean) = viewModelScope.launch {
+        _uiState.value = _uiState.value.copy(
+            usePhoneKeyboardForDecimalInput = value
+        )
+        userPreferencesRepository.saveUsePhoneKeyboardForDecimalInput(value)
+    }
+
     @OptIn(FormatStringsInDatetimeFormats::class)
     fun saveDateFormatPattern(pattern: String) = viewModelScope.launch {
         val dateFormatPattern = Preference(
@@ -204,7 +212,8 @@ data class SettingsUiState(
     val numDropDownElements: Preference = Preference(),
     val defaultDropDownFilter: DropDownSelection = DropDownSelection.MostUsed,
     val dateFormat: DateFormat = ISO,
-    val dateFormatPattern: Preference = Preference()
+    val dateFormatPattern: Preference = Preference(),
+    val usePhoneKeyboardForDecimalInput: Boolean = false
 )
 
 data class Preference(

@@ -99,7 +99,8 @@ class FuelStopEntryViewModel(
                         volume = userPreferences.defaultVolumeSign.first()
                     ),
                     formats = formats,
-                    dropDownFilter = userPreferences.defaultEntryScreenDropDownSelection.first()
+                    dropDownFilter = userPreferences.defaultEntryScreenDropDownSelection.first(),
+                    usePhoneKeyboardForDecimalInputs = userPreferences.usePhoneKeyboardForDecimalInput.first()
                 )
             )
         }

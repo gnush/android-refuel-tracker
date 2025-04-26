@@ -56,6 +56,9 @@ class UserPreferencesRepository(
         private val DATE_FORMAT = intPreferencesKey("date_format")
         private val DATE_FORMAT_PATTERN = stringPreferencesKey("date_format_pattern")
 
+        private val USE_PHONE_KEYBOARD_FOR_DECIMAL_INPUT =
+            booleanPreferencesKey("use_phone_keyboard_for_decimal_input")
+
         @Volatile
         private var Instance: UserPreferencesRepository? = null
 
@@ -66,6 +69,8 @@ class UserPreferencesRepository(
                 }
             }
     }
+
+    val usePhoneKeyboardForDecimalInput: Flow<Boolean> = readDatastore(USE_PHONE_KEYBOARD_FOR_DECIMAL_INPUT, true)
 
     val separateThousands: Flow<Boolean> = readDatastore(SEPARATE_THOUSANDS, false)
 
@@ -111,9 +116,12 @@ class UserPreferencesRepository(
             }
         }
 
-    suspend fun saveSeparateThousands(value: Boolean) = datastore.edit {
-        it[SEPARATE_THOUSANDS] = value
-    }
+    suspend fun saveUsePhoneKeyboardForDecimalInput(value: Boolean) = save(
+        key = USE_PHONE_KEYBOARD_FOR_DECIMAL_INPUT,
+        value = value
+    )
+
+    suspend fun saveSeparateThousands(value: Boolean) = save(SEPARATE_THOUSANDS, value)
 
     suspend fun saveThousandsSeparatorPlaces(places: Int) = saveIntIfPositive(
         key = THOUSANDS_SEPARATOR_PLACES,
@@ -135,25 +143,22 @@ class UserPreferencesRepository(
         value = places
     )
 
-    suspend fun saveDefaultCurrencyPreference(sign: String) = datastore.edit {
-        it[CURRENCY_SIGN] = sign
-    }
+    suspend fun saveDefaultCurrencyPreference(sign: String) = save(CURRENCY_SIGN, sign)
 
-    suspend fun saveDefaultVolumePreference(sign: String) = datastore.edit {
-        it[VOLUME_SIGN] = sign
-    }
+    suspend fun saveDefaultVolumePreference(sign: String) = save(VOLUME_SIGN, sign)
 
     suspend fun saveDefaultNumberOfEntryScreenDropDownElements(numElements: Int) = saveIntIfPositive(
         key = ENTRY_SCREEN_DROP_DOWN_ELEMENTS,
         value = numElements
     )
 
-    suspend fun saveDefaultEntryScreenDropDownSelection(dropDownSelection: DropDownSelection) = datastore.edit {
-        it[ENTRY_SCREEN_DROP_DOWN_SELECTION] = when (dropDownSelection) {
+    suspend fun saveDefaultEntryScreenDropDownSelection(dropDownSelection: DropDownSelection) = save(
+        key = ENTRY_SCREEN_DROP_DOWN_SELECTION,
+        value = when (dropDownSelection) {
             DropDownSelection.MostRecent -> false
             DropDownSelection.MostUsed -> true
         }
-    }
+    )
 
     @OptIn(FormatStringsInDatetimeFormats::class)
     suspend fun saveDateFormatPattern(pattern: String) = datastore.edit {
@@ -165,14 +170,15 @@ class UserPreferencesRepository(
         }
     }
 
-    suspend fun saveDateFormat(dateFormat: DateFormat) = datastore.edit {
-        it[DATE_FORMAT] = when (dateFormat) {
+    suspend fun saveDateFormat(dateFormat: DateFormat) = save(
+        key = DATE_FORMAT,
+        value = when (dateFormat) {
             ISO -> 0
             DIN -> 1
             ANSI -> 2
             is CustomDateFormat -> 3
         }
-    }
+    )
 
     private fun <T> readDatastore(key: Preferences.Key<T>, default: T): Flow<T> = datastore.data
         .catch {
@@ -181,10 +187,12 @@ class UserPreferencesRepository(
         }
         .map { it[key] ?: default}
 
+    private suspend fun <T> save(key: Preferences.Key<T>, value: T) = datastore.edit {
+        it[key] = value
+    }
+
     private suspend fun saveIntIfPositive(key: Preferences.Key<Int>, value: Int) {
         if (value > 0)
-            datastore.edit {
-                it[key] = value
-            }
+            save(key, value)
     }
 }

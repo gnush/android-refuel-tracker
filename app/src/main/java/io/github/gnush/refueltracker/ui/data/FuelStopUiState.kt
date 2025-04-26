@@ -32,5 +32,6 @@ data class UserFormats(
 data class EntryUserPreferences(
     val signs: DefaultSigns = DefaultSigns(),
     val formats: UserFormats = UserFormats(),
-    val dropDownFilter: DropDownSelection = DropDownSelection.MostUsed
+    val dropDownFilter: DropDownSelection = DropDownSelection.MostUsed,
+    val usePhoneKeyboardForDecimalInputs: Boolean = false
 )

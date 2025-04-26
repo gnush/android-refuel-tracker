@@ -26,8 +26,8 @@
 
     <string name="fuel_stop_station_form_label">Tankstelle</string>
     <string name="fuel_stop_sort_form_label">Sorte</string>
-    <string name="fuel_stop_day_form_label">Tag des Tankstopps</string>
-    <string name="fuel_stop_time_form_label">Zeitpunkt des Tankstopps</string>
+    <string name="fuel_stop_day_form_label">Datum</string>
+    <string name="fuel_stop_time_form_label">Zeitpunkt (Optional)</string>
     <string name="fuel_stop_price_per_volume_form_label">Preis pro Volumen</string>
     <string name="fuel_stop_total_volume_form_label">Volumen</string>
     <string name="fuel_stop_total_paid_form_label">Preis</string>
@@ -61,9 +61,10 @@
 
     <string name="settings_category_date_formats_title">Datum/Zeit</string>
     <string name="settings_category_number_formats_title">Zahlen</string>
+    <string name="settings_sub_category_decimal_places_headline">Dezimalstellen</string>
     <string name="settings_category_symbols_title">Symbole</string>
     <string name="settings_category_drop_down_title">Drop-down Menü</string>
-    <string name="settings_sub_category_decimal_places_headline">Dezimalstellen</string>
+    <string name="settings_category_keyboard_title">Tastatur</string>
 
     <string name="settings_example_number_display_label">Zahlenvorschau</string>
     <string name="settings_example_date_display_label">Datumsvorschau</string>
@@ -78,6 +79,8 @@
     <string name="settings_ratio_decimal_places_label">Währung/Volumen</string>
     <string name="settings_num_drop_down_elements_label">#Elemente</string>
     <string name="settings_default_drop_down_filter_label">Standardfilter</string>
+    <string name="settings_use_phone_keyboard_label">Nutze Telefon-Tastatur für Dezimaleingaben</string>
+
     <string name="save_button">Speichern</string>
     <string name="current_month_heading">Aktueller Monat</string>
     <string name="previous_month_heading">Voriger Monat</string>

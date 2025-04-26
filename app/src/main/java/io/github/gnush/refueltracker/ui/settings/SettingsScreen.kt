@@ -1,5 +1,6 @@
 package io.github.gnush.refueltracker.ui.settings
 
+import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -92,6 +93,7 @@ fun SettingsScreen(
             onVolumeSignChange = viewModel::saveVolumeSign,
             onNumberOfDropDownElementsChange = viewModel::saveNumberOfDropDownElements,
             onDropDownFilterSelected = viewModel::saveInitialDropDownFilter,
+            onUsePhoneKeyboardToggle = viewModel::saveUsePhoneKeyboardForDecimalInput,
             dateFormats = viewModel.dateFormats,
             entryScreenDropDownFilterItems = viewModel.entryScreenDropDownFilterItems
         )
@@ -112,6 +114,7 @@ private fun SettingsScreenBody(
     onVolumeSignChange: (String) -> Unit,
     onNumberOfDropDownElementsChange: (String) -> Unit,
     onDropDownFilterSelected: (DropDownSelection) -> Unit,
+    onUsePhoneKeyboardToggle: (Boolean) -> Unit,
     dateFormats: List<DateFormat>,
     entryScreenDropDownFilterItems: List<DropDownSelection>,
     modifier: Modifier = Modifier,
@@ -226,6 +229,19 @@ private fun SettingsScreenBody(
                 items = entryScreenDropDownFilterItems
             )
         }
+        // On Samsung devices
+        if (Build.BRAND.lowercase().contains("samsung")) {
+            SettingsCategoryDivider()
+            SettingsCategory(
+                title = R.string.settings_category_keyboard_title
+            ) {
+                SwitchPreference(
+                    label = R.string.settings_use_phone_keyboard_label,
+                    value = uiState.usePhoneKeyboardForDecimalInput,
+                    onValueChange = onUsePhoneKeyboardToggle
+                )
+            }
+        }
     }
 }
 
@@ -267,8 +283,8 @@ private fun SettingsCategoryDivider(
         thickness = 2.dp,
         modifier = modifier
             .padding(
-                top = dimensionResource(R.dimen.padding_tiny),
-                bottom = dimensionResource(R.dimen.padding_tiny)
+                top = dimensionResource(R.dimen.padding_medium),
+                bottom = dimensionResource(R.dimen.padding_medium)
             )
     )
 }
@@ -531,6 +547,7 @@ private fun SettingsScreenPreview() {
             onVolumeSignChange = {},
             onNumberOfDropDownElementsChange = {},
             onDropDownFilterSelected = {},
+            onUsePhoneKeyboardToggle = {},
             dateFormats = emptyList(),
             entryScreenDropDownFilterItems = emptyList()
         )

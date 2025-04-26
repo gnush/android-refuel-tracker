@@ -1,5 +1,7 @@
 package io.github.gnush.refueltracker.ui.fuelstop
 
+import android.os.Build
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -59,6 +61,9 @@ import io.github.gnush.refueltracker.ui.dialog.PickDateDialog
 import io.github.gnush.refueltracker.ui.dialog.PickTimeDialDialog
 import io.github.gnush.refueltracker.ui.navigation.NavigationDestination
 import io.github.gnush.refueltracker.ui.theme.RefuelTrackerTheme
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.text.NumberFormat
 
 object FuelStopEntryDestination: NavigationDestination {
     override val route: String = "fuel_stop_entry"
@@ -159,6 +164,14 @@ private fun FuelStopInputForm(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
         modifier = modifier
     ) {
+        val f = NumberFormat.getInstance()
+        val d = DecimalFormat.getInstance()
+        val ds = DecimalFormatSymbols.getInstance()
+
+        // TODO: use this ↓ to construct decimal formats instead of the pattern construction approach
+        userPreferences.formats.currency.minimumIntegerDigits = 3
+        Log.d("ME", userPreferences.formats.currency.format(1.2345))
+
         var showTimeDialog by remember { mutableStateOf(false) }
         var showDateDialog by remember { mutableStateOf(false) }
 
@@ -237,6 +250,7 @@ private fun FuelStopInputForm(
             onValueChange = onPricePerVolumeChange,
             labelId = R.string.fuel_stop_price_per_volume_form_label,
             hasDecimalKeyboard = true,
+            usePhoneInsteadOfDecimalKeyboard = userPreferences.usePhoneKeyboardForDecimalInputs,
             icon = {
                 Row {
                     Text(userPreferences.signs.currency)
@@ -249,6 +263,7 @@ private fun FuelStopInputForm(
             onValueChange = onVolumeChange,
             labelId = R.string.fuel_stop_total_volume_form_label,
             hasDecimalKeyboard = true,
+            usePhoneInsteadOfDecimalKeyboard = userPreferences.usePhoneKeyboardForDecimalInputs,
             icon = { Text(userPreferences.signs.volume) }
         )
         FormTextField(
@@ -256,6 +271,7 @@ private fun FuelStopInputForm(
             onValueChange = onPriceChange,
             labelId = R.string.fuel_stop_total_paid_form_label,
             hasDecimalKeyboard = true,
+            usePhoneInsteadOfDecimalKeyboard = userPreferences.usePhoneKeyboardForDecimalInputs,
             icon = { Text(userPreferences.signs.currency) }
         )
     }
@@ -268,6 +284,8 @@ private fun FormTextField(
     @StringRes labelId: Int,
     modifier: Modifier = Modifier,
     hasDecimalKeyboard: Boolean = false,
+    hasNumberKeyboard: Boolean = false,
+    usePhoneInsteadOfDecimalKeyboard: Boolean = false,
     isIconLeading: Boolean = false,
     icon: @Composable (() -> Unit)? = null
 ) {
@@ -276,15 +294,24 @@ private fun FormTextField(
         unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer
     )
 
+    val decimalKeyboard =
+        // Samsung decimal keyboard doesn't show localized decimal separator
+        if (usePhoneInsteadOfDecimalKeyboard && Build.BRAND.lowercase().contains("samsung"))
+            KeyboardType.Phone
+        else
+            KeyboardType.Decimal
+
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(stringResource(labelId)) },
         colors = colors,
         singleLine = true,
-        keyboardOptions =
-            if (hasDecimalKeyboard) KeyboardOptions(keyboardType = KeyboardType.Decimal)
-            else KeyboardOptions.Default,
+        keyboardOptions = when {
+            hasDecimalKeyboard -> KeyboardOptions(keyboardType = decimalKeyboard)
+            hasNumberKeyboard -> KeyboardOptions(keyboardType = KeyboardType.Number)
+            else -> KeyboardOptions.Default
+        },
         leadingIcon = if (isIconLeading) icon else null,
         trailingIcon = if (!isIconLeading) icon else null,
         modifier = modifier.fillMaxWidth()
