@@ -160,7 +160,6 @@ private fun SettingsScreenBody(
                 hasNumericKeyboard = true
             )
             FormattedNumber(
-                label = R.string.settings_example_number_display_label,
                 groupLargeNumbers = uiState.groupLargeNumbers,
                 decimalPlaces = uiState.currencyDecimalPlaces
             )
@@ -171,7 +170,6 @@ private fun SettingsScreenBody(
                 hasNumericKeyboard = true
             )
             FormattedNumber(
-                label = R.string.settings_example_number_display_label,
                 groupLargeNumbers = uiState.groupLargeNumbers,
                 decimalPlaces = uiState.volumeDecimalPlaces
             )
@@ -182,7 +180,6 @@ private fun SettingsScreenBody(
                 hasNumericKeyboard = true
             )
             FormattedNumber(
-                label = R.string.settings_example_number_display_label,
                 groupLargeNumbers = uiState.groupLargeNumbers,
                 decimalPlaces = uiState.ratioDecimalPlaces
             )
@@ -319,16 +316,17 @@ private fun FormattedDate(
 
 @Composable
 private fun FormattedNumber(
-    @StringRes label: Int,
     groupLargeNumbers: Boolean,
     modifier: Modifier = Modifier,
+    @StringRes label: Int? = null,
     decimalPlaces: Preference? = null
 ) {
     CenteredPreferenceRow(modifier = modifier) {
-        Text(
-            text = stringResource(label),
-            style = MaterialTheme.typography.labelMedium
-        )
+        if (label != null)
+            Text(
+                text = stringResource(label),
+                style = MaterialTheme.typography.labelMedium
+            )
         Spacer(Modifier.weight(1f))
         if (decimalPlaces == null) {
             Text(

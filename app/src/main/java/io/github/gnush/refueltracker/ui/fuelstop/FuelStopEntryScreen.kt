@@ -1,7 +1,6 @@
 package io.github.gnush.refueltracker.ui.fuelstop
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -62,9 +61,6 @@ import io.github.gnush.refueltracker.ui.dialog.PickDateDialog
 import io.github.gnush.refueltracker.ui.dialog.PickTimeDialDialog
 import io.github.gnush.refueltracker.ui.navigation.NavigationDestination
 import io.github.gnush.refueltracker.ui.theme.RefuelTrackerTheme
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.text.NumberFormat
 
 object FuelStopEntryDestination: NavigationDestination {
     override val route: String = "fuel_stop_entry"
