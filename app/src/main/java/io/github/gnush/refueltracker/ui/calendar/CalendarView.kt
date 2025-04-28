@@ -173,7 +173,8 @@ private fun CalendarHeader(
                 text = "${stringResource(uiState.month.monthOfYearId)} ${uiState.year}",
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-//                modifier = Modifier
+                modifier = Modifier
+                    .padding(start = 16.dp)
 //                .offset {
 //                    IntOffset(
 //                        x = offset.roundToInt(),
