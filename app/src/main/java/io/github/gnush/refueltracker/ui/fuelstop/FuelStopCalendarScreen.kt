@@ -26,7 +26,6 @@ import kotlinx.datetime.LocalDate
 import io.github.gnush.refueltracker.CommonBottomAppBar
 import io.github.gnush.refueltracker.CommonTopAppBar
 import io.github.gnush.refueltracker.R
-import io.github.gnush.refueltracker.data.FuelStop
 import io.github.gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import io.github.gnush.refueltracker.ui.calendar.CalendarUiState
 import io.github.gnush.refueltracker.ui.calendar.CalendarView
@@ -90,7 +89,7 @@ fun FuelStopCalendarScreen(
         Column(modifier.padding(innerPadding)) {
             FuelStopCalendar(
                 uiState = uiState.calendar,
-                fuelStopDates = uiState.fuelStops.map(FuelStop::day),
+                fuelStopDates = uiState.fuelStops.map { it.stop.day },
                 onPreviousClick = viewModel::displayPreviousMonth,
                 onNextClick = viewModel::displayNextMonth,
                 onMonthSelected = viewModel::updateCalendarView
@@ -99,7 +98,9 @@ fun FuelStopCalendarScreen(
                 fuelStops = uiState.fuelStops,
                 signs = uiState.signs,
                 formats = uiState.formats,
-                onFuelStopClick = { navigateToFuelStopEdit(it.id) }
+                onFuelStopClick = { navigateToFuelStopEdit(it.id) },
+                onFuelStopLongPress = viewModel::toggleSelection,
+                onDeleteSelection = viewModel::deleteSelection
             )
         }
     }

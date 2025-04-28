@@ -7,6 +7,7 @@ import io.github.gnush.refueltracker.data.FuelStopsRepository
 import io.github.gnush.refueltracker.data.UserPreferencesRepository
 import io.github.gnush.refueltracker.ui.createNumberFormat
 import io.github.gnush.refueltracker.ui.data.DefaultSigns
+import io.github.gnush.refueltracker.ui.data.FuelStopListItem
 import io.github.gnush.refueltracker.ui.data.FuelStopListUiState
 import io.github.gnush.refueltracker.ui.data.UserFormats
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,8 +16,10 @@ import kotlinx.coroutines.launch
 
 class FuelStopListViewModel(
     userPreferencesRepository: UserPreferencesRepository,
-    fuelStopsRepository: FuelStopsRepository
+    val fuelStopsRepository: FuelStopsRepository
 ): ViewModel() {
+    // TODO: - fuelStops in ui state from val to var?
+    //       - fuelStops in ui state from List to Set?
     private var _uiState: MutableStateFlow<FuelStopListUiState> =
         MutableStateFlow(FuelStopListUiState())
     val uiState: StateFlow<FuelStopListUiState> = _uiState
@@ -28,7 +31,7 @@ class FuelStopListViewModel(
                     val separateLargeNumbers = userPreferencesRepository.groupLargeNumbers.first()
 
                     _uiState.value = FuelStopListUiState(
-                        fuelStops = it,
+                        fuelStops = it.map { stop -> FuelStopListItem(stop) },
                         signs = DefaultSigns(
                             currency = userPreferencesRepository.defaultCurrencySign.first(),
                             volume = userPreferencesRepository.defaultVolumeSign.first()
@@ -51,5 +54,30 @@ class FuelStopListViewModel(
                     )
                 }
         }
+    }
+
+    fun toggleSelection(id: Long) {
+        // TODO: stateful: isSelected from val to var?
+        //_uiState.value.fuelStops.find { it.stop.id == id }?.isSelected = true
+        _uiState.value = _uiState.value.copy(
+            fuelStops = _uiState.value.fuelStops.map {
+                if (id == it.stop.id)
+                    it.copy(isSelected = !it.isSelected)
+                else
+                    it
+            }
+        )
+    }
+
+    fun deleteSelection() = viewModelScope.launch {
+        val selected = _uiState.value.fuelStops.filter { it.isSelected }.toSet()
+
+        selected.forEach {
+            fuelStopsRepository.deleteFuelStop(it.stop.id)
+        }
+
+        _uiState.value = _uiState.value.copy(
+            fuelStops = _uiState.value.fuelStops.minus(selected)
+        )
     }
 }

@@ -95,6 +95,9 @@
     <string name="confirm_button">OK</string>
     <string name="dismiss_button">Dismiss</string>
 
+    <string name="list_edit_label">Edit</string>
+    <string name="list_select_label">Select</string>
+
     <string name="jump_to_month_dialog_headline">Jump to…</string>
 
     <string name="current_month_heading">Current month</string>

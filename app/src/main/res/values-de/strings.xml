@@ -87,6 +87,9 @@
     <string name="confirm_button">OK</string>
     <string name="dismiss_button">Verwerfen</string>
 
+    <string name="list_edit_label">Ändern</string>
+    <string name="list_select_label">Auswählen</string>
+
     <string name="jump_to_month_dialog_headline">Springe zu…</string>
 
     <string name="current_month_heading">Aktueller Monat</string>

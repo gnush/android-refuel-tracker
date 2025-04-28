@@ -12,6 +12,7 @@ import io.github.gnush.refueltracker.data.UserPreferencesRepository
 import io.github.gnush.refueltracker.ui.createNumberFormat
 import io.github.gnush.refueltracker.ui.data.DefaultSigns
 import io.github.gnush.refueltracker.ui.data.FuelStopCalendarUiState
+import io.github.gnush.refueltracker.ui.data.FuelStopListItem
 import io.github.gnush.refueltracker.ui.data.UserFormats
 import kotlinx.coroutines.flow.first
 
@@ -19,6 +20,7 @@ class FuelStopCalendarViewModel(
     userPreferencesRepository: UserPreferencesRepository,
     private val fuelStopsRepository: FuelStopsRepository
 ): ViewModel() {
+    // TODO: reuse/Extend FuelStopListModel
     private val _fuelStopsState: MutableStateFlow<FuelStopCalendarUiState> =
         MutableStateFlow(FuelStopCalendarUiState())
     val fuelStopsState: StateFlow<FuelStopCalendarUiState> = _fuelStopsState
@@ -30,7 +32,7 @@ class FuelStopCalendarViewModel(
                     val separateLargeNumbers = userPreferencesRepository.groupLargeNumbers.first()
 
                     _fuelStopsState.value = _fuelStopsState.value.copy(
-                        fuelStops = it,
+                        fuelStops = it.map { stop -> FuelStopListItem(stop) },
                         signs = DefaultSigns(
                             currency = userPreferencesRepository.defaultCurrencySign.first(),
                             volume = userPreferencesRepository.defaultVolumeSign.first()
@@ -53,6 +55,29 @@ class FuelStopCalendarViewModel(
                     )
                 }
         }
+    }
+
+    fun toggleSelection(id: Long) {
+        _fuelStopsState.value = _fuelStopsState.value.copy(
+            fuelStops = _fuelStopsState.value.fuelStops.map {
+                if (id == it.stop.id)
+                    it.copy(isSelected = !it.isSelected)
+                else
+                    it
+            }
+        )
+    }
+
+    fun deleteSelection() = viewModelScope.launch {
+        val selected = _fuelStopsState.value.fuelStops.filter { it.isSelected }.toSet()
+
+        selected.forEach {
+            fuelStopsRepository.deleteFuelStop(it.stop.id)
+        }
+
+        _fuelStopsState.value = _fuelStopsState.value.copy(
+            fuelStops = _fuelStopsState.value.fuelStops.minus(selected)
+        )
     }
 
     fun displayPreviousMonth() =
@@ -93,7 +118,7 @@ class FuelStopCalendarViewModel(
             _fuelStopsState.value.calendar.year,
             _fuelStopsState.value.calendar.month
         ).collect {
-            _fuelStopsState.value = _fuelStopsState.value.copy(fuelStops = it)
+            _fuelStopsState.value = _fuelStopsState.value.copy(fuelStops = it.map { stop -> FuelStopListItem(stop) })
         }
     }
 }

@@ -1,8 +1,10 @@
 package io.github.gnush.refueltracker.ui.fuelstop
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,7 +18,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,7 +37,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,6 +55,7 @@ import io.github.gnush.refueltracker.data.FuelStop
 import io.github.gnush.refueltracker.ui.Config
 import io.github.gnush.refueltracker.ui.RefuelTrackerViewModelProvider
 import io.github.gnush.refueltracker.ui.data.DefaultSigns
+import io.github.gnush.refueltracker.ui.data.FuelStopListItem
 import io.github.gnush.refueltracker.ui.data.UserFormats
 import io.github.gnush.refueltracker.ui.extensions.format
 import io.github.gnush.refueltracker.ui.navigation.BottomNavigationDestination
@@ -114,41 +121,80 @@ fun FuelStopListScreen(
             signs = uiState.signs,
             formats = uiState.formats,
             onFuelStopClick = { navigateToFuelStopEdit(it.id) },
+            onFuelStopLongPress = viewModel::toggleSelection,
+            onDeleteSelection = viewModel::deleteSelection,
             modifier = modifier.fillMaxSize(),
             contentPadding = innerPadding
         )
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FuelStopList(
-    fuelStops: List<FuelStop>,
+    fuelStops: List<FuelStopListItem>,
     signs: DefaultSigns,
     formats: UserFormats,
     onFuelStopClick: (FuelStop) -> Unit,
+    onFuelStopLongPress: (Long) -> Unit,
+    onDeleteSelection: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = contentPadding
+    val haptics = LocalHapticFeedback.current
+
+    Box(
+        modifier.padding(contentPadding),
+
     ) {
-        items(fuelStops) {
-            FuelStopListItem(
-                fuelStop = it,
-                signs = signs,
-                formats = formats,
-                modifier = Modifier
-                    .padding(dimensionResource(R.dimen.padding_small))
-                    .clickable { onFuelStopClick(it) }
-            )
+        LazyColumn(
+            modifier = Modifier.align(Alignment.TopCenter),
+        ) {
+            items(
+                items = fuelStops,
+                key = { it.stop.id }
+            ) {
+                FuelStopListItemCard(
+                    item = it,
+                    signs = signs,
+                    formats = formats,
+                    modifier = Modifier
+                        .padding(dimensionResource(R.dimen.padding_small))
+                        .combinedClickable(
+                            onClick = { onFuelStopClick(it.stop) },
+                            onClickLabel = stringResource(R.string.list_edit_label),
+                            onLongClick = {
+                                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                                onFuelStopLongPress(it.stop.id)
+                            },
+                            onLongClickLabel = stringResource(R.string.list_select_label)
+                        )
+                )
+            }
         }
+        if (fuelStops.any { it.isSelected })
+            Row(
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(dimensionResource(R.dimen.padding_tiny))
+            ) {
+                Button(
+                    onDeleteSelection
+                ) {
+                    Icon(
+                        Icons.Outlined.Delete,
+                        contentDescription = stringResource(R.string.remove_icon_description),
+                        Modifier.padding(end = dimensionResource(R.dimen.padding_tiny))
+                    )
+                    Text(stringResource(R.string.remove_button))
+                }
+            }
     }
 }
 
 @Composable
-private fun FuelStopListItem(
-    fuelStop: FuelStop,
+private fun FuelStopListItemCard(
+    item: FuelStopListItem,
     signs: DefaultSigns,
     formats: UserFormats,
     modifier: Modifier = Modifier
@@ -159,7 +205,10 @@ private fun FuelStopListItem(
             defaultElevation = dimensionResource(R.dimen.card_elevation)
         ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = if (item.isSelected)
+                MaterialTheme.colorScheme.primaryContainer
+            else
+                MaterialTheme.colorScheme.surfaceVariant
         ),
         shape = FuelCardShape
     ) {
@@ -168,20 +217,20 @@ private fun FuelStopListItem(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_tiny))
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text(fuelStop.station)
+                Text(item.stop.station)
                 Spacer(Modifier.weight(1f))
-                FuelStopDateTime(fuelStop.day, fuelStop.time, formats)
+                FuelStopDateTime(item.stop.day, item.stop.time, formats)
             }
             Spacer(Modifier.height(dimensionResource(R.dimen.padding_small)))
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text(fuelStop.fuelSort)
+                Text(item.stop.fuelSort)
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalVolume.format(formats.volume)} ${signs.volume}")
+                Text("${item.stop.totalVolume.format(formats.volume)} ${signs.volume}")
             }
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text("${fuelStop.pricePerVolume.format(formats.ratio)} ${signs.currency}/${signs.volume}")
+                Text("${item.stop.pricePerVolume.format(formats.ratio)} ${signs.currency}/${signs.volume}")
                 Spacer(Modifier.weight(1f))
-                Text("${fuelStop.totalPrice.format(formats.currency)} ${signs.currency}")
+                Text("${item.stop.totalPrice.format(formats.currency)} ${signs.currency}")
             }
         }
     }
@@ -209,26 +258,30 @@ private fun FuelStopListPreview() {
     RefuelTrackerTheme {
         FuelStopList(
             fuelStops = listOf(
-                FuelStop(
-                    station = "Fuel Station",
-                    day = LocalDate(2000, 1, 1),
-                    fuelSort = "E10",
-                    pricePerVolume = stop1PPV,
-                    totalVolume = stop1V.div(stop1PPV),
-                    totalPrice = stop1V,
-                    volume = "L",
-                    currency = "€"
+                FuelStopListItem(
+                    FuelStop(
+                        station = "Fuel Station",
+                        day = LocalDate(2000, 1, 1),
+                        fuelSort = "E10",
+                        pricePerVolume = stop1PPV,
+                        totalVolume = stop1V.div(stop1PPV),
+                        totalPrice = stop1V,
+                        volume = "L",
+                        currency = "€"
+                    )
                 ),
-                FuelStop(
-                    station = "Other Fuel Station",
-                    day = LocalDate(2011, 11, 30),
-                    time = LocalTime(12, 1),
-                    fuelSort = "E5",
-                    pricePerVolume = stop2PPV,
-                    totalVolume = stop2V/stop2PPV,
-                    totalPrice = stop2V,
-                    volume = "L",
-                    currency = "€"
+                FuelStopListItem(
+                    FuelStop(
+                        station = "Other Fuel Station",
+                        day = LocalDate(2011, 11, 30),
+                        time = LocalTime(12, 1),
+                        fuelSort = "E5",
+                        pricePerVolume = stop2PPV,
+                        totalVolume = stop2V/stop2PPV,
+                        totalPrice = stop2V,
+                        volume = "L",
+                        currency = "€"
+                    )
                 )
             ),
             signs = DefaultSigns(
@@ -236,7 +289,9 @@ private fun FuelStopListPreview() {
                 volume = "L"
             ),
             formats = UserFormats(),
-            onFuelStopClick = {}
+            onFuelStopClick = {},
+            onFuelStopLongPress = {},
+            onDeleteSelection = {}
         )
     }
 }
@@ -248,16 +303,18 @@ private fun FuelStopListNoTimeItemPreview() {
     val totalPrice = BigDecimal("20.01")
 
     RefuelTrackerTheme {
-        FuelStopListItem(
-            fuelStop = FuelStop(
-                station = "Fuel Station",
-                day = LocalDate(2000, 1, 1),
-                fuelSort = "E10",
-                pricePerVolume = pricePerVolume,
-                totalVolume = totalPrice.div(pricePerVolume),
-                totalPrice = totalPrice,
-                volume = "L",
-                currency = "€"
+        FuelStopListItemCard(
+            item = FuelStopListItem(
+                FuelStop(
+                    station = "Fuel Station",
+                    day = LocalDate(2000, 1, 1),
+                    fuelSort = "E10",
+                    pricePerVolume = pricePerVolume,
+                    totalVolume = totalPrice.div(pricePerVolume),
+                    totalPrice = totalPrice,
+                    volume = "L",
+                    currency = "€"
+                )
             ),
             signs = DefaultSigns(
                 currency = "€",
@@ -275,17 +332,19 @@ private fun FuelStopListTimeItemPreview() {
     val totalPrice = BigDecimal("34.56")
 
     RefuelTrackerTheme {
-        FuelStopListItem(
-            fuelStop = FuelStop(
-                station = "Fuel Station",
-                day = LocalDate(2011, 11, 30),
-                time = LocalTime(12, 1),
-                fuelSort = "E5",
-                pricePerVolume = pricePerVolume,
-                totalVolume = totalPrice/pricePerVolume,
-                totalPrice = totalPrice,
-                volume = "L",
-                currency = "€"
+        FuelStopListItemCard(
+            item = FuelStopListItem(
+                FuelStop(
+                    station = "Fuel Station",
+                    day = LocalDate(2011, 11, 30),
+                    time = LocalTime(12, 1),
+                    fuelSort = "E5",
+                    pricePerVolume = pricePerVolume,
+                    totalVolume = totalPrice/pricePerVolume,
+                    totalPrice = totalPrice,
+                    volume = "L",
+                    currency = "€"
+                )
             ),
             signs = DefaultSigns(
                 currency = "€",

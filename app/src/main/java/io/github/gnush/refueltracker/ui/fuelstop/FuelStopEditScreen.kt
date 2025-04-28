@@ -6,6 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveCircleOutline
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -57,7 +58,7 @@ fun FuelStopEditScreen(
                             viewModel.removeFuelStop()
                             onSaveClickNavigateTo()
                         },
-                        icon = Icons.Default.RemoveCircleOutline,
+                        icon = Icons.Outlined.Delete,
                         iconDescription = R.string.remove_icon_description
                     )
                 )
