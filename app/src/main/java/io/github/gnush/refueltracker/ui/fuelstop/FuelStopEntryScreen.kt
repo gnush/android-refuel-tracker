@@ -73,7 +73,6 @@ fun FuelStopEntryScreen(
     onNavigateUp: () -> Unit,
     onSaveClickNavigateTo: () -> Unit,
     navigateToSettings: () -> Unit,
-    navigateToAbout: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FuelStopEntryViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
@@ -84,8 +83,7 @@ fun FuelStopEntryScreen(
             CommonTopAppBar(
                 title = stringResource(FuelStopEntryDestination.titleRes),
                 onNavigateUp = onNavigateUp,
-                onSettingsClick = navigateToSettings,
-                onAboutClick = navigateToAbout
+                onSettingsClick = navigateToSettings
             )
         },
         modifier = modifier

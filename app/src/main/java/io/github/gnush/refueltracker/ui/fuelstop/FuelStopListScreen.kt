@@ -183,7 +183,7 @@ fun FuelStopList(
                 ) {
                     Icon(
                         Icons.Outlined.Delete,
-                        contentDescription = stringResource(R.string.remove_icon_description),
+                        contentDescription = stringResource(R.string.delete_icon_description),
                         Modifier.padding(end = dimensionResource(R.dimen.padding_tiny))
                     )
                     Text(stringResource(R.string.remove_button))

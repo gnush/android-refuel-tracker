@@ -56,7 +56,6 @@ fun AppNavHost(
             FuelStopEntryScreen(
                 onNavigateUp = navController::navigateUp,
                 navigateToSettings = { navController.navigate(SettingsDestination.route) },
-                navigateToAbout = { navController.navigate(AboutDestination.route) },
                 onSaveClickNavigateTo = navController::popBackStack
             )
         }
@@ -68,8 +67,6 @@ fun AppNavHost(
         ) {
             FuelStopEditScreen(
                 onNavigateUp = navController::navigateUp,
-                navigateToSettings = { navController.navigate(SettingsDestination.route) },
-                navigateToAbout = { navController.navigate(AboutDestination.route) },
                 onSaveClickNavigateTo = navController::popBackStack
             )
         }

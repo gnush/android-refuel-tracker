@@ -16,7 +16,7 @@
     <string name="about_person_icon_description">Person Icon</string>
     <string name="about_code_icon_description">Code Tag Icon</string>
     <string name="about_book_icon_description">Book Icon</string>
-    <string name="remove_icon_description">Circled Minus Icon</string>
+    <string name="delete_icon_description">Trash Can Icon</string>
 
     <string name="fuel_stop_list_screen">All stops</string>
     <string name="fuel_stop_calendar_screen">Fuel stops by month</string>

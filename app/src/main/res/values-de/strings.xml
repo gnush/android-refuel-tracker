@@ -14,7 +14,7 @@
     <string name="about_person_icon_description">Icon Person</string>
     <string name="about_code_icon_description">Icon Quellcode Markierung</string>
     <string name="about_book_icon_description">Icon Buch</string>
-    <string name="remove_icon_description">Icon Minus in Kreis</string>
+    <string name="delete_icon_description">Mülleimer Icon</string>
 
     <string name="fuel_stop_list_screen">Alle</string>
     <string name="fuel_stop_calendar_screen">Monatlich</string>

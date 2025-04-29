@@ -35,8 +35,6 @@ object FuelStopEditDestination: NavigationDestination {
 fun FuelStopEditScreen(
     onNavigateUp: () -> Unit,
     onSaveClickNavigateTo: () -> Unit,
-    navigateToSettings: () -> Unit,
-    navigateToAbout: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FuelStopEntryViewModel = viewModel(factory = RefuelTrackerViewModelProvider.Factory)
 ) {
@@ -48,8 +46,6 @@ fun FuelStopEditScreen(
             CommonTopAppBar(
                 title = stringResource(FuelStopEditDestination.titleRes),
                 onNavigateUp = onNavigateUp,
-                onSettingsClick = navigateToSettings,
-                onAboutClick = navigateToAbout,
                 extraActions = listOf(
                     TopAppBarAction(
                         text = R.string.remove_button,
@@ -58,7 +54,7 @@ fun FuelStopEditScreen(
                             onSaveClickNavigateTo()
                         },
                         icon = Icons.Outlined.Delete,
-                        iconDescription = R.string.remove_icon_description
+                        iconDescription = R.string.delete_icon_description
                     )
                 )
             )
@@ -91,9 +87,7 @@ private fun FuelStopEditScreenPreview() {
     RefuelTrackerTheme {
         FuelStopEditScreen(
             onNavigateUp = {},
-            onSaveClickNavigateTo = {},
-            navigateToSettings = {},
-            navigateToAbout = {}
+            onSaveClickNavigateTo = {}
         )
     }
 }

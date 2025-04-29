@@ -66,7 +66,7 @@ fun CommonTopAppBar(
             }
         },
         actions = {
-            if (onSettingsClick != null || onAboutClick != null)
+            if (extraActions.isNotEmpty() || onSettingsClick != null || onAboutClick != null)
                 CommonTopAppBarActions(
                     onSettingsClick = onSettingsClick,
                     onAboutClick = onAboutClick,
@@ -108,13 +108,6 @@ fun CommonBottomAppBar(
     )
 }
 
-data class TopAppBarAction(
-    @StringRes val text: Int,
-    val onClick: () -> Unit,
-    val icon: ImageVector,
-    @StringRes val iconDescription: Int
-)
-
 @Composable
 fun CommonTopAppBarActions(
     modifier: Modifier = Modifier,
@@ -122,71 +115,93 @@ fun CommonTopAppBarActions(
     onAboutClick: (() -> Unit)? = null,
     extraActions: List<TopAppBarAction> = emptyList()
 ) {
-    var expanded by remember { mutableStateOf(false) }
     Box(
         modifier.padding(dimensionResource(R.dimen.padding_tiny))
     ) {
-        IconButton(
-            onClick = { expanded = !expanded }
-        ) {
-            Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = stringResource(R.string.menu_button_icon_description)
-            )
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            extraActions.forEach {
-                DropdownMenuItem(
-                    text = { Text(stringResource(it.text)) },
-                    onClick = it.onClick,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = it.icon,
-                            contentDescription = stringResource(it.iconDescription)
-                        )
+        when {
+            extraActions.size == 1 && onSettingsClick == null && onAboutClick == null ->
+                TopAppBarActionIconButton(extraActions.first())
+            extraActions.isEmpty() && onSettingsClick != null && onAboutClick == null ->
+                TopAppBarActionIconButton(settingsAction(onSettingsClick))
+            extraActions.isEmpty() && onSettingsClick == null && onAboutClick != null ->
+                TopAppBarActionIconButton(aboutAction(onAboutClick))
+            else -> {
+                var expanded by remember { mutableStateOf(false) }
+
+                IconButton(
+                    onClick = { expanded = !expanded }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = stringResource(R.string.menu_button_icon_description)
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    extraActions.forEach {
+                        TopAppBarActionDropDownItem(it)
                     }
-                )
+
+                    if (extraActions.isNotEmpty() && (onSettingsClick != null || onAboutClick != null))
+                        HorizontalDivider()
+
+                    if (onSettingsClick != null)
+                        TopAppBarActionDropDownItem(settingsAction(onSettingsClick))
+
+                    if (onAboutClick != null)
+                        TopAppBarActionDropDownItem(aboutAction(onAboutClick))
+                }
             }
-
-            if (extraActions.isNotEmpty() && (onSettingsClick != null || onAboutClick != null))
-                HorizontalDivider()
-
-            if (onSettingsClick != null)
-                SettingsDropDownMenuItem(onSettingsClick)
-
-            if (onAboutClick != null)
-                AboutDropDownMenuItem(onAboutClick)
         }
     }
 }
 
 @Composable
-private fun AboutDropDownMenuItem(onCLick: () -> Unit) {
+private fun TopAppBarActionDropDownItem(action: TopAppBarAction) {
     DropdownMenuItem(
-        text = { Text(stringResource(R.string.about_screen)) },
-        onClick = onCLick,
+        text = { Text(stringResource(action.text)) },
+        onClick = action.onClick,
         leadingIcon = {
             Icon(
-                imageVector = Icons.Outlined.Info,
-                contentDescription = stringResource(R.string.about_info_icon_description)
+                imageVector = action.icon,
+                contentDescription = stringResource(action.iconDescription)
             )
         }
     )
 }
 
 @Composable
-private fun SettingsDropDownMenuItem(onCLick: () -> Unit) {
-    DropdownMenuItem(
-        text = { Text(stringResource(R.string.settings_screen)) },
-        onClick = onCLick,
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Settings,
-                contentDescription = stringResource(R.string.settings_button_icon_description)
-            )
-        }
-    )
+private fun TopAppBarActionIconButton(action: TopAppBarAction) {
+    IconButton(
+        action.onClick
+    ) {
+        Icon(
+            imageVector = action.icon,
+            contentDescription = stringResource(action.iconDescription)
+        )
+    }
 }
+
+data class TopAppBarAction(
+    @StringRes val text: Int,
+    val onClick: () -> Unit,
+    val icon: ImageVector,
+    @StringRes val iconDescription: Int
+)
+
+private fun settingsAction(onClick: () -> Unit): TopAppBarAction = TopAppBarAction(
+    text = R.string.settings_screen,
+    icon = Icons.Default.Settings,
+    iconDescription = R.string.settings_button_icon_description,
+    onClick = onClick
+)
+
+private fun aboutAction(onClick: () -> Unit): TopAppBarAction = TopAppBarAction(
+    text = R.string.about_screen,
+    icon = Icons.Outlined.Info,
+    iconDescription = R.string.about_info_icon_description,
+    onClick = onClick
+)
