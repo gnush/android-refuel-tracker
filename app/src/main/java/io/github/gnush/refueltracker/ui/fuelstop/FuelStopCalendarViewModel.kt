@@ -99,13 +99,6 @@ class FuelStopCalendarViewModel(
         updateFuelStops()
     }
 
-    private fun updateCalendarView(year: Int) {
-        _fuelStopsState.value = _fuelStopsState.value.copy(
-            calendar = _fuelStopsState.value.calendar.copy(year = year)
-        )
-        updateFuelStops()
-    }
-
     fun updateCalendarView(year: Int, month: Month) {
         _fuelStopsState.value = _fuelStopsState.value.copy(
             calendar = _fuelStopsState.value.calendar.copy(year = year, month = month)

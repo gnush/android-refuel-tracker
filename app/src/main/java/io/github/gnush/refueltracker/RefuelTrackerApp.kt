@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.BottomAppBar
@@ -13,6 +13,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
@@ -129,7 +130,7 @@ fun CommonTopAppBarActions(
             onClick = { expanded = !expanded }
         ) {
             Icon(
-                imageVector = Icons.Default.Menu,
+                imageVector = Icons.Default.MoreVert,
                 contentDescription = stringResource(R.string.menu_button_icon_description)
             )
         }
@@ -149,29 +150,43 @@ fun CommonTopAppBarActions(
                     }
                 )
             }
+
+            if (extraActions.isNotEmpty() && (onSettingsClick != null || onAboutClick != null))
+                HorizontalDivider()
+
             if (onSettingsClick != null)
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.settings_screen)) },
-                    onClick = onSettingsClick,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = stringResource(R.string.settings_button_icon_description)
-                        )
-                    }
-                )
+                SettingsDropDownMenuItem(onSettingsClick)
 
             if (onAboutClick != null)
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.about_screen)) },
-                    onClick = onAboutClick,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Info,
-                            contentDescription = stringResource(R.string.about_info_icon_description)
-                        )
-                    }
-                )
+                AboutDropDownMenuItem(onAboutClick)
         }
     }
+}
+
+@Composable
+private fun AboutDropDownMenuItem(onCLick: () -> Unit) {
+    DropdownMenuItem(
+        text = { Text(stringResource(R.string.about_screen)) },
+        onClick = onCLick,
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = stringResource(R.string.about_info_icon_description)
+            )
+        }
+    )
+}
+
+@Composable
+private fun SettingsDropDownMenuItem(onCLick: () -> Unit) {
+    DropdownMenuItem(
+        text = { Text(stringResource(R.string.settings_screen)) },
+        onClick = onCLick,
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = stringResource(R.string.settings_button_icon_description)
+            )
+        }
+    )
 }

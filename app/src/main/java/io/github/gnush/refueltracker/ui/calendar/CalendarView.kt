@@ -71,7 +71,7 @@ fun CalendarView(
     onMonthSelected: (Int, Month) -> Unit = { _, _ -> },
     hasClickableCells: Boolean = false,
     onCellClick: (LocalDate) -> Unit = {},
-    viewModel: CalendarViewModel = viewModel( factory = RefuelTrackerViewModelProvider.Factory )
+    viewModel: CalendarViewModel = viewModel()
 ) {
     if (firstDisplayMonth != null)
         viewModel.updateDisplayMonth(firstDisplayMonth)

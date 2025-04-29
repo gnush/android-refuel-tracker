@@ -6,7 +6,6 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.gnush.refueltracker.RefuelTrackerApplication
-import io.github.gnush.refueltracker.ui.calendar.CalendarViewModel
 import io.github.gnush.refueltracker.ui.settings.SettingsViewModel
 import io.github.gnush.refueltracker.ui.fuelstop.FuelStopCalendarViewModel
 import io.github.gnush.refueltracker.ui.fuelstop.FuelStopEntryViewModel
@@ -44,9 +43,6 @@ object RefuelTrackerViewModelProvider {
             SettingsViewModel(
                 userPreferencesRepository = refuelTrackerApplication().container.userPreferencesRepository
             )
-        }
-        initializer {
-            CalendarViewModel()
         }
     }
 }

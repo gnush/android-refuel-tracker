@@ -1,6 +1,5 @@
 package io.github.gnush.refueltracker.ui.navigation
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -8,7 +7,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import io.github.gnush.refueltracker.ui.settings.SettingsDestination
 import io.github.gnush.refueltracker.ui.settings.SettingsScreen
 import io.github.gnush.refueltracker.ui.fuelstop.FuelStopCalendarDestination
