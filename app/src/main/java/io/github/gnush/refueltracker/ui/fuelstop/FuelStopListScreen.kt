@@ -1,5 +1,6 @@
 package io.github.gnush.refueltracker.ui.fuelstop
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -62,6 +63,7 @@ import io.github.gnush.refueltracker.ui.navigation.BottomNavigationDestination
 import io.github.gnush.refueltracker.ui.theme.FuelCardShape
 import io.github.gnush.refueltracker.ui.theme.RefuelTrackerTheme
 import java.math.BigDecimal
+import java.text.NumberFormat
 
 object FuelStopListDestination: BottomNavigationDestination {
     override val route: String = "fuel_stop_list_home"
@@ -85,6 +87,11 @@ fun FuelStopListScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val uiState by viewModel.uiState.collectAsState()
+
+    Log.d("ME", "default min fraction = ${NumberFormat.getInstance().minimumFractionDigits}")
+    Log.d("ME", "default max fraction = ${NumberFormat.getInstance().maximumFractionDigits}")
+    Log.d("ME", "currency min fraction = ${NumberFormat.getCurrencyInstance().minimumFractionDigits}")
+    Log.d("ME", "currency max fraction = ${NumberFormat.getCurrencyInstance().maximumFractionDigits}")
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

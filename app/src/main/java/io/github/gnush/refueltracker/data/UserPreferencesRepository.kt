@@ -22,6 +22,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
+import java.text.NumberFormat
+import java.util.Currency
+import java.util.Locale
 
 private const val USER_PREFERENCES_NAME = "user_preferences"
 private val Context.datastore: DataStore<Preferences> by preferencesDataStore(
@@ -32,6 +35,8 @@ class UserPreferencesRepository(
     private val datastore: DataStore<Preferences>
 ) {
     companion object {
+        private const val DEFAULT_DATE_FORMAT_PATTERN = "yyyy-MM-dd"
+
         private const val TAG = "UserPreferencesRepo"
 
         private val GROUP_LARGE_NUMBERS =
@@ -74,11 +79,11 @@ class UserPreferencesRepository(
 
     val volumeDecimalPlaces: Flow<Int> = readDatastore(VOLUME_DECIMAL_PLACES, 2)
 
-    val currencyDecimalPlaces: Flow<Int> = readDatastore(CURRENCY_DECIMAL_PLACES, 2)
+    val currencyDecimalPlaces: Flow<Int> = readDatastore(CURRENCY_DECIMAL_PLACES, Currency.getInstance(Locale.getDefault()).defaultFractionDigits)
 
     val currencyVolumeRatioDecimalPlaces: Flow<Int> = readDatastore(CURRENCY_VOLUME_RATIO_DECIMAL_PLACES, 3)
 
-    val defaultCurrencySign: Flow<String> = readDatastore(CURRENCY_SIGN, "€")
+    val defaultCurrencySign: Flow<String> = readDatastore(CURRENCY_SIGN, Currency.getInstance(Locale.getDefault()).symbol)
 
     val defaultVolumeSign: Flow<String> = readDatastore(VOLUME_SIGN, "L")
 
@@ -96,7 +101,7 @@ class UserPreferencesRepository(
             }
         }
 
-    val dateFormatPattern: Flow<String> = readDatastore(DATE_FORMAT_PATTERN, "yyyy-MM-dd")
+    val dateFormatPattern: Flow<String> = readDatastore(DATE_FORMAT_PATTERN, DEFAULT_DATE_FORMAT_PATTERN)
 
     val dateFormat: Flow<DateFormat> = datastore.data
         .catch {
@@ -107,7 +112,7 @@ class UserPreferencesRepository(
                 0 -> ISO
                 1 -> DIN
                 2 -> ANSI
-                3 -> CustomDateFormat(it[DATE_FORMAT_PATTERN] ?: "yyyy-MM-dd")
+                3 -> CustomDateFormat(it[DATE_FORMAT_PATTERN] ?: DEFAULT_DATE_FORMAT_PATTERN)
                 else -> ISO
             }
         }
