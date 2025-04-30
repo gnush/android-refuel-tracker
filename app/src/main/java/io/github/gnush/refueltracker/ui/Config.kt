@@ -20,6 +20,7 @@ fun createNumberFormat(groupLargeNumbers: Boolean, @IntRange(from = 0) fractionD
 
     format.isGroupingUsed = groupLargeNumbers
     format.minimumFractionDigits = fractionDigits
+    format.maximumFractionDigits = fractionDigits
 
     return format
 }
