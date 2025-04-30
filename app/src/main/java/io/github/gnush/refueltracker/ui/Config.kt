@@ -10,6 +10,8 @@ import kotlinx.datetime.format.optional
 import java.text.NumberFormat
 
 object Config {
+    // TODO: https://stackoverflow.com/questions/11093182/date-formatting-based-on-user-locale-on-android
+    // requires api >= 26
     val TIME_FORMAT: DateTimeFormat<LocalTime> = LocalTime.Format {
         hour(); char(':'); minute(); optional { char(':'); second() }
     }

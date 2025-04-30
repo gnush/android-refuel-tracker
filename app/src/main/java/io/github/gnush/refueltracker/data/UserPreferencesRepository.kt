@@ -18,11 +18,11 @@ import io.github.gnush.refueltracker.ui.data.DateFormat
 import io.github.gnush.refueltracker.ui.data.ISO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
-import java.text.NumberFormat
 import java.util.Currency
 import java.util.Locale
 
@@ -112,7 +112,7 @@ class UserPreferencesRepository(
                 0 -> ISO
                 1 -> DIN
                 2 -> ANSI
-                3 -> CustomDateFormat(it[DATE_FORMAT_PATTERN] ?: DEFAULT_DATE_FORMAT_PATTERN)
+                3 -> CustomDateFormat(readDatastore(DATE_FORMAT_PATTERN, DEFAULT_DATE_FORMAT_PATTERN).first())
                 else -> ISO
             }
         }
